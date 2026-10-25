@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F1 Racing Simulator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<!-- HUD di gara -->
+<div id="hud" class="hidden">
+  <div id="tower"></div>
+  <div id="top"><div id="lapTxt"></div><div id="timeTxt"></div><div id="bestTxt"></div><div id="gapTxt"></div></div>
+  <div id="sectors" aria-live="polite"></div>
+  <div id="bottom"><div id="spd">0</div><small>km/h</small><div id="gear">N</div>
+    <div class="bars"><i id="thr"></i><i id="brk"></i></div></div>
+  <canvas id="mini" width="200" height="150"></canvas>
+  <div id="lights"><span></span><span></span><span></span><span></span><span></span></div>
+  <div id="banner"></div>
+</div>
+<div id="toast"></div>
+
+<div id="menu" class="panel">
+  <h1>F1 <em>Racing</em> Simulator</h1>
+  <button data-act="play" class="main">GIOCA</button>
+  <button data-go="cars">SELEZIONA AUTO</button>
+  <button data-go="paddock">GESTISCI PADDOCK</button>
+  <button data-go="settings">IMPOSTAZIONI</button>
+  <button data-go="controls">COMANDI</button>
+  <button data-go="records">CLASSIFICHE</button>
+</div>
+
+<div id="cars" class="panel">
+  <h2>La tua squadra</h2>
+  <canvas id="prev" width="220" height="100"></canvas>
+  <label>Nome squadra <input type="text" maxlength="22" data-my="name"></label>
+  <label>Nome pilota <input type="text" maxlength="22" data-my="driver"></label>
+  <label>Sigla (3 lettere) <input type="text" maxlength="3" data-my="code"></label>
+  <label>Numero (2-99) <input type="number" min="2" max="99" data-my="num"></label>
+  <label>Colore principale <input type="color" data-my="c1"></label>
+  <label>Colore secondario <input type="color" data-my="c2"></label>
+  <h3>Statistiche della tua auto</h3>
+  <label><span>Velocità massima <b data-mv="0"></b></span><input type="range" min="0.8" max="1.2" step="0.01" data-ms="0"></label>
+  <label><span>Accelerazione <b data-mv="1"></b></span><input type="range" min="0.8" max="1.2" step="0.01" data-ms="1"></label>
+  <label><span>Frenata <b data-mv="2"></b></span><input type="range" min="0.8" max="1.2" step="0.01" data-ms="2"></label>
+  <label><span>Aderenza <b data-mv="3"></b></span><input type="range" min="0.8" max="1.2" step="0.01" data-ms="3"></label>
+  <button data-act="resetmy">RIPRISTINA STATISTICHE</button>
+  <button data-go="menu">TORNA AL MENU</button>
+</div>
+
+<div id="paddock" class="panel">
+  <h2>Gestione paddock</h2>
+  <p class="hint">Modifica i nomi delle scuderie e sposta i piloti tra le squadre. Le modifiche vengono salvate in questo browser.</p>
+  <label>Scuderia <select id="padTeam"></select></label>
+  <label>Nome scuderia <input id="padTeamName" type="text" maxlength="28"></label>
+  <div id="padStats" class="team-stats"></div>
+  <h3>Modifica statistiche scuderia</h3>
+  <label><span>Velocità massima <b data-tv="0"></b></span><input type="range" min="0.8" max="1.2" step="0.01" data-ts="0"></label>
+  <label><span>Accelerazione <b data-tv="1"></b></span><input type="range" min="0.8" max="1.2" step="0.01" data-ts="1"></label>
+  <label><span>Frenata <b data-tv="2"></b></span><input type="range" min="0.8" max="1.2" step="0.01" data-ts="2"></label>
+  <label><span>Aderenza <b data-tv="3"></b></span><input type="range" min="0.8" max="1.2" step="0.01" data-ts="3"></label>
+  <button data-act="resetteam">RIPRISTINA STATISTICHE SCUDERIA</button>
+  <label>Pilota 1 <select id="padDriver1"></select></label>
+  <label>Pilota 2 <select id="padDriver2"></select></label>
+  <p class="hint">Scegli un pilota: verrà scambiato automaticamente con quello dello slot selezionato.</p>
+  <h3>Griglia e statistiche</h3>
+  <div id="paddockList" class="paddock-list"></div>
+  <button data-go="menu">TORNA AL MENU</button>
+</div>
+
+<div id="settings" class="panel">
+  <h2>Impostazioni</h2>
+  <label>Difficoltà <select data-set="diff"><option value="0">Facilissimo</option><option value="1">Facile</option><option value="2">Medio</option><option value="3">Difficile</option><option value="4">Difficilissimo</option></select></label>
+  <label>Giri <input type="number" min="1" max="20" data-set="laps"></label>
+  <label>Sensibilità sterzo <input type="range" min="0.5" max="1.5" step="0.05" data-set="sens"></label>
+  <label>Volume audio <input type="range" min="0" max="1" step="0.05" data-set="vol"></label>
+  <label>Minuti di qualifica (0 = salta) <input type="number" min="0" max="10" data-set="qmin"></label>
+  <label>Controllo <select data-set="ctrl"><option value="auto">Automatico</option><option value="kb">Tastiera</option><option value="pad">Controller</option></select></label>
+  <label>Qualità grafica <select data-set="qual"><option value="high">Alta</option><option value="low">Bassa</option></select></label>
+  <label>Inverti sterzo (controller) <input type="checkbox" data-set="inv"></label>
+  <button data-go="menu">TORNA AL MENU</button>
+</div>
+
+<div id="controls" class="panel">
+  <h2>Comandi</h2>
+  <div class="cols">
+    <div><b>Tastiera</b><p>W / ↑ acceleratore<br>S / ↓ freno e retromarcia<br>A D / ← → sterzo<br>Spazio freno a mano<br>Esc pausa<br>R riposiziona (+3 s)<br>C cambia visuale</p></div>
+    <div><b>Controller</b><p>Stick sinistro: sterzo<br>RT/R2: acceleratore<br>LT/L2: freno<br>A/Croce: acceleratore<br>B/Cerchio: freno<br>Start/Options: pausa<br>Y/Triangolo: visuale</p></div>
+  </div>
+  <p id="padStat"></p>
+  <div class="test"><span>Sterzo</span><div class="tb"><i id="tSt"></i></div><span>Acceleratore</span><div class="tb"><i id="tTh"></i></div><span>Freno</span><div class="tb"><i id="tBr"></i></div></div>
+  <p class="hint">Se il controller non viene rilevato, collegalo e premi un suo pulsante: alcuni browser lo mostrano solo dopo la prima pressione. Sensibilità e inversione sterzo sono in Impostazioni.</p>
+  <button data-go="menu">TORNA AL MENU</button>
+</div>
+
+<div id="records" class="panel">
+  <h2>Classifiche</h2><div id="recList"></div>
+  <button data-go="menu">TORNA AL MENU</button>
+</div>
+
+<div id="pause" class="panel hidden">
+  <h2>Pausa</h2>
+  <button data-act="resume" class="main">RIPRENDI</button>
+  <button data-act="restart">RICOMINCIA</button>
+  <button data-act="endq" id="endqBtn" class="hidden">TERMINA QUALIFICHE</button>
+  <button data-act="menu">TORNA AL MENU</button>
+</div>
+
+<div id="qres" class="panel hidden">
+  <h2>Griglia di partenza</h2><div id="qList"></div>
+  <button data-act="grid" class="main">INIZIA GARA</button>
+  <button data-act="retryq">RIFAI LE QUALIFICHE</button>
+  <button data-act="menu">TORNA AL MENU</button>
+</div>
+
+<div id="result" class="panel hidden">
+  <h2>Classifica finale 🏁</h2><div id="resList"></div>
+  <button data-act="restart" class="main">RICOMINCIA GARA</button>
+  <button data-act="menu">TORNA AL MENU</button>
+</div>
+<script src="js/utils.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/data.js"></script>
+<script src="js/track.js"></script>
+<script src="js/state.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/keyboard.js"></script>
+<script src="js/gamepad.js"></script>
+<script src="js/playerInput.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/cars.js"></script>
+<script src="js/laps.js"></script>
+<script src="js/sectors.js"></script>
+<script src="js/collisions.js"></script>
+<script src="js/physics.js"></script>
+<script src="js/botMotion.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/slipstream.js"></script>
+<script src="js/botRecovery.js"></script>
+<script src="js/particles.js"></script>
+<script src="js/session.js"></script>
+<script src="js/quali.js"></script>
+<script src="js/race.js"></script>
+<script src="js/hud.js"></script>
+<script src="js/carSprite.js"></script>
+<script src="js/minimap.js"></script>
+<script src="js/render.js"></script>
+<script src="js/update.js"></script>
+<script src="js/menuCars.js"></script>
+<script src="js/menuPaddock.js"></script>
+<script src="js/menuRecords.js"></script>
+<script src="js/menuSettings.js"></script>
+<script src="js/menuClicks.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
