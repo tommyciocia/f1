@@ -4,7 +4,7 @@ const AI_LANE_LIMIT=TW/2-28,AI_SIDE_GAP=58;
 
 // Distanza longitudinale firmata sul circuito: positiva significa che b è davanti ad a.
 function trackDelta(a,b){
- let d=prog(b)-prog(a);
+ let d=(prog(b)-prog(a))%L;
  if(d>L/2)d-=L;else if(d<-L/2)d+=L;
  return d;
 }
@@ -18,7 +18,7 @@ function idealLane(c){
 function nearestTrafficAhead(c){
  let car=null,distance=1e9;
  for(const o of cars){
-  if(o===c||hid(o))continue;
+  if(o===c||!trackTraffic(o))continue;
   const d=trackDelta(c,o);
   if(d>8&&d<450&&Math.abs(o.d-c.d)<118&&d<distance){car=o;distance=d;}
  }
@@ -29,7 +29,7 @@ function passingLaneOption(c,ahead,side){
  const lane=clamp(ahead.d+side*82,-AI_LANE_LIMIT,AI_LANE_LIMIT);
  let score=Math.abs(lane-ahead.d)>=AI_SIDE_GAP?170:-900;
  for(const o of cars){
-  if(o===c||hid(o))continue;
+  if(o===c||!trackTraffic(o))continue;
   const d=trackDelta(c,o);
   if(d<-105||d>350)continue;
   const separation=Math.abs(lane-plannedLane(o));
@@ -56,7 +56,11 @@ function trafficTargetSpeed(c,ahead,distance,want,tv){
  if(sameLine&&distance<safety)return Math.min(tv,Math.max(135,aheadSpeed+(distance-safety)*1.45));
  return tv;
 }
+function speedInput(v,target,st,throttleAt=1){
+ return{st,thr:v<target*throttleAt?clamp((target-v)/95,0,1):0,brk:v>target*1.035?clamp((v-target)/115,0,1):0,hb:false};
+}
 function aiInput(c,dt){
+ if(pitActive(c))return pitInput(c);
  const v=Math.hypot(c.vx,c.vy),i=c.idx;
  c.passHold=Math.max(0,(c.passHold||0)-dt);c.recoveryT=Math.max(0,(c.recoveryT||0)-dt);c.launchT=Math.max(0,(c.launchT||0)-dt);
  const recovering=!!c.off||c.recoveryT>0;
@@ -66,7 +70,7 @@ function aiInput(c,dt){
  const safeRecoveryLane=Number.isFinite(c.recoveryLane)?c.recoveryLane:idealLane(c);
  let want=recovering?clamp(safeRecoveryLane,-AI_LANE_LIMIT,AI_LANE_LIMIT):launching?clamp(c.launchLane,-AI_LANE_LIMIT,AI_LANE_LIMIT):idealLane(c),passing=false;
  const relative=ahead?v-Math.hypot(ahead.vx,ahead.vy):0;
- const targetStillRelevant=c.passTarget&&c.passTarget.go&&trackDelta(c,c.passTarget)>-95&&trackDelta(c,c.passTarget)<280;
+ const targetStillRelevant=c.passTarget&&c.passTarget.go&&trackTraffic(c.passTarget)&&trackDelta(c,c.passTarget)>-95&&trackDelta(c,c.passTarget)<280;
 
  if(!recovering&&targetStillRelevant){
   // Una volta impegnato, il bot non cambia lato a ogni fotogramma. Cambia solo se la
@@ -98,7 +102,7 @@ function aiInput(c,dt){
  // bloccata da un vecchio obiettivo di frenata.
  if(recovering)tv=Math.max(tv,185);
  const throttleAt=passing?.995:1;
- let thr=v<tv*throttleAt?clamp((tv-v)/95,0,1):0,brk=v>tv*1.035?clamp((v-tv)/115,0,1):0;
- if(recovering&&v<150){thr=Math.max(thr,.55);brk=0;}
- return{st,thr,brk,hb:false};
+ const inp=speedInput(v,tv,st,throttleAt);
+ if(recovering&&v<150){inp.thr=Math.max(inp.thr,.55);inp.brk=0;}
+ return inp;
 }

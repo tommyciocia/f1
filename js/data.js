@@ -10,7 +10,11 @@ const PLAYER='TOM',NCARS=23,PSLOT=12;
 // La griglia resta modificabile senza toccare i dati base della simulazione.
 S.teamNames=Array.isArray(S.teamNames)&&S.teamNames.length===TEAMS.length?S.teamNames:TEAMS.map(t=>t[2]);
 S.roster=Array.isArray(S.roster)&&S.roster.length===DR.length?S.roster:DR.map(d=>d.slice());
-S.roster=S.roster.map((d,i)=>Array.isArray(d)&&d.length>=4?[String(d[0]),String(d[1]),clamp(+d[2]||DR[i][2],1,99),clamp(+d[3]||0,0,TEAMS.length-2)]:DR[i].slice());
+S.roster=S.roster.map((d,i)=>Array.isArray(d)&&d.length>=4?[String(d[0]),String(d[1]),clamp(+d[2]||DR[i][2],1,99),clamp(Math.trunc(+d[3])||0,0,TEAMS.length-2)]:DR[i].slice());
+// Conserva gli scambi del paddock e ripara eventuali vecchi salvataggi con team sovraffollati.
+{const seats=Array(TEAMS.length-1).fill(0),extra=[];
+ for(const d of S.roster){if(seats[d[3]]<2)seats[d[3]]++;else extra.push(d);}
+ for(const d of extra){const team=seats.findIndex(n=>n<2);d[3]=team;seats[team]++;}}
 const cleanStats=(a,def)=>Array.isArray(a)&&a.length>=4?def.map((v,k)=>clamp(+a[k]||v,.8,1.2)):def.slice();
 S.teamStats=TSTAT.map((d,i)=>cleanStats(Array.isArray(S.teamStats)?S.teamStats[i]:null,d));
 S.myStats=cleanStats(S.myStats,[1,1,1,1]);

@@ -19,5 +19,10 @@ const path=new Path2D();T.forEach((p,i)=>i?path.lineTo(p.x,p.y):path.moveTo(p.x,
 let bx0=1e9,by0=1e9,bx1=-1e9,by1=-1e9;T.forEach(p=>{bx0=Math.min(bx0,p.x);bx1=Math.max(bx1,p.x);by0=Math.min(by0,p.y);by1=Math.max(by1,p.y);});
 // minimappa pre-renderizzata
 const mm=document.createElement('canvas');mm.width=200;mm.height=150;
-const mS=Math.min(180/(bx1-bx0),130/(by1-by0)),mX=p=>10+(p.x-bx0)*mS,mY=p=>10+(p.y-by0)*mS;
-(function(){const m=mm.getContext('2d');m.strokeStyle='#8a929c';m.lineWidth=5;m.lineJoin='round';m.beginPath();T.forEach((p,i)=>i?m.lineTo(mX(p),mY(p)):m.moveTo(mX(p),mY(p)));m.closePath();m.stroke();})();
+let mS;const mX=p=>10+(p.x-bx0)*mS,mY=p=>10+(p.y-by0)*mS;
+function rebuildMiniTrack(extra=[]){
+ for(const p of extra){bx0=Math.min(bx0,p.x);bx1=Math.max(bx1,p.x);by0=Math.min(by0,p.y);by1=Math.max(by1,p.y);}
+ mS=Math.min(180/(bx1-bx0),130/(by1-by0));
+ const m=mm.getContext('2d');m.clearRect(0,0,200,150);m.strokeStyle='#8a929c';m.lineWidth=5;m.lineJoin='round';m.beginPath();T.forEach((p,i)=>i?m.lineTo(mX(p),mY(p)):m.moveTo(mX(p),mY(p)));m.closePath();m.stroke();
+}
+rebuildMiniTrack();

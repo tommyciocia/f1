@@ -86,9 +86,10 @@
 <div id="controls" class="panel">
   <h2>Comandi</h2>
   <div class="cols">
-    <div><b>Tastiera</b><p>W / ↑ acceleratore<br>S / ↓ freno e retromarcia<br>A D / ← → sterzo<br>Spazio freno a mano<br>Esc pausa<br>R riposiziona (+3 s)<br>C cambia visuale</p></div>
-    <div><b>Controller</b><p>Stick sinistro: sterzo<br>RT/R2: acceleratore<br>LT/L2: freno<br>A/Croce: acceleratore<br>B/Cerchio: freno<br>Start/Options: pausa<br>Y/Triangolo: visuale</p></div>
+    <div><b>Tastiera</b><p>W / ↑ acceleratore<br>S / ↓ freno e retromarcia<br>A D / ← → sterzo<br>Spazio freno a mano<br>Esc pausa<br>R riposiziona (+3 s)<br>C cambia visuale<br>P prenota/annulla ingresso box</p></div>
+    <div><b>Controller</b><p>Stick sinistro: sterzo<br>RT/R2: acceleratore<br>LT/L2: freno<br>A/Croce: acceleratore<br>B/Cerchio: freno<br>Start/Options: pausa<br>Y/Triangolo: visuale<br>X/Quadrato: prenota/annulla box</p></div>
   </div>
+  <p class="hint">Per entrare ai box, prenota con P o X/Quadrato e raggiungi l'ingresso indicato a sinistra, dopo il traguardo, a massimo 80 km/h. Il transito è assistito, senza fermate; all'uscita riprendi il controllo.</p>
   <p id="padStat"></p>
   <div class="test"><span>Sterzo</span><div class="tb"><i id="tSt"></i></div><span>Acceleratore</span><div class="tb"><i id="tTh"></i></div><span>Freno</span><div class="tb"><i id="tBr"></i></div></div>
   <p class="hint">Se il controller non viene rilevato, collegalo e premi un suo pulsante: alcuni browser lo mostrano solo dopo la prima pressione. Sensibilità e inversione sterzo sono in Impostazioni.</p>
@@ -136,6 +137,7 @@
 <script src="js/collisions.js"></script>
 <script src="js/physics.js"></script>
 <script src="js/botMotion.js"></script>
+<script src="js/pits.js"></script>
 <script src="js/ai.js"></script>
 <script src="js/slipstream.js"></script>
 <script src="js/botRecovery.js"></script>

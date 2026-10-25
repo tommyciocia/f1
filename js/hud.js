@@ -7,9 +7,9 @@ function qHud(dt){const v=Math.hypot(pl.vx,pl.vy);$('spd').textContent=Math.roun
  $('bestTxt').textContent='Giro '+fmt(pl.lap>=0?raceTime-pl.lapStart:0)+'  |  Miglior '+fmt(pl.best);
  sectorHud(pl);
  tickT-=dt;if(tickT>0)return;tickT=.2;
- const rows=cars.filter(c=>c.best<1e8).sort((a,b)=>a.best-b.best),pos=rows.indexOf(pl)+1;
- $('tower').innerHTML=rows.map((c,i)=>`<div class="${c.isP?'me':''}" style="border-left-color:${c.col}"><b>${i+1}</b>${esc(c.code)} ${fmt(c.best)}</div>`).join('');
- $('gapTxt').textContent=(pl.tow>.15?'SCIA  ':'')+(pos?'P'+pos:'Fai un giro lanciato');}
+ const rows=cars.slice().sort((a,b)=>a.best-b.best||a.relT-b.relT),pos=pl.best<1e8?rows.indexOf(pl)+1:0;
+ $('tower').innerHTML=rows.map((c,i)=>`<div class="${c.isP?'me':''}" style="border-left-color:${c.col}"><b>${i+1}</b>${esc(c.code)} ${c.best<1e8?fmt(c.best):pitActive(c)?c.go?c.pit.fromTrack?'BOX':'USCITA':'BOX':'GIRO'}</div>`).join('');
+ $('gapTxt').textContent=pitHudMessage(pl)||(pl.tow>.15?'SCIA  ':'')+(pos?'P'+pos:'Fai un giro lanciato');}
 const fmt=t=>{if(!t||t>1e8)return '--:--.---';const m=Math.floor(t/60);return m+':'+(t%60).toFixed(3).padStart(6,'0');};
 function sectorHud(c){
  const out=[];
@@ -32,7 +32,7 @@ function hudUpdate(dt){
  const o=order(),me=o.indexOf(pl),fastest=fastestLapDriver();
  $('tower').innerHTML=o.map((c,i)=>`<div class="${[c.isP?'me':'',c===fastest?'fastest-lap':''].filter(Boolean).join(' ')}" style="border-left-color:${c.col}" title="${esc(c.name)}"><b>${i+1}</b><span class="driver-name">${esc(c.code)}</span></div>`).join('');
  const sp=Math.max(v,150),a=o[me-1],b=o[me+1];
- $('gapTxt').textContent=(pl.tow>.15?'SCIA  ':'')+(a?`▲ ${a.code} -${((prog(a)-prog(pl))/sp).toFixed(1)}s`:'Leader')+(b?`   ▼ ${b.code} +${((prog(pl)-prog(b))/sp).toFixed(1)}s`:'');}
+ $('gapTxt').textContent=pitHudMessage(pl)||(pl.tow>.15?'SCIA  ':'')+(a?`▲ ${a.code} -${((prog(a)-prog(pl))/sp).toFixed(1)}s`:'Leader')+(b?`   ▼ ${b.code} +${((prog(pl)-prog(b))/sp).toFixed(1)}s`:'');}
 function testUpdate(){const p=getPad(),s=$('padStat');
  if(p){const r=readPad(p);s.textContent='Controller collegato: '+p.id.slice(0,50);
   $('tSt').style.cssText=`left:${r.st<0?50+r.st*50:50}%;width:${Math.abs(r.st)*50}%`;$('tTh').style.width=r.thr*100+'%';$('tBr').style.width=r.brk*100+'%';}

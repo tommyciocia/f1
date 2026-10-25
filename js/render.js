@@ -23,14 +23,14 @@ function render(){
  for(let i=0;i<10;i++)for(let j=0;j<2;j++){ctx.fillStyle=(i+j)%2?'#fff':'#111';ctx.fillRect(j*14-14,-TW/2+i*(TW/10),14,TW/10);}
  ctx.fillStyle='#4a505a';ctx.fillRect(-400,TW/2+BAR+40,900,90);ctx.fillStyle='#e10600';for(let i=0;i<30;i++){ctx.fillStyle=`hsl(${i*37%360},60%,55%)`;ctx.fillRect(-390+i*30,TW/2+BAR+60,16,50);}
  ctx.restore();
- drawSectorLines();
+ drawPits();drawSectorLines();
  for(const p of particles){ctx.globalAlpha=clamp(p.life,0,p.t===2?.42:.6);
   if(p.t===2){const sp=Math.hypot(p.vx,p.vy)||1;ctx.strokeStyle='#bdeeff';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x-p.vx/sp*p.sz,p.y-p.vy/sp*p.sz);ctx.stroke();}
   else{ctx.fillStyle=p.t?'#8a6a3a':'#eee';ctx.beginPath();ctx.arc(p.x,p.y,(.7-p.life)*30+6,0,7);ctx.fill();}}
  ctx.globalAlpha=1;
- for(const c of cars)if(!hid(c))drawCar(c,true);for(const c of cars)if(!hid(c))drawCar(c,false);
+ for(const c of cars)drawCar(c,true);for(const c of cars)drawCar(c,false);
  ctx.font='bold 17px Segoe UI,sans-serif';ctx.textAlign='center';
- for(const c of cars){if(hid(c))continue;ctx.fillStyle=c.isP?'#ffd400':'#fff';ctx.strokeStyle='#000';ctx.lineWidth=3;const t=c.code+' '+c.num;ctx.strokeText(t,c.x,c.y-38);ctx.fillText(t,c.x,c.y-38);}
+ for(const c of cars){ctx.fillStyle=c.isP?'#ffd400':'#fff';ctx.strokeStyle='#000';ctx.lineWidth=3;const t=c.code+' '+c.num;ctx.strokeText(t,c.x,c.y-38);ctx.fillText(t,c.x,c.y-38);}
  ctx.restore();
  if(state!=='menu')drawMini();
 }

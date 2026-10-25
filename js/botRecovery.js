@@ -10,7 +10,7 @@ function recoverInvalidBot(c){
 function chooseRecoveryLane(c){
  const candidates=[-AI_LANE_LIMIT+10,AI_LANE_LIMIT-10];let best=candidates[0],bestScore=-1e9;
  for(const lane of candidates){let score=0;
-  for(const o of cars){if(o===c||hid(o))continue;const d=trackDelta(c,o);if(d<-120||d>220)continue;
+  for(const o of cars){if(o===c||!onTrack(o))continue;const d=trackDelta(c,o);if(d<-120||d>220)continue;
    const gap=Math.abs(lane-plannedLane(o));score+=gap>=AI_SIDE_GAP?16:-(AI_SIDE_GAP-gap)*4;}
   // A parità di spazio la scelta stabile dipende dall'identità della vettura.
   score+=lane===((c.aiId||0)%2?candidates[1]:candidates[0]) ? .1 : 0;
@@ -20,7 +20,7 @@ function chooseRecoveryLane(c){
 }
 function updateBotRecovery(dt){
  for(const c of cars){
-  if(!c.ai||!c.go){c.stuck=0;c.stallT=0;c.stallP=undefined;continue;}
+  if(!c.ai||!c.go||pitActive(c)){c.stuck=0;c.stallT=0;c.stallP=undefined;continue;}
   const bad=![c.x,c.y,c.vx,c.vy,c.a,c.lane,c.d].every(Number.isFinite);
   if(bad){recoverInvalidBot(c);continue;}
   const v=Math.hypot(c.vx,c.vy),stillLaunching=c.launchT>0;

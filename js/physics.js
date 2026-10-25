@@ -1,10 +1,12 @@
 'use strict';
 /* Fisica di una vettura (accelerazione, frenata, aderenza, barriere) e avanzamento di tutte le vetture */
 function stepCar(c,h){
+ if(pitActive(c)&&!c.go)return;
+ const inPits=pitActive(c);
  const f={x:Math.cos(c.a),y:Math.sin(c.a)},r={x:-f.y,y:f.x},inp=c.inp;
  let vF=c.vx*f.x+c.vy*f.y,vL=c.vx*r.x+c.vy*r.y;
  // La scia dà un vantaggio limitato, ma abbastanza evidente per preparare un sorpasso.
- const go=c.go,tp=c.top*(1+.075*(c.tow||0));
+ const go=c.go,tp=inPits?PIT.speedLimit:c.top*(1+.075*(c.tow||0));
  // acceleratore progressivo (cala verso la velocità massima)
  if(go&&inp.thr>0)vF+=inp.thr*c.accel*(1+.46*(c.tow||0))*(1-clamp(vF/tp,0,1)**2)*h*(c.off?.45:1);
  else vF-=vF*.35*h;
@@ -12,7 +14,7 @@ function stepCar(c,h){
  if(inp.hb&&go){vF-=Math.sign(vF)*500*h;}
  // Rete di sicurezza fisica per le IA: una collisione o un riferimento di traiettoria
  // non può lasciarle ferme in mezzo alla pista. È un recupero graduale, non un reset.
- if(c.ai&&go&&(state==='racing'||state==='quali')&&!c.fin&&vF<115){
+ if(c.ai&&!inPits&&go&&(state==='racing'||state==='quali')&&!c.fin&&vF<115){
   const rollingTarget=c.recoveryT>0?185:125;
   vF+=(rollingTarget-vF)*Math.min(1,h*3.4);
  }
@@ -24,6 +26,7 @@ function stepCar(c,h){
  // aderenza: la velocità laterale decade, ma solo se la gomma tiene
  c.slip=Math.abs(vL);let g=(inp.hb?2.2:7)*c.grip;if(c.slip>230)g*=.45;
  vL*=Math.exp(-g*h);
+ if(inPits){vF=clamp(vF,0,PIT.speedLimit);vL=0;}
  c.vx=f.x*vF+r.x*vL;c.vy=f.y*vF+r.y*vL;c.x+=c.vx*h;c.y+=c.vy*h;
  // posizione sul tracciato
  // L'IA deve cercare prima attorno al proprio segmento: una scansione completa a
@@ -31,11 +34,13 @@ function stepCar(c,h){
  // lasciando l'auto ferma sul posto pur con velocità calcolata. La ricerca completa
  // resta disponibile solo se è davvero uscita dalla pista o ha perso il riferimento.
  const lostTrack=!Number.isFinite(c.idx)||Math.abs(c.d||0)>TW*.6||c.trackGuard>0;
- let ni=nearest(c,lostTrack),q=T[ni],d=(c.x-q.x)*q.nx+(c.y-q.y)*q.ny;
+ let ni=inPits?c.idx:nearest(c,lostTrack),q=T[ni],d=(c.x-q.x)*q.nx+(c.y-q.y)*q.ny;
  // Il follower dei bot restituisce anche il segmento effettivamente raggiunto:
  // aggiornare tempi e giri con quello evita disallineamenti tra posizione e velocità.
- if(c.ai){const followed=followTrackAsBot(c,ni,h);ni=followed.idx;q=T[ni];d=followed.d;}
- if(state==='racing'||state==='quali'){sectorProgress(c,c.idx,ni);progress(c,c.idx,ni);}c.idx=ni;c.d=d;
+ if(c.ai||inPits){const followed=followTrackAsBot(c,ni,h);ni=followed.idx;q=T[ni];d=followed.d;}
+ if(!inPits&&(state==='racing'||state==='quali')){sectorProgress(c,c.idx,ni);progress(c,c.idx,ni);}c.idx=ni;c.d=d;
+ // Box e corsia di uscita hanno la propria superficie; non sono erba o barriere.
+ if(inPits){c.off=c.kerb=false;return;}
  // L'erba resta percorribile e rallenta la vettura; i muri fermano solo chi va davvero fuori.
  let ad=Math.abs(d);c.off=ad>TW/2+22;
  const k=ad>TW/2&&!c.off;

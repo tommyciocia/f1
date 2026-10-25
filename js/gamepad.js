@@ -15,6 +15,6 @@ function readPad(p){
   if(!trgMap[p.index]){trgMap[p.index]=[];p.axes.forEach((a,i)=>{if(i>=2&&a<-.9)trgMap[p.index].push(i);});}
   const t=trgMap[p.index];if(t.length>=2){brk=clamp((p.axes[t[0]]+1)/2,0,1);thr=clamp((p.axes[t[1]]+1)/2,0,1);}else{thr=B(7);brk=B(6);}}
  thr=Math.max(thr,B(0));brk=Math.max(brk,B(1));
- return{st,thr,brk,start:B(9)>.5,y:B(3)>.5};}
+ return{st,thr,brk,start:B(9)>.5,y:B(3)>.5,x:B(2)>.5};}
 function pollPad(){const p=getPad();if(!p){padPrev={};return;}const r=readPad(p);
- if(r.start&&!padPrev.start)togglePause();if(r.y&&!padPrev.y)camMul=camMul===1?1.45:1;padPrev=r;}
+ if(r.start&&!padPrev.start)togglePause();if(r.y&&!padPrev.y)camMul=camMul===1?1.45:1;if(r.x&&!padPrev.x)requestPitEntry();padPrev=r;}

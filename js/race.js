@@ -1,6 +1,6 @@
 'use strict';
 /* Gara: semafori di partenza, countdown, traguardo e classifica finale */
-function startRace(g){if(g!==undefined)lastGrid=g;mkCars(lastGrid);mode='race';$('lights').classList.remove('hidden');raceTime=0;sessionBestSecs=[1e9,1e9,1e9];cd=0;lit=0;hold=.6+Math.random()*.9;finT=0;particles=[];camMul=1;
+function startRace(g){resetQualiRelease();if(g!==undefined)lastGrid=g;mkCars(lastGrid);mode='race';$('lights').classList.remove('hidden');raceTime=0;sessionBestSecs=[1e9,1e9,1e9];cd=0;lit=0;hold=.6+Math.random()*.9;finT=0;particles=[];camMul=1;
  camX=pl.x;camY=pl.y;state='countdown';hideAll();$('hud').classList.remove('hidden');setLights(0);$('banner').textContent='';}
 function setLights(n){[...$('lights').children].forEach((s,i)=>s.classList.toggle('on',i<n));}
 function updateCountdown(dt){

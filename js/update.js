@@ -7,8 +7,9 @@ function update(dt){
   if(!(dt>1e-4))dt=1e-4;
   if(state==='racing'||state==='quali')raceTime+=dt;
   if(state==='quali')releaseQualiCars();
+  tryPitEntry(pl);
   updateSlipstream();
-  for(const c of cars){c.inp=c.ai?aiInput(c,dt):getInput(dt);if(c.rep>0)c.rep-=dt;}
+  for(const c of cars){c.inp=c.ai||pitActive(c)?aiInput(c,dt):getInput(dt);if(c.rep>0)c.rep-=dt;}
   stepAllCars(dt);
   updateBotRecovery(dt);
   emitParticles();
