@@ -2,6 +2,7 @@
 /* Recupero IA: nessuna sosta casuale; aiuto forte solo dopo uno stallo configurabile */
 const BOT_SLOW_SPEED=105,BOT_STALL_RECOVERY_AT=.4,BOT_STALL_ASSIST_AT=3.5;
 function recoverInvalidBot(c){
+ if(state==='quali')invalidateQualiLap(c);
  // Questo ramo è esclusivamente per valori NaN/Infinity: non viene usato per il traffico.
  c.idx=Number.isFinite(c.idx)?c.idx:0;const q=T[c.idx%N],lane=clamp(c.base,-TW/2+32,TW/2-32);
  c.x=q.x+q.nx*lane;c.y=q.y+q.ny*lane;c.a=q.ang;c.yaw=0;c.steer=0;c.lane=lane;c.d=lane;

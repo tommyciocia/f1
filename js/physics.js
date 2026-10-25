@@ -6,7 +6,7 @@ function stepCar(c,h){
  const f={x:Math.cos(c.a),y:Math.sin(c.a)},r={x:-f.y,y:f.x},inp=c.inp;
  let vF=c.vx*f.x+c.vy*f.y,vL=c.vx*r.x+c.vy*r.y;
  // La scia dà un vantaggio limitato, ma abbastanza evidente per preparare un sorpasso.
- const go=c.go,tp=inPits?PIT.speedLimit:c.top*(1+.075*(c.tow||0));
+ const go=c.go,tp=inPits?PIT.speedLimit:c.top*tyreSpeed(c)*(1+.075*(c.tow||0));
  // acceleratore progressivo (cala verso la velocità massima)
  if(go&&inp.thr>0)vF+=inp.thr*c.accel*(1+.46*(c.tow||0))*(1-clamp(vF/tp,0,1)**2)*h*(c.off?.45:1);
  else vF-=vF*.35*h;
@@ -24,7 +24,7 @@ function stepCar(c,h){
  c.steer+=(inp.st-c.steer)*Math.min(1,h*12);
  c.a+=c.steer*2.7/(1+Math.abs(vF)/480)*clamp(vF/70,-1,1)*h;
  // aderenza: la velocità laterale decade, ma solo se la gomma tiene
- c.slip=Math.abs(vL);let g=(inp.hb?2.2:7)*c.grip;if(c.slip>230)g*=.45;
+ c.slip=Math.abs(vL);let g=(inp.hb?2.2:7)*c.grip*tyreGrip(c);if(c.slip>230)g*=.45;
  vL*=Math.exp(-g*h);
  if(inPits){vF=clamp(vF,0,PIT.speedLimit);vL=0;}
  c.vx=f.x*vF+r.x*vL;c.vy=f.y*vF+r.y*vL;c.x+=c.vx*h;c.y+=c.vy*h;
@@ -38,6 +38,7 @@ function stepCar(c,h){
  // Il follower dei bot restituisce anche il segmento effettivamente raggiunto:
  // aggiornare tempi e giri con quello evita disallineamenti tra posizione e velocità.
  if(c.ai||inPits){const followed=followTrackAsBot(c,ni,h);ni=followed.idx;q=T[ni];d=followed.d;}
+ if(state==='quali'&&!inPits&&Math.abs(d)>TW/2+22)invalidateQualiLap(c);
  if(!inPits&&(state==='racing'||state==='quali')){sectorProgress(c,c.idx,ni);progress(c,c.idx,ni);}c.idx=ni;c.d=d;
  // Box e corsia di uscita hanno la propria superficie; non sono erba o barriere.
  if(inPits){c.off=c.kerb=false;return;}

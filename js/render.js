@@ -5,11 +5,12 @@ function render(){
  const dpr=devicePixelRatio||1,W=innerWidth,H=innerHeight;
  if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);}
  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#2f6b2f';ctx.fillRect(0,0,W,H);
- const unit=clamp(Math.min(W,H)/900,.55,1.4);let tx,ty,z;
+ const unit=clamp(Math.min(W,H)/900,.55,1.4),qualifyingView=mode==='quali'&&state==='quali';let tx,ty,z;
  if(state==='menu'){tx=(bx0+bx1)/2;ty=(by0+by1)/2;z=Math.min(W/(bx1-bx0),H/(by1-by0))*.9;camX=tx;camY=ty;camZ=z;}
- else{const v=Math.hypot(pl.vx,pl.vy);tx=pl.x+pl.vx*.5;ty=pl.y+pl.vy*.5;z=(.62-.2*clamp(v/1000,0,1))*unit/camMul;
+ else{const followed=mode==='quali'?qualiCameraCar():pl,v=Math.hypot(followed.vx,followed.vy),lookAhead=qualifyingView&&W<=1000?.15:.5;tx=followed.x+followed.vx*lookAhead;ty=followed.y+followed.vy*lookAhead;z=(.62-.2*clamp(v/1000,0,1))*unit/camMul;
   camX+=(tx-camX)*.15;camY+=(ty-camY)*.15;camZ+=(z-camZ)*.05;}
- ctx.save();ctx.translate(W/2,H/2);ctx.scale(camZ,camZ);ctx.translate(-camX,-camY);
+ // La tabella estesa lascia la vettura nella parte libera della visuale.
+ ctx.save();ctx.translate(qualifyingView&&W>1000?W*.75:W/2,qualifyingView&&W<=1000?H*.68:H/2);ctx.scale(camZ,camZ);ctx.translate(-camX,-camY);
  ctx.lineJoin='round';ctx.lineCap='butt';
  ctx.strokeStyle='#d8dce0';ctx.lineWidth=TW+2*BAR+30;ctx.stroke(path);       // barriere
  ctx.strokeStyle='#e10600';ctx.lineWidth=TW+2*BAR+30;ctx.setLineDash([80,80]);ctx.stroke(path);ctx.setLineDash([]);

@@ -6,4 +6,7 @@ try{Object.assign(S,JSON.parse(localStorage.getItem('f1sim.set')||'{}'))}catch(e
 S.my=Object.assign({},DEF.my,S.my);
 if(S.dv!==2){S.diff=[1,2,3][clamp(S.diff|0,0,2)];S.dv=2;} // migrazione dalle vecchie 3 difficoltà alle 5 attuali
 S.diff=clamp(S.diff|0,0,4);
+// Il vecchio qmin conserva solo la scelta di saltare le qualifiche.
+S.qualiEnabled=typeof S.qualiEnabled==='boolean'?S.qualiEnabled:Number(S.qmin)!==0;
+S.qualiMinutes=[18,15,12].map((value,i)=>clamp(Math.round(Number(Array.isArray(S.qualiMinutes)?S.qualiMinutes[i]:value))||value,1,60));
 const save=()=>{try{localStorage.setItem('f1sim.set',JSON.stringify(S))}catch(e){}};

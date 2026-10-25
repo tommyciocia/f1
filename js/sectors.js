@@ -13,13 +13,21 @@ function finishSector(c,n){
  if(time<old)c.bestSecs[n]=time;c.secStart=raceTime;c.activeSec=(n+1)%3;
 }
 function sectorProgress(c,a,b){
+ const qualifying=state==='quali';
+ if(qualifying&&(!c.qActive||c.qd))return;
  if(!movedForward(a,b))return;
  // Il traguardo chiude S3; poi ricomincia una nuova terna per il giro seguente.
  if(crossedMark(a,b,0)){
-  if(c.lap>=0)finishSector(c,2);
+  if(c.lap>=0&&(!qualifying||c.qLapActive&&c.qLapValid&&c.qLapSectors===3))finishSector(c,2);
   c.secs=[null,null,null];c.secDelta=[null,null,null];c.secState=['wait','wait','wait'];c.secStart=raceTime;c.activeSec=0;
  }
  if(c.lap<0)return;
- if(crossedMark(a,b,SECTOR_MARKS[0]))finishSector(c,0);
- if(crossedMark(a,b,SECTOR_MARKS[1]))finishSector(c,1);
+ if(crossedMark(a,b,SECTOR_MARKS[0])){
+  if(qualifying){if(!c.qLapActive||!c.qLapValid||c.qLapSectors!==0)return;c.qLapSectors=1;}
+  finishSector(c,0);
+ }
+ if(crossedMark(a,b,SECTOR_MARKS[1])){
+  if(qualifying){if(!c.qLapActive||!c.qLapValid||c.qLapSectors!==1)return;c.qLapSectors=3;}
+  finishSector(c,1);
+ }
 }

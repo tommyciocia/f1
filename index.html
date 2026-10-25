@@ -16,6 +16,7 @@
   <div id="sectors" aria-live="polite"></div>
   <div id="bottom"><div id="spd">0</div><small>km/h</small><div id="gear">N</div>
     <div class="bars"><i id="thr"></i><i id="brk"></i></div></div>
+  <div id="tyreIndicator" role="status" aria-label="SOFT — 100%"><span id="tyreText">SOFT — 100%</span></div>
   <canvas id="mini" width="200" height="150"></canvas>
   <div id="lights"><span></span><span></span><span></span><span></span><span></span></div>
   <div id="banner"></div>
@@ -76,7 +77,11 @@
   <label>Giri <input type="number" min="1" max="20" data-set="laps"></label>
   <label>Sensibilità sterzo <input type="range" min="0.5" max="1.5" step="0.05" data-set="sens"></label>
   <label>Volume audio <input type="range" min="0" max="1" step="0.05" data-set="vol"></label>
-  <label>Minuti di qualifica (0 = salta) <input type="number" min="0" max="10" data-set="qmin"></label>
+  <label>Qualifiche Q1 → Q2 → Q3 <input type="checkbox" data-set="qualiEnabled"></label>
+  <label>Q1 · minuti <input type="number" min="1" max="60" data-qminutes="0"></label>
+  <label>Q2 · minuti <input type="number" min="1" max="60" data-qminutes="1"></label>
+  <label>Q3 · minuti <input type="number" min="1" max="60" data-qminutes="2"></label>
+  <p class="hint">Durate iniziali: 18 / 15 / 12 minuti. Le qualifiche usano SOFT al 100%, senza degradazione. Disattiva le qualifiche per partire direttamente in gara.</p>
   <label>Controllo <select data-set="ctrl"><option value="auto">Automatico</option><option value="kb">Tastiera</option><option value="pad">Controller</option></select></label>
   <label>Qualità grafica <select data-set="qual"><option value="high">Alta</option><option value="low">Bassa</option></select></label>
   <label>Inverti sterzo (controller) <input type="checkbox" data-set="inv"></label>
@@ -110,8 +115,9 @@
 </div>
 
 <div id="qres" class="panel hidden">
-  <h2>Griglia di partenza</h2><div id="qList"></div>
-  <button data-act="grid" class="main">INIZIA GARA</button>
+  <h2 id="qTitle">Risultati qualifiche</h2><p id="qSummary"></p><div id="qList" tabindex="0" aria-label="Risultati e griglia completa di 23 vetture"></div>
+  <button data-act="nextq" id="nextQBtn" class="main">CONTINUA IN Q2</button>
+  <button data-act="grid" id="gridBtn" class="main hidden">INIZIA GARA</button>
   <button data-act="retryq">RIFAI LE QUALIFICHE</button>
   <button data-act="menu">TORNA AL MENU</button>
 </div>
@@ -132,6 +138,7 @@
 <script src="js/playerInput.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/cars.js"></script>
+<script src="js/tyres.js"></script>
 <script src="js/laps.js"></script>
 <script src="js/sectors.js"></script>
 <script src="js/collisions.js"></script>

@@ -95,8 +95,8 @@ function aiInput(c,dt){
  const st=clamp(angDiff(Math.atan2(ty-c.y,tx-c.x),c.a)*(recovering?4.0:3.15),-1,1);
 
  // Frenata prevista dalla curvatura; non dipende dalle auto che sono dietro o affiancate.
- let tv=c.top*(.995+.045*(c.tow||0)),dist=0;
- for(let k=0;k<40;k++){const s=T[(i+k)%N],vc=s.vc*c.cs,allowed=Math.sqrt(vc*vc+2*c.brk*.34*dist);if(allowed<tv)tv=allowed;dist+=s.len;if(dist>1800)break;}
+ let tv=c.top*tyreSpeed(c)*(.995+.045*(c.tow||0)),dist=0;
+ for(let k=0;k<40;k++){const s=T[(i+k)%N],vc=s.vc*c.cs*Math.sqrt(tyreGrip(c)),allowed=Math.sqrt(vc*vc+2*c.brk*.34*dist);if(allowed<tv)tv=allowed;dist+=s.len;if(dist>1800)break;}
  tv=trafficTargetSpeed(c,ahead,distance,want,tv);
  // Se è quasi ferma, la vettura recupera marcia nella corsia libera senza restare
  // bloccata da un vecchio obiettivo di frenata.

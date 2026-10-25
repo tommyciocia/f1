@@ -1,0 +1,143 @@
+'use strict';
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const {game,placePlayer,checkSeats}=require('./helpers/game.cjs');
+const plain=value=>JSON.parse(JSON.stringify(value));
+function endWithTimes(g,code='c.best=60+i;c.qBestSetAt=10+i;c.qLaps=1;'){
+ // Dati di test per isolare ordinamento ed eliminazioni; i test di simulazione sotto
+ // verificano separatamente che il gioco generi i suoi tempi soltanto con giri reali.
+ g.run('qualiParticipants().forEach((c,i)=>{'+code+'});endQuali();');
+}
+test('durate 18/15/12, 23 partecipanti, migrazione impostazioni e possibilità di saltare',()=>{
+ const g=game();g.click('play');checkSeats(g);
+ assert.deepEqual(plain(g.run('quali.stages.map(s=>s.duration)')),[1080,900,720]);
+ assert.equal(g.run('qualiParticipants().length'),23);assert.equal(g.run('qualiTimeLeft()'),1080);
+ assert.ok(g.run('cars.every(c=>c.best===1e9&&c.qualiTimes.every(t=>t===null))'));
+ g.run('qHud(1);');assert.equal(g.elements.get('timeTxt').textContent,'18:00');assert.match(g.elements.get('lapTxt').textContent,/Q1/);
+ const skip=game({qmin:0});skip.click('play');assert.equal(skip.run('state'),'countdown');assert.equal(skip.run('quali'),null);
+ const enabled=game({qmin:0,qualiEnabled:true,qualiMinutes:[10,8,6]});enabled.click('play');assert.equal(enabled.run('qualiStage().duration'),600);
+});
+test('6 eliminati in Q1, 7 in Q2, 10 in Q3; i tempi di accesso non cambiano le classifiche successive',()=>{
+ const g=game();g.run('startQuali();');endWithTimes(g);
+ assert.equal(g.run('state'),'qbetween');assert.equal(g.run('lastGrid'),null);
+ assert.equal(g.run('quali.results[0].qualified.length'),17);assert.equal(g.run('quali.results[0].eliminated.length'),6);
+ const q1=g.run('JSON.stringify(quali.results[0])');g.click('grid');assert.equal(g.run('state'),'qbetween');
+ assert.ok(!g.elements.get('nextQBtn').classList.contains('hidden'));assert.ok(g.elements.get('gridBtn').classList.contains('hidden'));
+ g.click('nextq');assert.equal(g.run('quali.stage'),1);assert.equal(g.run('qualiParticipants().length'),17);
+ assert.ok(g.run('qualiParticipants().every(c=>c.best===1e9&&c.qLaps===0&&c.qualiTimes[0]!==null&&c.bestSecs.every(t=>t===1e9))'));
+ assert.equal(g.run('raceTime'),0);assert.ok(g.run('sessionBestSecs.every(t=>t===1e9)'));
+ const parked=g.run('JSON.stringify(cars.filter(c=>!c.qActive).map(c=>[c.id,c.x,c.y,c.go]))');g.advance(3);
+ assert.equal(g.run('JSON.stringify(cars.filter(c=>!c.qActive).map(c=>[c.id,c.x,c.y,c.go]))'),parked);
+ endWithTimes(g,'c.best=50+(16-i);c.qBestSetAt=i;c.qLaps=1;');
+ assert.equal(g.run('quali.results[1].qualified.length'),10);assert.equal(g.run('quali.results[1].eliminated.length'),7);
+ assert.notEqual(g.run('quali.results[0].rows[0].id'),g.run('quali.results[1].rows[0].id'));
+ const q2=g.run('JSON.stringify(quali.results[1])');g.click('nextq');assert.equal(g.run('qualiParticipants().length'),10);
+ assert.ok(g.run('qualiParticipants().every(c=>c.best===1e9&&c.qLaps===0&&c.qualiTimes[1]!==null)'));
+ endWithTimes(g,'c.best=40+(9-i);c.qBestSetAt=i;c.qLaps=2;');
+ assert.equal(g.run('state'),'qdone');assert.equal(g.run('quali.results[2].rows.length'),10);
+ assert.equal(g.run('JSON.stringify(quali.results[0])'),q1);assert.equal(g.run('JSON.stringify(quali.results[1])'),q2);
+ assert.equal(g.run('quali.finalGrid.length'),23);assert.equal(g.run('new Set(quali.finalGrid.map(r=>r.id)).size'),23);
+ assert.ok(g.run('quali.finalGrid.slice(0,10).every((r,i)=>r.id===quali.results[2].rows[i].id&&r.source==="Q3")'));
+ assert.ok(g.run('quali.finalGrid.slice(10,17).every((r,i)=>r.id===quali.results[1].rows[i+10].id&&r.source==="Q2")'));
+ assert.ok(g.run('quali.finalGrid.slice(17).every((r,i)=>r.id===quali.results[0].rows[i+17].id&&r.source==="Q1")'));
+ assert.ok(g.elements.get('nextQBtn').classList.contains('hidden'));assert.ok(!g.elements.get('gridBtn').classList.contains('hidden'));
+ const ids=plain(g.run('quali.finalGrid.map(r=>r.id)'));g.click('grid');
+ assert.equal(g.run('state'),'countdown');assert.deepEqual(plain(g.run('cars.map(c=>c.id)')),ids);checkSeats(g);
+ assert.ok(g.run('cars.every(c=>c.tyres.degradation&&c.tyres.condition===1)&&quali.finished&&quali.results.length===3'));
+ assert.ok(g.run('cars.every(c=>JSON.stringify(c.qualiTimes)===JSON.stringify(quali.finalGrid.find(r=>r.id===c.id).times))'));
+});
+test('nessun tempo inventato, ordine stabile senza tempi e identità indipendente dalle sigle duplicate',()=>{
+ const g=game();g.run('S.roster.forEach(d=>d[0]="AAA");startQuali();endQuali();nextQualiSession();endQuali();nextQualiSession();endQuali();');
+ assert.ok(g.run('quali.results.every(s=>s.rows.every(r=>r.time===null&&r.laps===0))'));
+ assert.equal(g.run('new Set(quali.finalGrid.map(r=>r.id)).size'),23);
+ assert.ok(g.run('quali.finalGrid.every(r=>r.times.every(t=>t===null))'));
+ assert.doesNotMatch(g.elements.get('qSummary').textContent,/^Pole:/);
+});
+test('pareggi: prevale chi ha registrato prima il tempo; chi non ha tempo segue chi lo ha',()=>{
+ const g=game();g.run('startQuali();cars[0].best=60;cars[0].qBestSetAt=80;cars[1].best=60;cars[1].qBestSetAt=70;endQuali();');
+ assert.equal(g.run('quali.results[0].rows[0].id'),'driver:0');
+ assert.equal(g.run('quali.results[0].rows[1].id'),'player');
+ assert.ok(g.run('quali.results[0].rows.slice(2).every(r=>r.time===null)'));
+});
+for(const eliminatedIn of [0,1])test('giocatore eliminato in Q'+(eliminatedIn+1)+': resta ai box e può seguire la fase successiva',()=>{
+ const g=game();g.run('startQuali();');
+ for(let phase=0;phase<=eliminatedIn;phase++){
+  endWithTimes(g,phase===eliminatedIn?'c.best=c.isP?1000:60+i;c.qBestSetAt=i;c.qLaps=1;':'c.best=c.isP?40:60+i;c.qBestSetAt=i;c.qLaps=1;');
+  g.click('nextq');
+ }
+ assert.ok(g.run('!pl.qActive&&!pl.go&&!pl.ai&&pl.pit.phase==="garage"'));
+ const p=g.run('JSON.stringify([pl.x,pl.y])');g.run('keys.KeyW=true;');g.advance(4);
+ assert.equal(g.run('JSON.stringify([pl.x,pl.y])'),p);assert.ok(g.run('qualiCameraCar()!==pl'));
+ assert.match(g.elements.get('gapTxt').textContent,/ELIMINATO/);assert.equal(g.run('requestPitEntry()'),false);
+});
+test('il giocatore qualificato riprende sempre il controllo manuale nella fase successiva',()=>{
+ const g=game();g.run('startQuali();');endWithTimes(g,'c.best=c.isP?40:60+i;c.qBestSetAt=i;c.qLaps=1;');
+ assert.ok(g.run('pl.ai'));g.click('nextq');assert.ok(g.run('pl.qActive&&!pl.ai'));
+ g.advance(15);assert.ok(g.run('onTrack(pl)&&!pl.ai'));g.run('keys.KeyW=true;update(.01);');assert.equal(g.run('pl.inp.thr'),1);
+});
+test('allo zero si completa soltanto il giro lanciato già in corso, poi nessun altro giro',()=>{
+ const g=game({qualiMinutes:[1,1,1]});g.run('startQuali();');
+ placePlayer(g,0,-55,200);
+ g.run('raceTime=59;qualiLapProgress(pl,N-1,0);pl.qLapSectors=3;pl.qLapDistance=L;raceTime=60;expireQualiSession();');
+ assert.ok(g.run('qEnd&&!pl.qd&&pl.qLapActive'));
+ assert.ok(g.run('cars.filter(c=>!c.isP).every(c=>c.qd&&!c.qLapActive)'));assert.equal(g.run('qualiReleaseQueue.length'),0);
+ g.run('raceTime=61;qualiLapProgress(pl,N-1,0);');assert.equal(g.run('pl.best'),2);assert.equal(g.run('pl.qLaps'),1);
+ assert.ok(g.run('pl.qd&&!pl.qLapActive'));g.run('raceTime=62;qualiLapProgress(pl,N-1,0);checkQualiTime();');assert.equal(g.run('pl.qLaps'),1);
+ assert.equal(g.run('state'),'qbetween');assert.equal(g.run('quali.results[0].rows[0].time'),2);
+});
+test('un out-lap che termina allo zero non avvia un giro cronometrato',()=>{
+ const g=game({qualiMinutes:[1,1,1]});g.run('startQuali();');placePlayer(g,0,-55,200);
+ g.run('raceTime=60;qualiLapProgress(pl,N-1,0);');assert.ok(g.run('pl.qd&&!pl.qLapActive&&pl.best===1e9'));
+ g.run('checkQualiTime();');assert.ok(g.run('qEnd'));assert.equal(g.run('releaseQualiCar(cars[1])'),false);
+});
+test('giri incompleti, settori mancanti, riposizionamento e ingresso box non producono tempi',()=>{
+ const g=game();g.run('startQuali();');placePlayer(g,0,-55,200);
+ g.run('raceTime=1;qualiLapProgress(pl,N-1,0);pl.qLapDistance=L;raceTime=35;qualiLapProgress(pl,N-1,0);');assert.equal(g.run('pl.best'),1e9);
+ g.run('pl.qLapSectors=3;pl.qLapDistance=L*.5;raceTime=70;qualiLapProgress(pl,N-1,0);');assert.equal(g.run('pl.best'),1e9);
+ g.run('repos();');assert.ok(g.run('!pl.qLapActive&&pl.best===1e9'));
+ placePlayer(g,150,-70,200);g.run('pl.rep=0;pl.qLapActive=true;pl.qLapValid=true;requestPitEntry();tryPitEntry(pl);');assert.ok(g.run('!pl.qLapActive&&pl.best===1e9'));
+});
+test('riavvio della Q2 conserva la Q1; pausa e timer non avanzano; doppio click non salta fasi',()=>{
+ const g=game();g.run('startQuali();');endWithTimes(g);g.click('nextq');const q1=g.run('JSON.stringify(quali.results[0])');
+ g.advance(3);const time=g.run('raceTime');g.run('togglePause();');g.advance(40);assert.equal(g.run('raceTime'),time);
+ g.click('restart');assert.equal(g.run('quali.stage'),1);assert.equal(g.run('raceTime'),0);
+ assert.equal(g.run('JSON.stringify(quali.results[0])'),q1);assert.equal(g.run('qualiParticipants().length'),17);
+ g.click('nextq');assert.equal(g.run('quali.stage'),1);
+});
+test('SOFT al 100% anche per eliminate e auto ai box, fattori costanti; in gara usura effettiva',()=>{
+ const g=game();g.run('startQuali();');
+ for(let phase=0;phase<3;phase++){
+  g.run('cars.forEach(c=>{c.tyres.condition=.1;c.tyres.compound="HARD";});update(.01);');
+  assert.ok(g.run('cars.every(c=>c.tyres.compound==="SOFT"&&c.tyres.condition===1&&!c.tyres.degradation&&tyreGrip(c)===1&&tyreSpeed(c)===1)'));
+  assert.equal(g.elements.get('tyreText').textContent,'SOFT — 100%');endWithTimes(g);
+  if(phase<2)g.click('nextq');
+ }
+ g.click('grid');g.advance(2);assert.ok(g.run('cars.every(c=>c.tyres.condition===1&&c.tyres.degradation)'));
+ g.run('pl.ai=true;');g.advance(15);assert.ok(g.run('cars.every(c=>c.tyres.condition<1&&c.tyres.condition>0)'));
+ g.run('pl.tyres.condition=.1;');assert.ok(g.run('tyreGrip(pl)<1&&tyreSpeed(pl)<1'));
+});
+test('weekend fisico completo: 23 -> 17 -> 10, più tentativi reali, griglia automatica e gomme',()=>{
+ const g=game({qualiMinutes:[2,2,2],laps:1});g.run('startQuali();');const counts=[23,17,10];
+ for(let phase=0;phase<3;phase++){
+  assert.equal(g.run('qualiParticipants().length'),counts[phase]);g.run('if(pl.qActive)pl.ai=true;');
+  const data=g.run(`(()=>{
+   let maxPitSpeed=0,maxStuck=0,tyresLocked=true;
+   for(let n=0;n<5000&&state==='quali';n++){
+    update(.05);
+    for(const c of cars){
+     if(![c.x,c.y,c.vx,c.vy,c.trackS].every(Number.isFinite))throw Error(c.id);
+     maxStuck=Math.max(maxStuck,c.stuck);if(pitActive(c))maxPitSpeed=Math.max(maxPitSpeed,Math.hypot(c.vx,c.vy)*.32);
+     tyresLocked=tyresLocked&&c.tyres.condition===1&&!c.tyres.degradation;
+    }
+   }
+   return{state,maxPitSpeed,maxStuck,tyresLocked,rows:quali.results[quali.stage]?.rows,release:qualiParticipants().map(c=>({id:c.id,time:c.releasedAt,order:c.relT})).sort((a,b)=>a.order-b.order)};
+  })()`);
+  assert.equal(data.state,phase===2?'qdone':'qbetween',JSON.stringify(data));assert.equal(data.rows.length,counts[phase]);
+  assert.ok(data.rows.every(r=>r.time>20&&r.time<120&&r.laps>=1),JSON.stringify(data));assert.ok(data.rows.some(r=>r.laps>1));
+  assert.ok(data.tyresLocked);assert.ok(data.maxPitSpeed<=80+1e-6);assert.ok(data.maxStuck<1);
+  data.release.forEach((r,i)=>assert.ok(Math.abs(r.time-i*2)<.051,JSON.stringify(data.release)));
+  if(phase<2)g.click('nextq');
+ }
+ const ids=plain(g.run('lastGrid.map(e=>e.isP?"player":"driver:"+e.di)'));assert.equal(ids.length,23);
+ g.click('grid');assert.deepEqual(plain(g.run('cars.map(c=>c.id)')),ids);assert.ok(g.run('cars.every(c=>c.tyres.degradation)'));
+});

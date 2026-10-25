@@ -3,13 +3,15 @@
 const mmss=t=>Math.floor(t/60)+':'+String(Math.floor(t%60)).padStart(2,'0');
 function qHud(dt){const v=Math.hypot(pl.vx,pl.vy);$('spd').textContent=Math.round(v*.32);
  $('gear').textContent=v<5?'N':1+Math.min(7,Math.floor(v/pl.top*7.99));$('thr').style.width=pl.inp.thr*60+'px';$('brk').style.width=pl.inp.brk*60+'px';
- $('lapTxt').textContent='QUALIFICHE';$('timeTxt').textContent=qEnd?'Ultimo giro':'Resta '+mmss(Math.max(0,S.qmin*60-raceTime));
- $('bestTxt').textContent='Giro '+fmt(pl.lap>=0?raceTime-pl.lapStart:0)+'  |  Miglior '+fmt(pl.best);
- sectorHud(pl);
+ const phase=qualiStage();$('lapTxt').textContent=phase.name+' · '+qualiParticipants().length+' VETTURE';
+ $('timeTxt').textContent=qEnd?'0:00 · Ultimo giro':mmss(Math.ceil(qualiTimeLeft()-1e-7));
+ $('bestTxt').textContent='Giro '+fmt(pl.qLapActive?raceTime-pl.lapStart:0)+'  |  Miglior '+fmt(pl.best);
+ sectorHud(pl);tyreHud();
  tickT-=dt;if(tickT>0)return;tickT=.2;
- const rows=cars.slice().sort((a,b)=>a.best-b.best||a.relT-b.relT),pos=pl.best<1e8?rows.indexOf(pl)+1:0;
- $('tower').innerHTML=rows.map((c,i)=>`<div class="${c.isP?'me':''}" style="border-left-color:${c.col}"><b>${i+1}</b>${esc(c.code)} ${c.best<1e8?fmt(c.best):pitActive(c)?c.go?c.pit.fromTrack?'BOX':'USCITA':'BOX':'GIRO'}</div>`).join('');
- $('gapTxt').textContent=pitHudMessage(pl)||(pl.tow>.15?'SCIA  ':'')+(pos?'P'+pos:'Fai un giro lanciato');}
+ const rows=qualiOrder(),pos=validQualiTime(pl.best)&&pl.qActive?rows.indexOf(pl)+1:0;
+ const caption=phase.advance?phase.name+' · Passano i primi '+phase.advance+' · '+(rows.length-phase.advance)+' eliminati':phase.name+' · Lotta per la pole position';
+ $('tower').innerHTML='<p class="quali-caption">'+caption+'</p>'+qualiTable();
+ $('gapTxt').textContent=!pl.qActive?'ELIMINATO IN '+QUALI_STAGES[pl.qEliminatedAt].name+' · SPETTATORE':pl.qd?'TENTATIVI CONCLUSI':pitHudMessage(pl)||(pl.tow>.15?'SCIA  ':'')+(pos?'P'+pos:'Fai un giro lanciato');}
 const fmt=t=>{if(!t||t>1e8)return '--:--.---';const m=Math.floor(t/60);return m+':'+(t%60).toFixed(3).padStart(6,'0');};
 function sectorHud(c){
  const out=[];
@@ -28,7 +30,7 @@ function hudUpdate(dt){
  const lap=clamp(pl.lap+1,1,S.laps);$('lapTxt').textContent='GIRO '+lap+'/'+S.laps;
  $('timeTxt').textContent='Tempo '+fmt(pl.fin||raceTime+pl.pen);
  $('bestTxt').textContent='Giro '+fmt(pl.lap>=0?raceTime-pl.lapStart:0)+'  |  Miglior '+fmt(pl.best);
- sectorHud(pl);tickT-=dt;if(tickT>0)return;tickT=.2;
+ sectorHud(pl);tyreHud();tickT-=dt;if(tickT>0)return;tickT=.2;
  const o=order(),me=o.indexOf(pl),fastest=fastestLapDriver();
  $('tower').innerHTML=o.map((c,i)=>`<div class="${[c.isP?'me':'',c===fastest?'fastest-lap':''].filter(Boolean).join(' ')}" style="border-left-color:${c.col}" title="${esc(c.name)}"><b>${i+1}</b><span class="driver-name">${esc(c.code)}</span></div>`).join('');
  const sp=Math.max(v,150),a=o[me-1],b=o[me+1];

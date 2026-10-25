@@ -62,3 +62,23 @@ input[type=color]{width:60px;height:32px;border:0;background:none;padding:0}
 
 label>span b{color:#ffd400;margin-left:6px}
 h3{font-size:1rem;margin-top:6px}
+#tower.quali-tower{width:min(540px,calc(100vw - 400px));max-height:calc(100vh - 190px);overflow:auto;pointer-events:auto;font-size:.64rem}
+#tower .quali-table th,#tower .quali-table td{padding:3px 4px;font-size:inherit}
+#tower .quali-caption{font-size:.66rem;padding:6px}
+.quali-caption{font-size:.74rem;font-weight:800;padding:8px;background:#202832}
+.quali-table{width:100%;border-collapse:collapse;font-size:inherit;font-variant-numeric:tabular-nums}
+.quali-table th{position:sticky;top:0;background:#202832;text-align:left;font-size:.7rem;z-index:1}
+.quali-table th,.quali-table td{padding:5px 6px;border-bottom:1px solid #343c47;white-space:nowrap}
+.quali-table td:nth-child(2),.quali-table td:nth-child(3){white-space:normal}
+.quali-table tr.me{background:#5d121b;color:#fff;font-weight:700}
+.quali-table .q-cut td{border-top:3px dashed #ff5864}
+.quali-table .q-danger{background:rgba(225,6,0,.15)}
+.quali-table .q-eliminated{color:#b6bec8}
+.quali-table .q-pole td:first-child{color:#d2a0ff;font-weight:900}
+#qres{width:min(860px,96vw);padding:22px;background:rgba(14,17,20,.98)}#qList{overflow:auto;font-size:.82rem;scrollbar-gutter:stable}#qSummary{font-size:.9rem}
+#qList .quali-table td{padding:2px 6px;font-size:.75rem;line-height:1.1}
+#tyreIndicator{position:absolute;left:165px;bottom:18px;width:94px;height:94px;border-radius:50%;padding:7px;background:conic-gradient(var(--tyre-color,#ff3344) var(--tyre-condition,100%),#39414b 0);display:grid;place-items:center}
+#tyreText{width:80px;height:80px;display:grid;place-items:center;text-align:center;border-radius:50%;background:#14191f;font-size:.68rem;font-weight:800}
+@media(max-width:1000px){#tower.quali-tower{top:215px;width:min(540px,calc(100vw - 24px));max-height:min(180px,20vh)}}
+@media(max-width:700px){#tower.quali-tower{top:165px;max-height:min(140px,20vh);font-size:.61rem}.quali-table th{font-size:.6rem}.quali-table th,.quali-table td{padding:4px}.quali-caption{font-size:.65rem}#tyreIndicator{left:140px;bottom:18px;width:64px;height:64px;padding:6px}#tyreText{width:52px;height:52px;font-size:.54rem}#banner{font-size:clamp(1.2rem,5vw,4rem)}}
+@media(max-width:340px){#mini{width:110px;height:82.5px}#tyreIndicator{width:56px;height:56px}#tyreText{width:44px;height:44px;font-size:.48rem}}

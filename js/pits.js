@@ -47,13 +47,13 @@ function pitTrackPosition(c){
  return position;
 }
 function requestPitEntry(c=pl){
- if(!c||!c.isP||!c.go||c.fin||c.qd||pitActive(c)||(state!=='racing'&&state!=='quali'))return false;
+ if(!c||!c.isP||!c.go||c.fin||c.qd||state==='quali'&&(qEnd||!c.qActive)||pitActive(c)||(state!=='racing'&&state!=='quali'))return false;
  c.pit.requested=!c.pit.requested;
  banner(c.pit.requested?'BOX PRENOTATI: ingresso a sinistra, max 80 km/h':'INGRESSO BOX ANNULLATO',2200);
  return true;
 }
 function tryPitEntry(c){
- if(!c||!c.isP||!c.pit.requested||pitActive(c)||!c.go||c.fin||c.qd||(state!=='racing'&&state!=='quali'))return false;
+ if(!c||!c.isP||!c.pit.requested||pitActive(c)||!c.go||c.fin||c.qd||state==='quali'&&(qEnd||!c.qActive)||(state!=='racing'&&state!=='quali'))return false;
  const p=pitTrackPosition(c),speed=Math.hypot(c.vx,c.vy),q=botPointAt(p.s);
  // Il pilota raggiunge l'entrata indicata, sul lato sinistro, già sotto il limite.
  // Una prenotazione lontano dall'ingresso non cambia posizione, velocità o comandi.
@@ -61,6 +61,7 @@ function tryPitEntry(c){
  c.pit.route=makePitEntryRoute(c,p.s,p.d);c.pit.progress=0;c.pit.phase='entry';c.pit.fromTrack=true;c.pit.requested=false;
  c.idx=p.i;c.trackS=p.s;c.d=p.d;c.lane=p.d;c.off=c.kerb=false;c.tow=0;c.yaw=0;c.steer=0;c.stuck=0;c.recoveryT=0;c.passTarget=null;c.passSide=0;
  if(state==='quali'){
+  invalidateQualiLap(c);
   c.lap=-1;c.lapStart=raceTime;c.secs=[null,null,null];c.secDelta=[null,null,null];c.secState=['wait','wait','wait'];c.secStart=raceTime;c.activeSec=0;
  }
  banner('INGRESSO BOX · GUIDA ASSISTITA · MAX 80 km/h',1800);

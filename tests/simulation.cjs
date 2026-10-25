@@ -2,50 +2,17 @@
 // node --test tests/simulation.cjs — usa i moduli reali del gioco, senza dipendenze.
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const fs=require('node:fs');
-const path=require('node:path');
-const vm=require('node:vm');
-const root=path.join(__dirname,'..');
-function game(settings={}){
- const elements=new Map(),events=new Map(),ctx=new Proxy({},{get:(o,k)=>o[k]||(()=>{}),set:(o,k,v)=>(o[k]=v,true)});
- function element(id){if(!elements.has(id))elements.set(id,{id,style:{},dataset:{},children:[],textContent:'',innerHTML:'',classList:{add(){},remove(){},toggle(){},contains:()=>true},getContext:()=>ctx,addEventListener(){}});return elements.get(id);}
- element('lights').children=Array.from({length:5},()=>element(Symbol()));
- const storage=new Map([['f1sim.set',JSON.stringify(settings)]]);
- const env=vm.createContext({console,Math:Object.create(Math),Date,performance:{now:()=>0},setTimeout:()=>1,clearTimeout(){},
-  localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v)},Path2D:class{moveTo(){}lineTo(){}closePath(){}},
-  document:{getElementById:element,createElement:()=>element(Symbol()),querySelectorAll:()=>[],addEventListener(){}},
-  innerWidth:1280,innerHeight:800,devicePixelRatio:1,window:{},navigator:{getGamepads:()=>[]},addEventListener(type,handler){if(!events.has(type))events.set(type,[]);events.get(type).push(handler);},requestAnimationFrame(){}});
- let seed=12345;env.Math.random=()=>((seed=(seed*1664525+1013904223)>>>0)/4294967296);
- const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
- for(const [,file] of html.matchAll(/<script src="([^"]+)"/g)){
-  if(file.startsWith('js/menu'))continue;
-  vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),env,{filename:file});
- }
- const run=code=>vm.runInContext(code,env);
- function advance(seconds,dt=1/30){const count=Math.ceil(seconds/dt);run(`for(let step=0;step<${count};step++)if(state!=='paused')update(${dt});`);}
- return{run,advance,elements,events};
-}
-function placePlayer(g,s,d,speed){
- // Fixture: prepara un avvicinamento reale all'entrata senza alterare il codice di guida.
- g.run(`{const q=botPointAt(${s});pl.x=q.x+q.nx*${d};pl.y=q.y+q.ny*${d};pl.a=q.ang;pl.idx=q.i;pl.trackS=${s};pl.d=pl.lane=${d};pl.vx=Math.cos(q.ang)*${speed};pl.vy=Math.sin(q.ang)*${speed};pl.go=true;pl.off=pl.kerb=false;}`);
-}
-function checkSeats(g){
- assert.equal(g.run('cars.length'),23);
- assert.equal(g.run('new Set(cars.map(c=>c.team)).size'),12);
- assert.equal(g.run('cars.filter(c=>c.team===11).length'),1);
- assert.ok(g.run('TEAMS.slice(0,-1).every((_,i)=>cars.filter(c=>c.team===i).length===2)'));
- assert.equal(g.run('new Set(cars.map(c=>c.pit.stallId)).size'),23);
-}
+const {game,placePlayer,checkSeats}=require('./helpers/game.cjs');
 test('23 auto, 12 team e piazzole stabili dopo qualifiche, griglia e scambi',()=>{
  const g=game();checkSeats(g);
- g.run('globalThis.stalls=Object.fromEntries(cars.map(c=>[c.code,c.pit.stallId]));startQuali();endQuali();startRace(lastGrid);');
+ g.run('globalThis.stalls=Object.fromEntries(cars.map(c=>[c.code,c.pit.stallId]));startQuali();endQuali();nextQualiSession();endQuali();nextQualiSession();endQuali();startRace();');
  checkSeats(g);assert.ok(g.run('cars.every(c=>stalls[c.code]===c.pit.stallId)'));
  g.run('[S.roster[0][3],S.roster[2][3]]=[S.roster[2][3],S.roster[0][3]];mkCars();');checkSeats(g);
  assert.ok(g.run('cars.every(c=>c.pit.team===c.team)'));
  const damaged=Array.from({length:22},(_,i)=>['A'+i,'Pilota '+i,i+1,0]);checkSeats(game({roster:damaged}));
 });
 test('23 uscite ogni 2 secondi, parcheggio reale, limite 80 km/h, continuità e giri validi',()=>{
- const g=game({qmin:2});g.run('startQuali();pl.ai=true;globalThis.initial=cars.map(c=>({x:c.x,y:c.y}));');
+ const g=game({qualiMinutes:[2,2,2]});g.run('startQuali();pl.ai=true;globalThis.initial=cars.map(c=>({x:c.x,y:c.y}));');
  assert.equal(g.run('cars.filter(c=>c.go).length'),1);
  assert.ok(g.run('cars.every(c=>c.lap===-1&&c.best===1e9&&Math.abs(c.d+470)<.001)'));
  // Raccoglie le misure ad ogni frame mentre percorrono davvero pit lane e circuito.
@@ -69,13 +36,13 @@ test('23 uscite ogni 2 secondi, parcheggio reale, limite 80 km/h, continuità e 
    releases:cars.slice().sort((a,b)=>a.relT-b.relT).map(c=>c.releasedAt),pending:cars.filter(pitActive).map(c=>({code:c.code,s:c.trackS,phase:c.pit.phase}))};
  })()`);
  assert.equal(metrics.released,23,JSON.stringify(metrics));assert.equal(metrics.onTrack,23,JSON.stringify(metrics));
- assert.equal(metrics.timed,23,JSON.stringify(metrics));assert.equal(metrics.state,'qdone');
+ assert.equal(metrics.timed,23,JSON.stringify(metrics));assert.equal(metrics.state,'qbetween');
  assert.ok(metrics.maxPitSpeed<=80+1e-6,JSON.stringify(metrics));
  assert.ok(metrics.maxPitStep<=250/30+.1,JSON.stringify(metrics));
  assert.ok(metrics.minPitGap>=76,JSON.stringify(metrics));
  assert.ok(metrics.maxTrackStuck<1,JSON.stringify(metrics));
  metrics.releases.forEach((t,i)=>{assert.ok(Math.abs(t-i*2)<1e-6,JSON.stringify(metrics.releases));});
- assert.equal((g.elements.get('qList').innerHTML.match(/<div /g)||[]).length,23);
+ assert.equal(g.run('quali.results[0].rows.length'),23);
  console.log('Qualifiche:',JSON.stringify(metrics));
 });
 test('pausa, frame lenti, riavvio e passaggio diretto in gara non raggruppano le partenze',()=>{
@@ -111,10 +78,10 @@ test('i comandi del giocatore tornano manuali all’uscita; R non teletrasporta 
  assert.ok(g.run('pl.inp.thr===0&&pl.inp.brk===0'));
 });
 for(const [label,settings,dt] of [
- ['standard',{qmin:1},1/30],
- ['lenta',{qmin:1,diff:0,teamStats:Array.from({length:12},()=>[.8,.8,.8,.8]),myStats:[.8,.8,.8,.8]},.05],
- ['veloce',{qmin:1,diff:4,teamStats:Array.from({length:12},()=>[1.2,1.2,1.2,1.2]),myStats:[1.2,1.2,1.2,1.2]},1/60]
-])test('qualifica da 1 minuto '+label+': tutte le auto escono e completano un giro valido',()=>{
+ ['standard',{qualiMinutes:[1,1,1]},1/30],
+ ['lenta',{qualiMinutes:[1,1,1],diff:0,teamStats:Array.from({length:12},()=>[.8,.8,.8,.8]),myStats:[.8,.8,.8,.8]},.05],
+ ['veloce',{qualiMinutes:[1,1,1],diff:4,teamStats:Array.from({length:12},()=>[1.2,1.2,1.2,1.2]),myStats:[1.2,1.2,1.2,1.2]},1/60]
+])test('qualifica breve '+label+': 23 uscite senza assegnare giri iniziati dopo lo zero',()=>{
  const g=game(settings);g.run('startQuali();pl.ai=true;');
  const result=g.run(`(()=>{
   let maxSpeed=0,minGap=Infinity;for(let n=0;n<${Math.ceil(240/dt)}&&state==='quali';n++){
@@ -125,8 +92,9 @@ for(const [label,settings,dt] of [
   }
   return{state,time:raceTime,timed:cars.filter(c=>c.best<1e8).length,onTrack:cars.filter(onTrack).length,maxSpeed,minGap};
  })()`);
- assert.equal(result.state,'qdone',JSON.stringify(result));assert.equal(result.onTrack,23,JSON.stringify(result));
- assert.equal(result.timed,23,JSON.stringify(result));assert.ok(result.maxSpeed<=80+1e-6,JSON.stringify(result));assert.ok(result.minGap>=76,JSON.stringify(result));
+ assert.equal(result.state,'qbetween',JSON.stringify(result));assert.equal(result.onTrack,23,JSON.stringify(result));
+ assert.ok(g.run('quali.results[0].rows.every(r=>r.time===null||r.laps>0)'));
+ assert.ok(result.maxSpeed<=80+1e-6,JSON.stringify(result));assert.ok(result.minGap>=76,JSON.stringify(result));
 });
 test('ingresso facoltativo: solo all’entrata, in avanti, a sinistra e sotto 80 km/h',()=>{
  const g=game();g.run('startRace();');assert.equal(g.run('requestPitEntry()'),false);
