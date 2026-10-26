@@ -1,6 +1,8 @@
 'use strict';
 /* IA vetture: linee alternative, sorpassi con decisione persistente e velocità sicura */
-const AI_LANE_LIMIT=TW/2-28,AI_SIDE_GAP=58;
+// 48 unità è il diametro di contatto fra vetture: due unità aggiungono margine.
+// Il vecchio margine 58 impediva di superare un'auto centrale anche su 15 metri.
+const aiLaneLimit=()=>Math.max(20,TW/2-28),AI_SIDE_GAP=50;
 
 // Distanza longitudinale firmata sul circuito: positiva significa che b è davanti ad a.
 function trackDelta(a,b){
@@ -8,12 +10,12 @@ function trackDelta(a,b){
  if(d>L/2)d-=L;else if(d<-L/2)d+=L;
  return d;
 }
-function plannedLane(c){return clamp(c.passTarget&&c.passHold>0?c.passLane:c.lane,-AI_LANE_LIMIT,AI_LANE_LIMIT);}
+function plannedLane(c){return clamp(c.passTarget&&c.passHold>0?c.passLane:c.lane,-aiLaneLimit(),aiLaneLimit());}
 function idealLane(c){
  const here=T[c.idx],ahead=T[(c.idx+7)%N];
  const turn=angDiff(ahead.ang,here.ang);
  // Linee leggermente diverse anche in curva: interno con curva a sinistra, esterno con curva a destra.
- return clamp(c.base+Math.sign(turn)*Math.min(20,Math.abs(turn)*34),-AI_LANE_LIMIT,AI_LANE_LIMIT);
+ return clamp(c.base+Math.sign(turn)*Math.min(20,Math.abs(turn)*34),-aiLaneLimit(),aiLaneLimit());
 }
 function nearestTrafficAhead(c){
  let car=null,distance=1e9;
@@ -26,7 +28,7 @@ function nearestTrafficAhead(c){
 }
 // Valuta una corsia usando auto davanti, affiancate e la corsia già annunciata dagli altri bot.
 function passingLaneOption(c,ahead,side){
- const lane=clamp(ahead.d+side*82,-AI_LANE_LIMIT,AI_LANE_LIMIT);
+ const lane=clamp(ahead.d+side*82,-aiLaneLimit(),aiLaneLimit());
  let score=Math.abs(lane-ahead.d)>=AI_SIDE_GAP?170:-900;
  for(const o of cars){
   if(o===c||!trackTraffic(o))continue;
@@ -38,7 +40,7 @@ function passingLaneOption(c,ahead,side){
   else score+=Math.min(separation,110)*.14;
  }
  // Una corsia che tocca il bordo lascia poco margine per un sorpasso pulito.
- score-=Math.max(0,Math.abs(lane)-(AI_LANE_LIMIT-8))*3;
+ score-=Math.max(0,Math.abs(lane)-(aiLaneLimit()-8))*3;
  return{side,lane,score};
 }
 function choosePassingLane(c,ahead){
@@ -60,6 +62,7 @@ function speedInput(v,target,st,throttleAt=1){
  return{st,thr:v<target*throttleAt?clamp((target-v)/95,0,1):0,brk:v>target*1.035?clamp((v-target)/115,0,1):0,hb:false};
 }
 function aiInput(c,dt){
+ updateAiPitStrategy(c);
  if(pitActive(c))return pitInput(c);
  const v=Math.hypot(c.vx,c.vy),i=c.idx;
  c.passHold=Math.max(0,(c.passHold||0)-dt);c.recoveryT=Math.max(0,(c.recoveryT||0)-dt);c.launchT=Math.max(0,(c.launchT||0)-dt);
@@ -68,7 +71,7 @@ function aiInput(c,dt){
  // Al via ogni auto conserva per poco la sua corsia. Evita che le vetture interne
  // scambino la fila di partenza per traffico e restino ferme prima di accelerare.
  const safeRecoveryLane=Number.isFinite(c.recoveryLane)?c.recoveryLane:idealLane(c);
- let want=recovering?clamp(safeRecoveryLane,-AI_LANE_LIMIT,AI_LANE_LIMIT):launching?clamp(c.launchLane,-AI_LANE_LIMIT,AI_LANE_LIMIT):idealLane(c),passing=false;
+ let want=recovering?clamp(safeRecoveryLane,-aiLaneLimit(),aiLaneLimit()):launching?clamp(c.launchLane,-aiLaneLimit(),aiLaneLimit()):idealLane(c),passing=false;
  const relative=ahead?v-Math.hypot(ahead.vx,ahead.vy):0;
  const targetStillRelevant=c.passTarget&&c.passTarget.go&&trackTraffic(c.passTarget)&&trackDelta(c,c.passTarget)>-95&&trackDelta(c,c.passTarget)<280;
 
@@ -96,7 +99,7 @@ function aiInput(c,dt){
 
  // Frenata prevista dalla curvatura; non dipende dalle auto che sono dietro o affiancate.
  let tv=c.top*tyreSpeed(c)*(.995+.045*(c.tow||0)),dist=0;
- for(let k=0;k<40;k++){const s=T[(i+k)%N],vc=s.vc*c.cs*Math.sqrt(tyreGrip(c)),allowed=Math.sqrt(vc*vc+2*c.brk*.34*dist);if(allowed<tv)tv=allowed;dist+=s.len;if(dist>1800)break;}
+ for(let k=0;k<40;k++){const s=T[(i+k)%N],grip=tyreGrip(c),vc=s.vc*c.cs*Math.sqrt(grip),allowed=Math.sqrt(vc*vc+2*c.brk*grip*.34*dist);if(allowed<tv)tv=allowed;dist+=s.len;if(dist>1800)break;}
  tv=trafficTargetSpeed(c,ahead,distance,want,tv);
  // Se è quasi ferma, la vettura recupera marcia nella corsia libera senza restare
  // bloccata da un vecchio obiettivo di frenata.

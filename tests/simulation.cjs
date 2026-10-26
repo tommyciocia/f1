@@ -11,7 +11,7 @@ test('23 auto, 12 team e piazzole stabili dopo qualifiche, griglia e scambi',()=
  assert.ok(g.run('cars.every(c=>c.pit.team===c.team)'));
  const damaged=Array.from({length:22},(_,i)=>['A'+i,'Pilota '+i,i+1,0]);checkSeats(game({roster:damaged}));
 });
-test('23 uscite ogni 2 secondi, parcheggio reale, limite 80 km/h, continuità e giri validi',()=>{
+test('23 uscite ogni 0,5 secondi, parcheggio reale, limite 80 km/h, continuità e giri validi',()=>{
  const g=game({qualiMinutes:[2,2,2]});g.run('startQuali();pl.ai=true;globalThis.initial=cars.map(c=>({x:c.x,y:c.y}));');
  assert.equal(g.run('cars.filter(c=>c.go).length'),1);
  assert.ok(g.run('cars.every(c=>c.lap===-1&&c.best===1e9&&Math.abs(c.d+470)<.001)'));
@@ -41,25 +41,25 @@ test('23 uscite ogni 2 secondi, parcheggio reale, limite 80 km/h, continuità e 
  assert.ok(metrics.maxPitStep<=250/30+.1,JSON.stringify(metrics));
  assert.ok(metrics.minPitGap>=76,JSON.stringify(metrics));
  assert.ok(metrics.maxTrackStuck<1,JSON.stringify(metrics));
- metrics.releases.forEach((t,i)=>{assert.ok(Math.abs(t-i*2)<1e-6,JSON.stringify(metrics.releases));});
+ metrics.releases.forEach((t,i)=>{assert.ok(Math.abs(t-i*.5)<1e-6,JSON.stringify(metrics.releases));});
  assert.equal(g.run('quali.results[0].rows.length'),23);
  console.log('Qualifiche:',JSON.stringify(metrics));
 });
 test('pausa, frame lenti, riavvio e passaggio diretto in gara non raggruppano le partenze',()=>{
- const g=game();g.run('startQuali();');g.advance(1);
+ const g=game();g.run('startQuali();');g.advance(.2,.01);
  const snapshot=g.run('JSON.stringify(cars.map(c=>[c.x,c.y,c.go]))');
  g.run('togglePause();');g.advance(60);
  assert.equal(g.run('JSON.stringify(cars.map(c=>[c.x,c.y,c.go]))'),snapshot);
- g.run('releaseQualiCars();resume();');g.advance(1);
+ g.run('releaseQualiCars();resume();');g.advance(.3,.01);
  assert.equal(g.run('cars.filter(c=>c.go).length'),2);
- g.advance(1);
+ g.advance(.4,.01);
  g.run('raceTime+=20;releaseQualiCars();');assert.equal(g.run('cars.filter(c=>c.go).length'),3);
  g.run('releaseQualiCars();');assert.equal(g.run('cars.filter(c=>c.go).length'),3);
  g.run('startQuali();');assert.equal(g.run('cars.filter(c=>c.go).length'),1);
  g.run('startRace();');assert.equal(g.run('qualiReleaseQueue.length'),0);assert.ok(g.run('cars.every(onTrack)'));
 });
 test('23 auto gareggiano e terminano senza entrare ai box; classifiche e minimappa complete',()=>{
- const g=game({laps:2});g.run('startRace();pl.ai=true;');
+ const g=game({laps:2,diff:4,myStats:[.8,.8,.8,.8]});g.run('startRace();pl.ai=true;');
  const result=g.run(`(()=>{
   let pitVisits=0,maxStuck=0;for(let n=0;n<9000&&state!=='done';n++){
    update(1/30);pitVisits+=cars.filter(pitActive).length;
@@ -96,55 +96,56 @@ for(const [label,settings,dt] of [
  assert.ok(g.run('quali.results[0].rows.every(r=>r.time===null||r.laps>0)'));
  assert.ok(result.maxSpeed<=80+1e-6,JSON.stringify(result));assert.ok(result.minGap>=76,JSON.stringify(result));
 });
-test('ingresso facoltativo: solo all’entrata, in avanti, a sinistra e sotto 80 km/h',()=>{
+test('X si attiva soltanto all’ingresso e in marcia avanti, senza prenotazioni',()=>{
  const g=game();g.run('startRace();');assert.equal(g.run('requestPitEntry()'),false);
- g.run('state="racing";pl.go=true;');assert.equal(g.run('requestPitEntry()'),true);
- for(const [s,d,v] of [[2000,-70,200],[150,55,200],[150,-70,500],[150,-70,-100]]){
+ g.run('state="racing";pl.go=true;');assert.equal(g.run('requestPitEntry()'),false);
+ for(const [s,d,v] of [[2000,-70,200],[g.run("PIT.entryStart")-100,200,200],[g.run("PIT.entryStart")-100,-70,-100]]){
   placePlayer(g,s,d,v);const before=g.run('JSON.stringify([pl.x,pl.y,pl.vx,pl.vy,pl.lap])');
   assert.equal(g.run('tryPitEntry(pl)'),false);assert.equal(g.run('JSON.stringify([pl.x,pl.y,pl.vx,pl.vy,pl.lap])'),before);
  }
- assert.equal(g.run('requestPitEntry()'),true);assert.equal(g.run('pl.pit.requested'),false);
- placePlayer(g,150,-70,200);assert.equal(g.run('tryPitEntry(pl)'),false);
- g.run('requestPitEntry();');assert.equal(g.run('tryPitEntry(pl)'),true);
+ assert.equal(g.run('pl.pit.requested'),false);
+ placePlayer(g,g.run("PIT.entryStart")-100,-70,200);assert.equal(g.run('requestPitEntry()'),true);
  assert.equal(g.run('pl.pit.phase'),'entry');assert.equal(g.run('pl.ai'),false);
  assert.equal(g.run('requestPitEntry(cars.find(c=>!c.isP))'),false);
 });
-test('ingresso, transito e uscita in gara: niente teletrasporti o soste, giri e penalità invariati',()=>{
- const g=game({laps:5});g.run('startRace();state="racing";cars.forEach(c=>c.go=true);pl.lap=0;pl.pen=3;pl.best=60;');
- placePlayer(g,150,-70,200);g.run('requestPitEntry();');
+test('transito ai box continuo: un passaggio al traguardo e penalità conservate',()=>{
+ const g=game({laps:5});g.run('startRace();state="racing";cars.forEach(c=>c.go=true);pl.lap=0;pl.pen=3;pl.best=60;raceTime=80;');
+ placePlayer(g,g.run("PIT.entryStart")-100,-70,200);g.run('requestPitEntry();');
  const result=g.run(`(()=>{
   const start={x:pl.x,y:pl.y};tryPitEntry(pl);
   const jump=Math.hypot(pl.x-start.x,pl.y-start.y),phases=new Set([pl.pit.phase]);let maxSpeed=0,maxStep=0,minSpeed=Infinity;
   for(let n=0;n<1200&&pitActive(pl);n++){
    const p={x:pl.x,y:pl.y};update(1/30);phases.add(pl.pit.phase);
+   if(pl.pit.phase==='waiting'){confirmPitTyres();phases.add(pl.pit.phase);}
    if(pitActive(pl)){const speed=Math.hypot(pl.vx,pl.vy);maxSpeed=Math.max(maxSpeed,speed*.32);minSpeed=Math.min(minSpeed,speed);maxStep=Math.max(maxStep,Math.hypot(pl.x-p.x,pl.y-p.y));}
   }
   render();return{jump,phases:[...phases],maxSpeed,minSpeed,maxStep,onTrack:onTrack(pl),ai:pl.ai,lap:pl.lap,pen:pl.pen,best:pl.best,others:cars.filter(c=>!c.isP&&pitActive(c)).length};
  })()`);
  assert.equal(result.jump,0);assert.ok(result.onTrack,JSON.stringify(result));assert.ok(!result.ai);
  assert.deepEqual(Array.from(result.phases),['entry','lane','exit','track']);assert.ok(result.maxSpeed<=80+1e-6,JSON.stringify(result));
- assert.ok(result.maxStep<=250/30+.1,JSON.stringify(result));assert.ok(result.minSpeed>100,JSON.stringify(result));
- assert.equal(result.lap,0);assert.equal(result.pen,3);assert.equal(result.best,60);assert.equal(result.others,0);checkSeats(g);
+ assert.ok(result.maxStep<=250/30+.1,JSON.stringify(result));assert.ok(result.minSpeed>0,JSON.stringify(result));
+ assert.equal(result.lap,1);assert.equal(result.pen,3);assert.equal(result.best,60);assert.equal(result.others,0);checkSeats(g);
  g.run('keys.KeyW=true;update(.01);');assert.equal(g.run('pl.inp.thr'),1);
  // Un secondo transito usa ancora la stessa piazzola e non riutilizza il vecchio percorso.
- placePlayer(g,250,-90,190);g.run('requestPitEntry();');assert.ok(g.run('tryPitEntry(pl)'));
+ placePlayer(g,g.run("PIT.entryStart")-80,-50,190);assert.ok(g.run('requestPitEntry()'));
  assert.ok(g.run('Math.abs(pl.pit.route.points[0].x-pl.x)<1e-9&&pl.pit.progress===0'));
 });
 test('rientro in qualifica: giro annullato, migliori tempi conservati e nuovo giro lanciato valido',()=>{
  const g=game({qmin:3});g.run('startQuali();');g.advance(20);
- placePlayer(g,150,-70,200);g.run('pl.lap=0;pl.best=75;pl.bestSecs=[20,25,30];requestPitEntry();');
- assert.ok(g.run('tryPitEntry(pl)'));assert.equal(g.run('pl.lap'),-1);assert.equal(g.run('pl.best'),75);
+ placePlayer(g,g.run("PIT.entryStart")-100,-70,200);g.run('pl.lap=0;pl.best=75;pl.bestSecs=[20,25,30];requestPitEntry();');
+ assert.ok(g.run('pitAutopilot(pl)'));assert.equal(g.run('pl.lap'),-1);assert.equal(g.run('pl.best'),75);
  assert.ok(g.run('pl.secs.every(t=>t===null)&&pl.bestSecs[0]===20'));
- g.run('pl.ai=true;');g.advance(115);
- assert.ok(g.run('cars.every(onTrack)&&cars.every(c=>c.go)&&pl.lap>=1&&pl.best<75'));
+ g.run('pl.ai=true;');g.advance(250);
+ assert.ok(g.run('cars.every(onTrack)&&cars.every(c=>c.go)&&pl.lap>=1&&pl.qLaps>=1&&pl.best<=75'));
  assert.ok(g.run('cars.every(c=>[c.x,c.y,c.vx,c.vy,c.trackS].every(Number.isFinite))'));checkSeats(g);
 });
-test('P e X/Quadrato prenotano e annullano senza ripetizioni mentre il pulsante resta premuto',()=>{
+test('X tastiera e X/Quadrato avviano una sola guida assistita per pressione',()=>{
  const g=game();g.run('startRace();state="racing";pl.go=true;');
- const pressP=repeat=>g.events.get('keydown').forEach(handler=>handler({code:'KeyP',repeat,preventDefault(){}}));
- pressP(false);assert.ok(g.run('pl.pit.requested'));pressP(true);assert.ok(g.run('pl.pit.requested'));
- pressP(false);assert.ok(g.run('!pl.pit.requested'));
+ placePlayer(g,g.run("PIT.entryStart")-100,-70,200);
+ const pressX=repeat=>g.events.get('keydown').forEach(handler=>handler({code:'KeyX',repeat,preventDefault(){}}));
+ pressX(false);assert.ok(g.run('pitAutopilot(pl)'));g.advance(.5);const progress=g.run('pl.pit.progress');
+ pressX(true);pressX(false);assert.equal(g.run('pl.pit.progress'),progress);
  g.run('globalThis.fakePad={index:0,id:"Test",connected:true,mapping:"standard",axes:[0,0],buttons:Array.from({length:16},()=>({value:0,pressed:false}))};navigator.getGamepads=()=>[fakePad];fakePad.buttons[2]={value:1,pressed:true};pollPad();');
- assert.ok(g.run('pl.pit.requested'));g.run('pollPad();');assert.ok(g.run('pl.pit.requested'));
- g.run('fakePad.buttons[2]={value:0,pressed:false};pollPad();fakePad.buttons[2]={value:1,pressed:true};pollPad();');assert.ok(g.run('!pl.pit.requested'));
+ assert.equal(g.run('pl.pit.progress'),progress);g.run('pollPad();');assert.equal(g.run('pl.pit.progress'),progress);
+ g.run('fakePad.buttons[2]={value:0,pressed:false};pollPad();fakePad.buttons[2]={value:1,pressed:true};pollPad();');assert.equal(g.run('pl.pit.progress'),progress);
 });

@@ -1,0 +1,46 @@
+{
+  "repository": "https://github.com/bacinger/f1-circuits",
+  "commit": "8094e957b8d6aa8b9f4510c93968556cccd30e02",
+  "files": [
+    {
+      "id": "es-1991",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/es-1991.geojson"
+    },
+    {
+      "id": "jp-1962",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/jp-1962.geojson"
+    },
+    {
+      "id": "be-1925",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/be-1925.geojson"
+    },
+    {
+      "id": "mc-1929",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/mc-1929.geojson"
+    },
+    {
+      "id": "gb-1948",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/gb-1948.geojson"
+    },
+    {
+      "id": "at-1969",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/at-1969.geojson"
+    },
+    {
+      "id": "us-2012",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/us-2012.geojson"
+    },
+    {
+      "id": "bh-2002",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/bh-2002.geojson"
+    },
+    {
+      "id": "sg-2008",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/sg-2008.geojson"
+    },
+    {
+      "id": "it-1922",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/it-1922.geojson"
+    }
+  ]
+}

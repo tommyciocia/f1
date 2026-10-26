@@ -9,7 +9,7 @@ function recoverInvalidBot(c){
  c.vx=0;c.vy=0;c.passTarget=null;c.passSide=0;c.recoveryLane=lane;c.recoveryT=2;
 }
 function chooseRecoveryLane(c){
- const candidates=[-AI_LANE_LIMIT+10,AI_LANE_LIMIT-10];let best=candidates[0],bestScore=-1e9;
+ const candidates=[-aiLaneLimit()+10,aiLaneLimit()-10];let best=candidates[0],bestScore=-1e9;
  for(const lane of candidates){let score=0;
   for(const o of cars){if(o===c||!onTrack(o))continue;const d=trackDelta(c,o);if(d<-120||d>220)continue;
    const gap=Math.abs(lane-plannedLane(o));score+=gap>=AI_SIDE_GAP?16:-(AI_SIDE_GAP-gap)*4;}

@@ -9,7 +9,7 @@ const qualiTimeLeft=()=>quali?Math.max(0,qualiStage().duration-raceTime):0;
 function resetQualiRelease(){qualiReleaseQueue=[];qualiNextReleaseAt=0;}
 function releaseQualiCar(c){
  if(state!=='quali'||qEnd||!c.qActive||c.go||raceTime>=qualiStage().duration||!canReleaseFromGarage(c))return false;
- c.go=true;c.releasedAt=raceTime;c.pit.phase='release';return true;
+ c.go=true;c.releasedAt=raceTime;c.pit.phase='release';c.pit.auto=true;return true;
 }
 function startQuali(){
  const entries=defOrder();entries.unshift(entries.splice(entries.findIndex(e=>e.isP),1)[0]);
@@ -56,8 +56,14 @@ function releaseQualiCars(){
 }
 function qualiOrder(){return qualiParticipants().sort((a,b)=>a.best-b.best||a.qBestSetAt-b.qBestSetAt||a.qSeed-b.qSeed);}
 function completeQualiRun(c){
+ const surface=c.isP&&c.go&&!pitAutopilot(c)&&(c.pit.onLane||Math.abs(c.d)>TW/2+5)?pitRoadSurface(c):null;
  c.qd=true;resetQualiLap(c);c.pit.requested=false;
- if(c.isP&&c.go)c.ai=true; // giro di rallentamento; guida manuale ripristinata nella prossima fase
+ if(c.isP&&c.go){
+  // Se la bandiera arriva durante un transito manuale, il giro di rallentamento
+  // prosegue sulla corsia reale invece di agganciare di colpo la pista principale.
+  if(surface?.road)startPitAutopilot(c,{...surface.position,inside:true},false);
+  c.ai=true;
+ } // guida manuale ripristinata nella prossima fase
 }
 function expireQualiSession(){
  if(qEnd||!quali)return;
@@ -68,11 +74,14 @@ function expireQualiSession(){
  for(const c of active)if(!c.qLapActive||!c.qLapValid||!onTrack(c))completeQualiRun(c);
  banner(qualiStage().name+' · TEMPO SCADUTO: completa il giro già iniziato',2500);beep(660,.3);
 }
-// Anche il pulsante di fine anticipata applica la bandiera a scacchi, senza inventare tempi.
+// Il salto manuale conclude subito la fase con i tempi già completati.
+// La scadenza naturale continua invece ad attendere i giri lanciati validi.
 function endQuali(){
  if(!quali||quali.finished||(state!=='quali'&&state!=='paused'))return;
  if(state==='paused'){state='quali';hideAll();}
- expireQualiSession();checkQualiTime();
+ qEnd=true;qEndT=raceTime;resetQualiRelease();
+ for(const c of qualiParticipants())completeQualiRun(c);
+ finishQualiSession();
 }
 function checkQualiTime(){
  if(state!=='quali'||!quali)return;
@@ -133,7 +142,7 @@ function qualiTable(final=false){
   const time=prior?c.qualiTimes[c.qEliminatedAt]:c.best;
   const delta=!prior&&leader&&validQualiTime(time)?i===0?'LEADER':'+'+(time-leader.best).toFixed(3):'—';
   const cells=final?c.qualiTimes.map(t=>'<td>'+fmt(t)+'</td>').join('')+'<td>'+(i===0&&validQualiTime(quali.finalGrid[0].time)?'POLE':quali.finalGrid[i].source)+'</td>':'<td>'+fmt(time)+'</td><td>'+delta+'</td><td>'+status+'</td>';
-  return '<tr class="'+[c.isP?'me':'',eliminated?'q-eliminated':'',!final&&cut&&i===cut?'q-cut':'',!final&&cut&&i>=cut&&i<current.length?'q-danger':'',quali.stage===2&&i===0?'q-pole':''].filter(Boolean).join(' ')+'"><td>'+(i+1)+'</td><td style="border-left:3px solid '+c.col+'">'+esc(c.name)+'</td><td>'+esc(c.tname)+'</td>'+cells+'</tr>';
+  return '<tr data-driver-id="'+esc(c.id)+'" class="'+[c.isP?'me':'',eliminated?'q-eliminated':'',!final&&cut&&i===cut?'q-cut':'',!final&&cut&&i>=cut&&i<current.length?'q-danger':'',quali.stage===2&&i===0?'q-pole':''].filter(Boolean).join(' ')+'"><td>'+(i+1)+'</td><td style="border-left:3px solid '+c.col+'">'+esc(c.name)+tyreBadge(c)+'</td><td>'+esc(c.tname)+'</td>'+cells+'</tr>';
  }).join('')+'</tbody></table>';
 }
 function showQualiResults(){

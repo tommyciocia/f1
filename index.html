@@ -8,6 +8,7 @@
 </head>
 <body>
 <canvas id="c"></canvas>
+<div id="menuBackdrop" aria-hidden="true"></div>
 
 <!-- HUD di gara -->
 <div id="hud" class="hidden">
@@ -17,21 +18,39 @@
   <div id="bottom"><div id="spd">0</div><small>km/h</small><div id="gear">N</div>
     <div class="bars"><i id="thr"></i><i id="brk"></i></div></div>
   <div id="tyreIndicator" role="status" aria-label="SOFT — 100%"><span id="tyreText">SOFT — 100%</span></div>
+  <div id="pitRuleStatus" class="hidden" role="status" aria-live="polite"></div>
+  <div id="pitService" class="hidden" role="dialog" aria-label="Scelta gomme al box">
+    <b>CAMBIO GOMME</b><span id="pitServiceStatus">Scegli la mescola</span>
+    <div class="pit-compounds"><button type="button" data-tyre="SOFT" class="tyre-s">S · SOFT<small>Massima aderenza, durata breve</small></button><button type="button" data-tyre="MEDIUM" class="tyre-m">M · MEDIUM<small>Equilibrio tra ritmo e durata</small></button><button type="button" data-tyre="HARD" class="tyre-h">H · HARD<small>Più resistente, ritmo inferiore</small></button></div>
+    <button type="button" id="confirmTyres" data-act="confirmtyres" class="main">CONFERMA CAMBIO GOMME</button>
+  </div>
   <canvas id="mini" width="200" height="150"></canvas>
   <div id="lights"><span></span><span></span><span></span><span></span><span></span></div>
   <div id="banner"></div>
+  <div id="pitPrompt" class="hidden" role="status" aria-live="polite"></div>
 </div>
 <div id="toast"></div>
 
 <div id="menu" class="panel">
   <h1>F1 <em>Racing</em> Simulator</h1>
   <button data-act="play" class="main">GIOCA</button>
+  <button data-go="circuits" class="home-circuits">CIRCUITI <span>10 tracciati · scegli la tua sfida →</span></button>
+  <p id="homeCircuit" class="home-circuit"></p>
   <button data-go="cars">SELEZIONA AUTO</button>
   <button data-go="paddock">GESTISCI PADDOCK</button>
   <button data-go="settings">IMPOSTAZIONI</button>
   <button data-go="controls">COMANDI</button>
   <button data-go="records">CLASSIFICHE</button>
 </div>
+
+<section id="circuits" class="panel hidden" aria-labelledby="circuitsTitle">
+  <header class="circuits-header"><div><p class="circuit-eyebrow">F1 RACING SIMULATOR / CALENDARIO</p><h2 id="circuitsTitle">CIRCUITI<span>10</span></h2></div><button data-go="menu" class="circuit-back">← HOME</button></header>
+  <p id="circuitCurrent" class="circuit-current" role="status" aria-live="polite"></p>
+  <p class="circuit-accuracy">Configurazioni F1 · Ricostruzioni 2D da mappe geografiche. Box, larghezze e settori adattati al gioco.</p>
+  <div class="circuit-hero"><div id="circuitPreview" class="circuit-preview"></div><div class="circuit-detail"><p id="circuitLocation" class="circuit-eyebrow"></p><h3 id="circuitName"></h3><p id="circuitDescription"></p><dl id="circuitStats" class="circuit-stats"></dl><div id="circuitTraits" class="circuit-traits"></div><button data-act="selectcircuit" id="selectCircuitBtn" class="main">SELEZIONA CIRCUITO</button></div></div>
+  <div class="circuit-grid-heading"><h3>SCEGLI IL TUO TRACCIATO</h3><span>Qualifiche e gara · 23 vetture</span></div>
+  <div id="circuitGrid" class="circuit-grid" aria-label="I 10 circuiti disponibili"></div>
+</section>
 
 <div id="cars" class="panel">
   <h2>La tua squadra</h2>
@@ -74,7 +93,9 @@
 <div id="settings" class="panel">
   <h2>Impostazioni</h2>
   <label>Difficoltà <select data-set="diff"><option value="0">Facilissimo</option><option value="1">Facile</option><option value="2">Medio</option><option value="3">Difficile</option><option value="4">Difficilissimo</option></select></label>
-  <label>Giri <input type="number" min="1" max="20" data-set="laps"></label>
+  <label>Giri <input type="number" min="1" max="65" data-set="laps"></label>
+  <label>Gomme di partenza <select data-set="startCompound"><option value="SOFT">SOFT — veloci</option><option value="MEDIUM">MEDIUM — equilibrate</option><option value="HARD">HARD — resistenti</option></select></label>
+  <p class="hint">Il consumo si adatta alla durata della gara. X avvia il transito assistito ai box a 80 km/h: nessuna fermata obbligatoria o sostituzione automatica delle gomme.</p>
   <label>Sensibilità sterzo <input type="range" min="0.5" max="1.5" step="0.05" data-set="sens"></label>
   <label>Volume audio <input type="range" min="0" max="1" step="0.05" data-set="vol"></label>
   <label>Qualifiche Q1 → Q2 → Q3 <input type="checkbox" data-set="qualiEnabled"></label>
@@ -91,13 +112,30 @@
 <div id="controls" class="panel">
   <h2>Comandi</h2>
   <div class="cols">
-    <div><b>Tastiera</b><p>W / ↑ acceleratore<br>S / ↓ freno e retromarcia<br>A D / ← → sterzo<br>Spazio freno a mano<br>Esc pausa<br>R riposiziona (+3 s)<br>C cambia visuale<br>P prenota/annulla ingresso box</p></div>
-    <div><b>Controller</b><p>Stick sinistro: sterzo<br>RT/R2: acceleratore<br>LT/L2: freno<br>A/Croce: acceleratore<br>B/Cerchio: freno<br>Start/Options: pausa<br>Y/Triangolo: visuale<br>X/Quadrato: prenota/annulla box</p></div>
+    <div><b>Tastiera</b><p>W / ↑ acceleratore<br>S / ↓ freno<br>A D / ← → sterzo<br>X ingresso e pilota automatico box<br>R retromarcia (tieni premuto)<br>Esc pausa<br>Spazio freno a mano<br>T riposiziona (+3 s)<br>C cambia visuale</p></div>
+    <div><b>Controller</b><p>RT/R2: acceleratore<br>LT/L2: freno e, da fermo, retromarcia<br>Stick sinistro: sterzo<br>X (Xbox) / X-Croce (PS4/PS5): pilota automatico box<br>B/Cerchio: retromarcia alternativa (tieni premuto)<br>Start/Menu/Options: pausa<br>A (Xbox): acceleratore alternativo<br>Y/Triangolo: visuale</p></div>
   </div>
-  <p class="hint">Per entrare ai box, prenota con P o X/Quadrato e raggiungi l'ingresso indicato a sinistra, dopo il traguardo, a massimo 80 km/h. Il transito è assistito, senza fermate; all'uscita riprendi il controllo.</p>
+  <p class="hint">Dopo il traguardo, quando compare «PREMI X PER ENTRARE AI BOX», premi X. L'assistenza frena prima della corsia e percorre ingresso, pit lane e uscita a massimo 80 km/h. I comandi manuali tornano all'uscita. Fuori dalla zona, X non prenota né attiva un ingresso.</p>
   <p id="padStat"></p>
+  <p id="inputReadout" role="status">Premi un comando per verificarlo qui.</p>
+  <p id="padButtons" class="hint"></p>
+  <p id="padAxes" class="hint"></p>
   <div class="test"><span>Sterzo</span><div class="tb"><i id="tSt"></i></div><span>Acceleratore</span><div class="tb"><i id="tTh"></i></div><span>Freno</span><div class="tb"><i id="tBr"></i></div></div>
   <p class="hint">Se il controller non viene rilevato, collegalo e premi un suo pulsante: alcuni browser lo mostrano solo dopo la prima pressione. Sensibilità e inversione sterzo sono in Impostazioni.</p>
+  <details class="controller-config"><summary>Configura joystick / controller non standard</summary>
+    <p class="hint">I numeri dei pulsanti premuti sono mostrati sopra (partono da 0). I controller standard usano automaticamente la mappatura del browser.</p>
+    <label>Tipo grilletti <select id="padMode"><option value="auto">Automatico</option><option value="buttons">Pulsanti</option><option value="axes">Assi −1 → +1</option><option value="invertedAxes">Assi +1 → −1</option><option value="positiveAxes">Assi 0 → +1</option><option value="negativeAxes">Assi 0 → −1</option></select></label>
+    <label>Asse sterzo <input type="number" min="0" max="15" data-pad-bind="steerAxis"></label>
+    <label>Pulsante acceleratore <input type="number" min="0" max="31" data-pad-bind="throttle"></label>
+    <label>Pulsante freno <input type="number" min="0" max="31" data-pad-bind="brake"></label>
+    <label>Pulsante box (X / Croce) <input type="number" min="0" max="31" data-pad-bind="pit"></label>
+    <label>Pulsante retromarcia <input type="number" min="0" max="31" data-pad-bind="reverse"></label>
+    <label>Pulsante pausa <input type="number" min="0" max="31" data-pad-bind="pause"></label>
+    <label>Pulsante visuale <input type="number" min="0" max="31" data-pad-bind="camera"></label>
+    <label>Asse acceleratore <input type="number" min="0" max="15" data-pad-bind="throttleAxis"></label>
+    <label>Asse freno <input type="number" min="0" max="15" data-pad-bind="brakeAxis"></label>
+    <button id="resetPadControls" type="button">RIPRISTINA MAPPATURA CONTROLLER</button>
+  </details>
   <button data-go="menu">TORNA AL MENU</button>
 </div>
 
@@ -130,6 +168,7 @@
 <script src="js/utils.js"></script>
 <script src="js/settings.js"></script>
 <script src="js/data.js"></script>
+<script src="js/circuitData.js"></script>
 <script src="js/track.js"></script>
 <script src="js/state.js"></script>
 <script src="js/audio.js"></script>
@@ -145,6 +184,7 @@
 <script src="js/physics.js"></script>
 <script src="js/botMotion.js"></script>
 <script src="js/pits.js"></script>
+<script src="js/strategy.js"></script>
 <script src="js/ai.js"></script>
 <script src="js/slipstream.js"></script>
 <script src="js/botRecovery.js"></script>
@@ -161,6 +201,8 @@
 <script src="js/menuPaddock.js"></script>
 <script src="js/menuRecords.js"></script>
 <script src="js/menuSettings.js"></script>
+<script src="js/circuits.js"></script>
+<script src="js/controlSettings.js"></script>
 <script src="js/menuClicks.js"></script>
 <script src="js/main.js"></script>
 </body>

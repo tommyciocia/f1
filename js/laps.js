@@ -4,10 +4,12 @@ function progress(c,a,b){
  if(state==='quali'){qualiLapProgress(c,a,b);return;}
  if(a>N*.75&&b<N*.25){c.lap++;
   if(c.lap>=1){const lt=raceTime-c.lapStart;if(lt<c.best)c.best=lt;}
-  c.lapStart=raceTime;if(c.lap>=S.laps&&!c.fin){c.fin=raceTime+c.pen;c.ai=true;if(c.isP){banner('BANDIERA A SCACCHI!',3000);finT=raceTime;}}}
+  c.lapStart=raceTime;if(c.lap>=S.laps&&!c.fin){c.fin=raceTime+c.pen;c.disqualified=missedMandatoryPit(c);c.ai=true;if(c.isP){banner(c.disqualified?'SQUALIFICATO · SOSTA OBBLIGATORIA NON EFFETTUATA':'BANDIERA A SCACCHI!',3000);finT=raceTime;}}}
  else if(a<N*.25&&b>N*.75)c.lap--;}
-const prog=c=>c.lap*L+T[c.idx].s;
-const order=()=>cars.slice().sort((a,b)=>a.fin&&b.fin?a.fin-b.fin:a.fin?-1:b.fin?1:prog(b)-prog(a));
+const prog=c=>c.lap*L+wrapDistance(Number.isFinite(c.trackS)?c.trackS:T[c.idx].s);
+const pitObligationSatisfied=c=>!c.pitRequired||c.pitStops>0;
+const missedMandatoryPit=c=>mode==='race'&&!!c.fin&&!pitObligationSatisfied(c);
+const order=()=>cars.slice().sort((a,b)=>Number(missedMandatoryPit(a))-Number(missedMandatoryPit(b))||(a.fin&&b.fin?a.fin-b.fin:a.fin?-1:b.fin?1:prog(b)-prog(a)));
 // Il giro veloce cambia durante la gara: nessun pilota viene evidenziato finché
 // non ha completato almeno un giro cronometrato.
 const fastestLapDriver=()=>{

@@ -7,12 +7,12 @@ function updateCountdown(dt){
  if(state!=='countdown')return;
  cd+=dt;const n=Math.min(5,Math.floor(cd/.8));
   if(n!==lit){lit=n;setLights(n);if(n>0)beep(440,.12);}
-  if(cd>=4+hold){setLights(0);state='racing';cars.forEach(c=>{c.go=true;c.launchLane=c.d;c.launchT=1.5;});beep(880,.35);banner('VIA!',900);}
+  if(cd>=4+hold){setLights(0);$('lights').classList.add('hidden');state='racing';cars.forEach(c=>{c.go=true;c.launchLane=c.d;c.launchT=1.5;});beep(880,.35);banner('VIA!',900);}
 }
 function checkRaceFinish(){if(state==='racing'&&pl.fin&&(cars.every(c=>c.fin)||raceTime-finT>10))endRace();}
-function endRace(){state='done';const o=order();let rec=[];
+function endRace(){state='done';cars.forEach(c=>c.disqualified=missedMandatoryPit(c));const o=order();let rec=[];
  try{rec=JSON.parse(localStorage.getItem('f1sim.rec')||'[]');}catch(e){}
- rec.unshift({d:new Date().toLocaleDateString('it-IT'),pos:o.indexOf(pl)+1,tot:pl.fin,best:pl.best<1e8?pl.best:0,laps:S.laps,diff:S.diff});
+ rec.unshift({d:new Date().toLocaleDateString('it-IT'),circuitId:activeCircuit.id,circuitName:activeCircuit.name,pos:o.indexOf(pl)+1,tot:pl.fin,best:pl.best<1e8?pl.best:0,laps:S.laps,diff:S.diff,disqualified:pl.disqualified,pitStops:pl.pitStops});
  try{localStorage.setItem('f1sim.rec',JSON.stringify(rec.slice(0,10)));}catch(e){}
- $('resList').innerHTML=o.map((c,i)=>`<div class="${c.isP?'me':''}"><b>${i+1}</b><span style="flex:1">${esc(c.name)} · ${esc(c.tname)}</span><span>${c.fin?fmt(c.fin):'+'+Math.max(1,S.laps-c.lap)+' giro/i'}</span></div>`).join('');
+ $('resList').innerHTML=o.map((c,i)=>`<div class="${c.isP?'me':''}"><b>${i+1}</b><span style="flex:1">${esc(c.name)} ${tyreBadge(c)} · ${esc(c.tname)}<small class="result-pits">${PIT.serviceAllowed?c.pitStops+' soste completate':esc(activeCircuit.name)}${c.disqualified?' · Sosta obbligatoria mancante':''}</small></span><span class="${c.disqualified?'pit-dsq':''}">${c.disqualified?'DSQ':c.fin?fmt(c.fin):'+'+Math.max(1,S.laps-c.lap)+' giro/i'}</span></div>`).join('');
  show('result');}

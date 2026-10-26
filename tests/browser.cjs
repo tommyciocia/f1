@@ -15,10 +15,18 @@ const {chromium}=require('playwright');
   page.on('pageerror',e=>errors.push(e.message));page.on('console',msg=>{if(msg.type()==='error')errors.push(msg.text());});
   await page.addInitScript(()=>{window.requestAnimationFrame=()=>0;localStorage.setItem('f1sim.set',JSON.stringify({vol:0}));});
   await page.goto(pathToFileURL(path.join(__dirname,'../index.html')).href);
+  await page.evaluate(()=>render());assert.ok(await page.locator('#menuBackdrop').isVisible());
+  const artworkWidth=await page.evaluate(async()=>{const artwork=new Image();artwork.src='assets/menu-duel.png';await artwork.decode();return artwork.naturalWidth;});
+  assert.ok(artworkWidth>=1280);
+  await page.screenshot({path:path.join(folder,'menu.png')});
+  await page.setViewportSize({width:360,height:800});await page.evaluate(()=>render());
+  await page.screenshot({path:path.join(folder,'menu-mobile.png')});
+  await page.setViewportSize({width:1280,height:800});
   await page.getByRole('button',{name:'IMPOSTAZIONI',exact:true}).click();
   for(const [i,value] of ['18','15','12'].entries())assert.equal(await page.locator('[data-qminutes="'+i+'"]').inputValue(),value);
   assert.ok(await page.locator('[data-set="qualiEnabled"]').isChecked());
   await page.locator('#settings [data-go="menu"]').click();await page.locator('#menu [data-act="play"]').click();
+  assert.ok(await page.locator('#menuBackdrop').isHidden());
   await page.evaluate(()=>{pl.ai=true;for(let n=0;n<2000;n++)update(.05);camX=pl.x;camY=pl.y;render();qHud(1);$('banner').textContent='';});
   assert.equal(await page.locator('#tower tbody tr').count(),23);assert.match(await page.locator('#lapTxt').textContent(),/Q1/);
   assert.equal(await page.locator('#timeTxt').textContent(),'16:20');assert.equal(await page.locator('#tyreText').textContent(),'SOFT — 100%');
@@ -35,7 +43,8 @@ const {chromium}=require('playwright');
   await page.setViewportSize({width:1280,height:800});
   for(let phase=0;phase<3;phase++){
    if(phase>0)await page.evaluate(()=>{if(pl.qActive)pl.ai=true;for(let n=0;n<2400;n++)update(.05);});
-   await page.evaluate(()=>{endQuali();for(let n=0;n<2400&&state==='quali';n++)update(.05);render();});
+   await page.evaluate(()=>{endQuali();render();});
+   assert.equal(await page.evaluate(()=>state),phase===2?'qdone':'qbetween');
    assert.equal(await page.locator('#qList tbody tr').count(),23);
    if(phase<2){
     assert.ok(await page.locator('#nextQBtn').isVisible());assert.ok(await page.locator('#gridBtn').isHidden());

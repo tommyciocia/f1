@@ -1,0 +1,567 @@
+{
+  "date": "2026-10-26",
+  "automatedTests": 135,
+  "passed": 135,
+  "failed": 0,
+  "testRuns": [
+    {
+      "source": "f1-real-final-a.txt",
+      "tests": 12,
+      "passed": 12,
+      "failed": 0
+    },
+    {
+      "source": "f1-real-final-b.txt",
+      "tests": 12,
+      "passed": 12,
+      "failed": 0
+    },
+    {
+      "source": "f1-real-final-c.txt",
+      "tests": 16,
+      "passed": 16,
+      "failed": 0
+    },
+    {
+      "source": "f1-real-final-d.txt",
+      "tests": 5,
+      "passed": 5,
+      "failed": 0
+    },
+    {
+      "source": "f1-real-regression-final2.txt",
+      "tests": 90,
+      "passed": 90,
+      "failed": 0
+    }
+  ],
+  "browserScriptsPassed": [
+    "tests/browser.cjs",
+    "tests/browser-controls.cjs",
+    "tests/browser-tyres.cjs",
+    "tests/browser-circuits.cjs"
+  ],
+  "browserJavaScriptErrors": 0,
+  "browserMeanUpdateAndRenderMs": 1.52,
+  "settings": {
+    "qualifyingMinutes": [
+      4,
+      4,
+      4
+    ],
+    "raceLaps": 2,
+    "raceCompound": "MEDIUM",
+    "racePlayerStats": [
+      0.8,
+      0.8,
+      0.8,
+      0.8
+    ],
+    "raceDifficulty": 4,
+    "physicsStepSeconds": 0.05,
+    "playerDrivenByAIOnlyInSimulationTests": true
+  },
+  "tests": "tests/circuits.cjs",
+  "circuits": [
+    {
+      "id": "barcelona",
+      "name": "Circuit de Barcelona-Catalunya",
+      "lengthKm": 4.657,
+      "turns": 14,
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 310.0000000000362
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 310.0000000000362
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 310.0000000000362
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.8720747565315,
+        "maxPitStep": 12.545237034423991,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7277292262121505,
+        "dsq": false,
+        "best": 107.74999999999588,
+        "pending": [],
+        "persisted": "barcelona"
+      }
+    },
+    {
+      "id": "suzuka",
+      "name": "Suzuka International Racing Course",
+      "lengthKm": 5.807,
+      "turns": 18,
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 332.3000000000413
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 326.85000000004004
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 319.7000000000384
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.81675527097437,
+        "maxPitStep": 12.471357659354261,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7251620989758052,
+        "dsq": false,
+        "best": 126.50000000002873,
+        "pending": [],
+        "persisted": "suzuka"
+      }
+    },
+    {
+      "id": "spa",
+      "name": "Circuit de Spa-Francorchamps",
+      "lengthKm": 7.004,
+      "turns": 19,
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 319.6500000000384
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 319.6500000000384
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 349.6500000000452
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.83618770776444,
+        "maxPitStep": 12.525543144557354,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7219028701845173,
+        "dsq": false,
+        "best": 135.90000000003087,
+        "pending": [],
+        "persisted": "spa"
+      }
+    },
+    {
+      "id": "monaco",
+      "name": "Circuit de Monaco",
+      "lengthKm": 3.337,
+      "turns": 19,
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 277.4500000000288
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 316.9000000000378
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 309.30000000003605
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.7943961389874,
+        "maxPitStep": 12.515744615062522,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.72534721993905,
+        "dsq": false,
+        "best": 89.25000000001162,
+        "pending": [],
+        "persisted": "monaco"
+      }
+    },
+    {
+      "id": "silverstone",
+      "name": "Silverstone Circuit",
+      "lengthKm": 5.891,
+      "turns": 18,
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 329.90000000004073
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 325.60000000003976
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 316.4500000000377
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.81556091880607,
+        "maxPitStep": 12.471171097723564,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7239711470721791,
+        "dsq": false,
+        "best": 121.84999999999503,
+        "pending": [],
+        "persisted": "silverstone"
+      }
+    },
+    {
+      "id": "red-bull-ring",
+      "name": "Red Bull Ring",
+      "lengthKm": 4.326,
+      "turns": 10,
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 303.8000000000348
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 298.35000000003356
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 289.95000000003165
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.83859811899003,
+        "maxPitStep": 12.509853476999734,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7264667047740003,
+        "dsq": false,
+        "best": 88.25000000001074,
+        "pending": [],
+        "persisted": "red-bull-ring"
+      }
+    },
+    {
+      "id": "cota",
+      "name": "Circuit of The Americas",
+      "lengthKm": 5.513,
+      "turns": 20,
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 329.45000000004063
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 324.8000000000396
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 316.1500000000376
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.77249954537847,
+        "maxPitStep": 12.464437388973682,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7208234142612773,
+        "dsq": false,
+        "best": 122.95000000002796,
+        "pending": [],
+        "persisted": "cota"
+      }
+    },
+    {
+      "id": "bahrain",
+      "name": "Bahrain International Circuit",
+      "lengthKm": 5.412,
+      "turns": 15,
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 308.05000000003577
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 303.65000000003477
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 296.8000000000332
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.80577738200597,
+        "maxPitStep": 12.469641031331548,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7250306436442754,
+        "dsq": false,
+        "best": 121.14999999999512,
+        "pending": [],
+        "persisted": "bahrain"
+      }
+    },
+    {
+      "id": "singapore",
+      "name": "Marina Bay Street Circuit",
+      "lengthKm": 4.927,
+      "turns": 19,
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 303.10000000003464
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 297.40000000003334
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 290.6000000000318
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.80063225296821,
+        "maxPitStep": 12.468836759427411,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7269127484664264,
+        "dsq": false,
+        "best": 112.65000000002313,
+        "pending": [],
+        "persisted": "singapore"
+      }
+    },
+    {
+      "id": "monza",
+      "name": "Autodromo Nazionale Monza",
+      "lengthKm": 5.793,
+      "turns": 11,
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 294.1500000000326
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 291.400000000032
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 285.8500000000307
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.82074170434174,
+        "maxPitStep": 12.47198111519404,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7248811189426938,
+        "dsq": false,
+        "best": 117.40000000002462,
+        "pending": [],
+        "persisted": "monza"
+      }
+    }
+  ]
+}

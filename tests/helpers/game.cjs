@@ -34,7 +34,10 @@ function game(settings={}){
  return{run,advance,elements,events,click};
 }
 function placePlayer(g,s,d,speed){
- g.run(`{const q=botPointAt(${s});pl.x=q.x+q.nx*${d};pl.y=q.y+q.ny*${d};pl.a=q.ang;pl.idx=q.i;pl.trackS=${s};pl.d=pl.lane=${d};pl.vx=Math.cos(q.ang)*${speed};pl.vy=Math.sin(q.ang)*${speed};pl.go=true;pl.pit.phase='track';pl.off=pl.kerb=false;}`);
+ g.run(`{const q=botPointAt(${s});pl.x=q.x+q.nx*${d};pl.y=q.y+q.ny*${d};pl.a=q.ang;pl.idx=q.i;pl.trackS=q.trackS;pl.d=pl.lane=${d};pl.vx=Math.cos(q.ang)*${speed};pl.vy=Math.sin(q.ang)*${speed};pl.go=true;pl.pit.phase='track';pl.pit.auto=pl.pit.onLane=false;pl.off=pl.kerb=false;}`);
+}
+function placePitLane(g,s,lateral=0,speed=150){
+ g.run(`{const q=pitCenterAt(${s}),p=pointAtDistance(${s});pl.x=q.x+q.nx*${lateral};pl.y=q.y+q.ny*${lateral};pl.a=q.ang;pl.idx=p.i;pl.trackS=p.s;pl.vx=Math.cos(q.ang)*${speed};pl.vy=Math.sin(q.ang)*${speed};pl.go=true;pl.pit.phase='track';pl.pit.auto=pl.pit.onLane=false;pl.off=pl.kerb=false;pl.d=pl.lane=pitTrackPosition(pl).d;}`);
 }
 function checkSeats(g){
  assert.equal(g.run('cars.length'),23);assert.equal(g.run('new Set(cars.map(c=>c.team)).size'),12);
@@ -42,4 +45,4 @@ function checkSeats(g){
  assert.ok(g.run('TEAMS.slice(0,-1).every((_,i)=>cars.filter(c=>c.team===i).length===2)'));
  assert.equal(g.run('new Set(cars.map(c=>c.pit.stallId)).size'),23);
 }
-module.exports={game,placePlayer,checkSeats};
+module.exports={game,placePlayer,placePitLane,checkSeats};

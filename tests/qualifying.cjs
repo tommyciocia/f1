@@ -85,6 +85,19 @@ test('allo zero si completa soltanto il giro lanciato già in corso, poi nessun 
  assert.ok(g.run('pl.qd&&!pl.qLapActive'));g.run('raceTime=62;qualiLapProgress(pl,N-1,0);checkQualiTime();');assert.equal(g.run('pl.qLaps'),1);
  assert.equal(g.run('state'),'qbetween');assert.equal(g.run('quali.results[0].rows[0].time'),2);
 });
+test('saltare Q1, Q2 e Q3 dalla pausa è immediato anche con giri lanciati in corso',()=>{
+ const g=game();g.run('startQuali();');
+ for(let phase=0;phase<3;phase++){
+  g.run('raceTime=100;qualiParticipants().forEach((c,i)=>{c.best=60+i;c.qLaps=1;c.qBestSetAt=80+i;c.qLapActive=c.qLapValid=true;});togglePause();');
+  g.click('endq');
+  assert.equal(g.run('state'),phase===2?'qdone':'qbetween');assert.equal(g.run('raceTime'),100);
+  assert.ok(g.run('qualiParticipants().every(c=>c.qd&&!c.qLapActive&&c.qLaps===1)'));
+  assert.equal(g.run('quali.results[quali.stage].rows[0].time'),60);
+  assert.equal(g.run('qualiReleaseQueue.length'),0);
+  if(phase<2){g.click('nextq');assert.equal(g.run('quali.stage'),phase+1);}
+ }
+ assert.equal(g.run('quali.finalGrid.length'),23);
+});
 test('un out-lap che termina allo zero non avvia un giro cronometrato',()=>{
  const g=game({qualiMinutes:[1,1,1]});g.run('startQuali();');placePlayer(g,0,-55,200);
  g.run('raceTime=60;qualiLapProgress(pl,N-1,0);');assert.ok(g.run('pl.qd&&!pl.qLapActive&&pl.best===1e9'));
@@ -95,7 +108,27 @@ test('giri incompleti, settori mancanti, riposizionamento e ingresso box non pro
  g.run('raceTime=1;qualiLapProgress(pl,N-1,0);pl.qLapDistance=L;raceTime=35;qualiLapProgress(pl,N-1,0);');assert.equal(g.run('pl.best'),1e9);
  g.run('pl.qLapSectors=3;pl.qLapDistance=L*.5;raceTime=70;qualiLapProgress(pl,N-1,0);');assert.equal(g.run('pl.best'),1e9);
  g.run('repos();');assert.ok(g.run('!pl.qLapActive&&pl.best===1e9'));
- placePlayer(g,150,-70,200);g.run('pl.rep=0;pl.qLapActive=true;pl.qLapValid=true;requestPitEntry();tryPitEntry(pl);');assert.ok(g.run('!pl.qLapActive&&pl.best===1e9'));
+ placePlayer(g,g.run("PIT.entryStart")-100,-70,200);g.run('pl.rep=0;pl.qLapActive=true;pl.qLapValid=true;requestPitEntry();tryPitEntry(pl);');assert.ok(g.run('!pl.qLapActive&&pl.best===1e9'));
+});
+test('qualifica manuale: i settori avanzano nel giro di uscita e il giro completo viene cronometrato',()=>{
+ const g=game();g.run(`startQuali();pl.go=true;pl.ai=false;pl.pit.phase='track';pl.pit.auto=false;pl.idx=0;
+  globalThis.crossSample=i=>{const q=T[i];pl.x=q.x;pl.y=q.y;pl.a=q.ang;pl.vx=pl.vy=0;pl.inp={st:0,thr:0,brk:0,rev:0};raceTime++;stepCar(pl,.01);};
+  globalThis.firstSplit=T.findIndex(q=>q.s>=SECTOR_MARKS[0]);globalThis.secondSplit=T.findIndex(q=>q.s>=SECTOR_MARKS[1]);
+  for(let i=1;i<=firstSplit;i++)crossSample(i);`);
+ assert.equal(g.run('pl.activeSec'),1);const s1=g.run('pl.secs[0]');assert.ok(s1>0);assert.equal(g.run('pl.bestSecs[0]'),1e9);
+ g.run('for(let i=firstSplit+1;i<=secondSplit;i++)crossSample(i);');
+ assert.equal(g.run('pl.activeSec'),2);assert.equal(g.run('pl.secs[0]'),s1);assert.ok(g.run('pl.secs[1]>0'));assert.equal(g.run('pl.qLaps'),0);
+ g.run('for(let i=secondSplit+1;i<=N;i++)crossSample(i%N);');
+ assert.ok(g.run('pl.qLapActive&&pl.qLapValid'));assert.equal(g.run('pl.qLaps'),0);
+ g.run('for(let i=1;i<=N;i++)crossSample(i%N);');
+ assert.equal(g.run('pl.qLaps'),1);assert.equal(g.run('pl.best'),g.run('N'));assert.ok(g.run('pl.bestSecs.every(t=>t>0&&t<1e8)'));
+});
+test('i settori visibili avanzano anche dopo un giro annullato, senza assegnare tempi validi',()=>{
+ const g=game();g.run(`startQuali();pl.go=true;pl.pit.phase='track';pl.lap=0;pl.qLapActive=pl.qLapValid=true;invalidateQualiLap(pl);
+  const first=T.findIndex(q=>q.s>=SECTOR_MARKS[0]),second=T.findIndex(q=>q.s>=SECTOR_MARKS[1]);
+  raceTime=20;sectorProgress(pl,first-1,first);raceTime=40;sectorProgress(pl,second-1,second);`);
+ assert.equal(g.run('pl.activeSec'),2);assert.ok(g.run('pl.secs[0]===20&&pl.secs[1]===20'));
+ assert.ok(g.run('!pl.qLapActive&&pl.best===1e9&&pl.bestSecs.every(t=>t===1e9)'));
 });
 test('riavvio della Q2 conserva la Q1; pausa e timer non avanzano; doppio click non salta fasi',()=>{
  const g=game();g.run('startQuali();');endWithTimes(g);g.click('nextq');const q1=g.run('JSON.stringify(quali.results[0])');
@@ -117,12 +150,12 @@ test('SOFT al 100% anche per eliminate e auto ai box, fattori costanti; in gara 
  g.run('pl.tyres.condition=.1;');assert.ok(g.run('tyreGrip(pl)<1&&tyreSpeed(pl)<1'));
 });
 test('weekend fisico completo: 23 -> 17 -> 10, più tentativi reali, griglia automatica e gomme',()=>{
- const g=game({qualiMinutes:[2,2,2],laps:1});g.run('startQuali();');const counts=[23,17,10];
+ const g=game({qualiMinutes:[4,4,4],laps:1});g.run('startQuali();');const counts=[23,17,10];
  for(let phase=0;phase<3;phase++){
   assert.equal(g.run('qualiParticipants().length'),counts[phase]);g.run('if(pl.qActive)pl.ai=true;');
   const data=g.run(`(()=>{
    let maxPitSpeed=0,maxStuck=0,tyresLocked=true;
-   for(let n=0;n<5000&&state==='quali';n++){
+   for(let n=0;n<10000&&state==='quali';n++){
     update(.05);
     for(const c of cars){
      if(![c.x,c.y,c.vx,c.vy,c.trackS].every(Number.isFinite))throw Error(c.id);
@@ -133,9 +166,9 @@ test('weekend fisico completo: 23 -> 17 -> 10, più tentativi reali, griglia aut
    return{state,maxPitSpeed,maxStuck,tyresLocked,rows:quali.results[quali.stage]?.rows,release:qualiParticipants().map(c=>({id:c.id,time:c.releasedAt,order:c.relT})).sort((a,b)=>a.order-b.order)};
   })()`);
   assert.equal(data.state,phase===2?'qdone':'qbetween',JSON.stringify(data));assert.equal(data.rows.length,counts[phase]);
-  assert.ok(data.rows.every(r=>r.time>20&&r.time<120&&r.laps>=1),JSON.stringify(data));assert.ok(data.rows.some(r=>r.laps>1));
+  assert.ok(data.rows.every(r=>r.time>20&&r.time<180&&r.laps>=1),JSON.stringify(data));assert.ok(data.rows.some(r=>r.laps>1));
   assert.ok(data.tyresLocked);assert.ok(data.maxPitSpeed<=80+1e-6);assert.ok(data.maxStuck<1);
-  data.release.forEach((r,i)=>assert.ok(Math.abs(r.time-i*2)<.051,JSON.stringify(data.release)));
+  data.release.forEach((r,i)=>assert.ok(Math.abs(r.time-i*.5)<.051,JSON.stringify(data.release)));
   if(phase<2)g.click('nextq');
  }
  const ids=plain(g.run('lastGrid.map(e=>e.isP?"player":"driver:"+e.di)'));assert.equal(ids.length,23);
