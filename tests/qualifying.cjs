@@ -14,7 +14,7 @@ test('durate 18/15/12, 23 partecipanti, migrazione impostazioni e possibilità d
  assert.equal(g.run('qualiParticipants().length'),23);assert.equal(g.run('qualiTimeLeft()'),1080);
  assert.ok(g.run('cars.every(c=>c.best===1e9&&c.qualiTimes.every(t=>t===null))'));
  g.run('qHud(1);');assert.equal(g.elements.get('timeTxt').textContent,'18:00');assert.match(g.elements.get('lapTxt').textContent,/Q1/);
- const skip=game({qmin:0});skip.click('play');assert.equal(skip.run('state'),'countdown');assert.equal(skip.run('quali'),null);
+ const skip=game({qmin:0});skip.click('play');assert.equal(skip.run('state'),'prerace');assert.equal(skip.run('quali'),null);skip.click('startrace');assert.equal(skip.run('state'),'countdown');
  const enabled=game({qmin:0,qualiEnabled:true,qualiMinutes:[10,8,6]});enabled.click('play');assert.equal(enabled.run('qualiStage().duration'),600);
 });
 test('6 eliminati in Q1, 7 in Q2, 10 in Q3; i tempi di accesso non cambiano le classifiche successive',()=>{
@@ -41,7 +41,7 @@ test('6 eliminati in Q1, 7 in Q2, 10 in Q3; i tempi di accesso non cambiano le c
  assert.ok(g.run('quali.finalGrid.slice(10,17).every((r,i)=>r.id===quali.results[1].rows[i+10].id&&r.source==="Q2")'));
  assert.ok(g.run('quali.finalGrid.slice(17).every((r,i)=>r.id===quali.results[0].rows[i+17].id&&r.source==="Q1")'));
  assert.ok(g.elements.get('nextQBtn').classList.contains('hidden'));assert.ok(!g.elements.get('gridBtn').classList.contains('hidden'));
- const ids=plain(g.run('quali.finalGrid.map(r=>r.id)'));g.click('grid');
+ const ids=plain(g.run('quali.finalGrid.map(r=>r.id)'));g.click('grid');assert.equal(g.run('state'),'prerace');g.click('startrace');
  assert.equal(g.run('state'),'countdown');assert.deepEqual(plain(g.run('cars.map(c=>c.id)')),ids);checkSeats(g);
  assert.ok(g.run('cars.every(c=>c.tyres.degradation&&c.tyres.condition===1)&&quali.finished&&quali.results.length===3'));
  assert.ok(g.run('cars.every(c=>JSON.stringify(c.qualiTimes)===JSON.stringify(quali.finalGrid.find(r=>r.id===c.id).times))'));
@@ -145,7 +145,7 @@ test('SOFT al 100% anche per eliminate e auto ai box, fattori costanti; in gara 
   assert.equal(g.elements.get('tyreText').textContent,'SOFT — 100%');endWithTimes(g);
   if(phase<2)g.click('nextq');
  }
- g.click('grid');g.advance(2);assert.ok(g.run('cars.every(c=>c.tyres.condition===1&&c.tyres.degradation)'));
+ g.click('grid');g.click('startrace');g.advance(2);assert.ok(g.run('cars.every(c=>c.tyres.condition===1&&c.tyres.degradation)'));
  g.run('pl.ai=true;');g.advance(15);assert.ok(g.run('cars.every(c=>c.tyres.condition<1&&c.tyres.condition>0)'));
  g.run('pl.tyres.condition=.1;');assert.ok(g.run('tyreGrip(pl)<1&&tyreSpeed(pl)<1'));
 });
@@ -172,5 +172,5 @@ test('weekend fisico completo: 23 -> 17 -> 10, più tentativi reali, griglia aut
   if(phase<2)g.click('nextq');
  }
  const ids=plain(g.run('lastGrid.map(e=>e.isP?"player":"driver:"+e.di)'));assert.equal(ids.length,23);
- g.click('grid');assert.deepEqual(plain(g.run('cars.map(c=>c.id)')),ids);assert.ok(g.run('cars.every(c=>c.tyres.degradation)'));
+ g.click('grid');g.click('startrace');assert.deepEqual(plain(g.run('cars.map(c=>c.id)')),ids);assert.ok(g.run('cars.every(c=>c.tyres.degradation)'));
 });

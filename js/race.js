@@ -1,7 +1,24 @@
 'use strict';
 /* Gara: semafori di partenza, countdown, traguardo e classifica finale */
+function renderRaceTyres(){
+ document.querySelectorAll('[data-start-compound]').forEach(input=>{
+  const tyre=TYRE_COMPOUNDS[input.value];input.checked=input.value===S.startCompound;
+  input.closest('.starting-tyre').style.setProperty('--tyre-compound-color',tyre.color);
+ });
+ $('raceTyreSummary').textContent='Gomme di partenza: '+S.startCompound+' · Set nuovo al 100%';
+}
+function showRaceSetup(){
+ resetQualiRelease();state='prerace';$('hud').classList.add('hidden');renderRaceTyres();show('raceSetup');
+ if(engG)engG.gain.value=0;
+ document.querySelectorAll('[data-start-compound]').forEach(input=>{if(input.checked)input.focus();});
+}
+function chooseRaceCompound(compound){
+ if(state!=='prerace'||!Object.hasOwn(TYRE_COMPOUNDS,compound))return false;
+ S.startCompound=compound;save();renderRaceTyres();return true;
+}
+function confirmRaceStart(){if(state!=='prerace')return false;startRace();return true;}
 function startRace(g){resetQualiRelease();if(g!==undefined)lastGrid=g;mode='race';mkCars(lastGrid);$('tower').classList.remove('quali-tower');$('lights').classList.remove('hidden');raceTime=0;sessionBestSecs=[1e9,1e9,1e9];cd=0;lit=0;hold=.6+Math.random()*.9;finT=0;particles=[];camMul=1;
- camX=pl.x;camY=pl.y;state='countdown';hideAll();$('hud').classList.remove('hidden');setLights(0);$('banner').textContent='';}
+ camX=pl.x;camY=pl.y;state='countdown';hideAll();$('hud').classList.remove('hidden');setLights(0);$('banner').textContent='';hudUpdate(0);}
 function setLights(n){[...$('lights').children].forEach((s,i)=>s.classList.toggle('on',i<n));}
 function updateCountdown(dt){
  if(state!=='countdown')return;

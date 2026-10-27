@@ -94,7 +94,6 @@
   <h2>Impostazioni</h2>
   <label>Difficoltà <select data-set="diff"><option value="0">Facilissimo</option><option value="1">Facile</option><option value="2">Medio</option><option value="3">Difficile</option><option value="4">Difficilissimo</option></select></label>
   <label>Giri <input type="number" min="1" max="65" data-set="laps"></label>
-  <label>Gomme di partenza <select data-set="startCompound"><option value="SOFT">SOFT — veloci</option><option value="MEDIUM">MEDIUM — equilibrate</option><option value="HARD">HARD — resistenti</option></select></label>
   <p class="hint">Il consumo si adatta alla durata della gara. X avvia il transito assistito ai box a 80 km/h: nessuna fermata obbligatoria o sostituzione automatica delle gomme.</p>
   <label>Sensibilità sterzo <input type="range" min="0.5" max="1.5" step="0.05" data-set="sens"></label>
   <label>Volume audio <input type="range" min="0" max="1" step="0.05" data-set="vol"></label>
@@ -155,10 +154,40 @@
 <div id="qres" class="panel hidden">
   <h2 id="qTitle">Risultati qualifiche</h2><p id="qSummary"></p><div id="qList" tabindex="0" aria-label="Risultati e griglia completa di 23 vetture"></div>
   <button data-act="nextq" id="nextQBtn" class="main">CONTINUA IN Q2</button>
-  <button data-act="grid" id="gridBtn" class="main hidden">INIZIA GARA</button>
+  <button data-act="grid" id="gridBtn" class="main hidden">CONTINUA ALLA GARA</button>
   <button data-act="retryq">RIFAI LE QUALIFICHE</button>
   <button data-act="menu">TORNA AL MENU</button>
 </div>
+
+<section id="raceSetup" class="panel hidden" aria-labelledby="raceSetupTitle">
+  <p class="race-setup-eyebrow">PRIMA DELLA PARTENZA</p>
+  <h2 id="raceSetupTitle">SCEGLI LE GOMME</h2>
+  <p>Con quale mescola vuoi partire? Scegli il tuo set per la gara.</p>
+  <fieldset class="starting-tyres">
+    <legend>Gomme di partenza</legend>
+    <label class="starting-tyre">
+      <input type="radio" name="raceCompound" value="SOFT" data-start-compound="SOFT" aria-label="SOFT — rosse">
+      <span class="starting-tyre-wheel" aria-hidden="true">S</span>
+      <strong>SOFT</strong><small>Più aderenza<br>Usura più rapida</small>
+      <span class="starting-tyre-selected" aria-hidden="true">✓ SELEZIONATE</span>
+    </label>
+    <label class="starting-tyre">
+      <input type="radio" name="raceCompound" value="MEDIUM" data-start-compound="MEDIUM" aria-label="MEDIUM — gialle">
+      <span class="starting-tyre-wheel" aria-hidden="true">M</span>
+      <strong>MEDIUM</strong><small>Equilibrio tra<br>prestazioni e durata</small>
+      <span class="starting-tyre-selected" aria-hidden="true">✓ SELEZIONATE</span>
+    </label>
+    <label class="starting-tyre">
+      <input type="radio" name="raceCompound" value="HARD" data-start-compound="HARD" aria-label="HARD — bianche">
+      <span class="starting-tyre-wheel" aria-hidden="true">H</span>
+      <strong>HARD</strong><small>Meno aderenza<br>Maggiore durata</small>
+      <span class="starting-tyre-selected" aria-hidden="true">✓ SELEZIONATE</span>
+    </label>
+  </fieldset>
+  <p id="raceTyreSummary" role="status" aria-live="polite"></p>
+  <button type="button" data-act="startrace" class="main">INIZIA GARA</button>
+  <button type="button" data-act="menu">TORNA AL MENU</button>
+</section>
 
 <div id="result" class="panel hidden">
   <h2>Classifica finale 🏁</h2><div id="resList"></div>

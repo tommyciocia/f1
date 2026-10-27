@@ -28,8 +28,12 @@ successiva utilizza automaticamente l'intera griglia di 23 auto.
 ## Gomme e box
 
 Le qualifiche impongono SOFT rosse al 100% a tutte le auto, senza consumo o penalità.
-In gara il giocatore sceglie SOFT, MEDIUM o HARD dalle impostazioni: le tre mescole
-hanno velocità, aderenza e durata differenti. L'indicatore circolare in basso a
+Prima della gara compare **SCEGLI LE GOMME**, con SOFT rosse, MEDIUM gialle e HARD
+bianche. Seleziona una mescola e premi **INIZIA GARA**: la vettura parte con il set
+scelto nuovo al 100%. La schermata appare anche saltando le qualifiche e quando
+si ricomincia una gara; dopo Q3 conserva la griglia ottenuta. L'ultima scelta viene
+ricordata nel browser. Le tre mescole hanno velocità, aderenza e durata differenti
+e usano lo stesso sistema di degrado in gara. L'indicatore circolare in basso a
 sinistra mostra mescola, percentuale e stato di usura; la torre mostra la sigla
 colorata accanto a ciascun pilota.
 
@@ -98,7 +102,7 @@ I risultati per singolo circuito sono in [docs/validation-circuits.json](docs/va
 
 ~~~text
 node --test tests/circuits.cjs
-node --test tests/simulation.cjs tests/qualifying.cjs tests/controls.cjs tests/tyres.cjs tests/race-rules.cjs tests/strategy.cjs tests/pit-access.cjs
+node --test tests/simulation.cjs tests/qualifying.cjs tests/controls.cjs tests/tyres.cjs tests/race-setup.cjs tests/race-rules.cjs tests/strategy.cjs tests/pit-access.cjs
 node tests/browser-circuits.cjs
 node tests/browser.cjs
 node tests/browser-controls.cjs
