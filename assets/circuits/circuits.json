@@ -1,51 +1,103 @@
 [
   {
-    "id": "barcelona",
-    "source": "es-1991",
+    "id": "albert-park",
+    "source": "au-1953",
     "startIndex": 0,
-    "name": "Circuit de Barcelona-Catalunya",
-    "country": "Spagna",
-    "km": 4.657,
+    "name": "Albert Park Grand Prix Circuit",
+    "country": "Australia",
+    "km": 5.278,
     "turns": 14,
     "direction": "Orario",
     "widthM": 14,
-    "barrierM": 8,
-    "type": "Misto",
-    "color": "#ffb44d",
-    "setting": "Montmeló · Spagna",
-    "description": "Configurazione GP senza la chicane finale: Curva 3 in appoggio, Campsa e le due curve veloci che riportano sul rettilineo.",
+    "barrierM": 5,
+    "type": "Semipermanente",
+    "color": "#74cebf",
+    "setting": "Melbourne · Australia",
+    "description": "Configurazione dal 2022 a 14 curve, senza la vecchia chicane sul Lakeside Drive. Rettilinei lungo il lago, esse veloci di curva 9–10 e frenata di curva 11.",
     "traits": [
-      "Curva 3",
-      "Campsa",
-      "Finale veloce"
+      "Lakeside Drive",
+      "Esse 9–10",
+      "14 curve"
     ],
     "sectorIndices": [
-      35,
-      98
+      34,
+      100
     ],
     "features": [
       {
-        "name": "Curva 3",
-        "index": 30
+        "name": "Curva 1",
+        "index": 7
       },
       {
-        "name": "Campsa",
-        "index": 93
+        "name": "Esse 9–10",
+        "index": 96
+      },
+      {
+        "name": "Curva 11",
+        "index": 112
       }
     ],
     "pit": {
-      "entryM": -430,
-      "joinM": -220,
-      "laneEndM": 210,
-      "exitM": 430,
+      "entryM": -360,
+      "joinM": -170,
+      "laneEndM": 200,
+      "exitM": 410,
       "side": 1,
-      "offsetM": 27
+      "offsetM": 25
     },
-    "official": "https://www.formula1.com/en/racing/2026/barcelona-catalunya",
-    "sectorMetres": [
-      1643,
-      3411
-    ]
+    "official": "https://www.formula1.com/en/racing/2026/australia",
+    "verifiedOn": "2026-10-27"
+  },
+  {
+    "id": "shanghai",
+    "source": "cn-2004",
+    "startIndex": 0,
+    "name": "Shanghai International Circuit",
+    "country": "Cina",
+    "km": 5.451,
+    "turns": 16,
+    "direction": "Orario",
+    "widthM": 15,
+    "barrierM": 8,
+    "type": "Tecnico",
+    "color": "#e97b74",
+    "setting": "Shanghai · Cina",
+    "description": "La spirale delle curve 1–2 apre il giro; seguono il tornante di curva 6, le esse 7–8 e la lunga curva 13 che immette sul rettilineo opposto.",
+    "traits": [
+      "Spirale 1–2",
+      "Rettilineo opposto",
+      "Tornante 14"
+    ],
+    "sectorIndices": [
+      40,
+      96
+    ],
+    "features": [
+      {
+        "name": "Spirale 1–2",
+        "index": 14,
+        "speedKmh": 85
+      },
+      {
+        "name": "Curva 13",
+        "index": 111
+      },
+      {
+        "name": "Tornante 14",
+        "index": 132,
+        "speedKmh": 65
+      }
+    ],
+    "pit": {
+      "entryM": -420,
+      "joinM": -200,
+      "laneEndM": 240,
+      "exitM": 460,
+      "side": 1,
+      "offsetM": 28
+    },
+    "official": "https://www.formula1.com/en/racing/2026/china",
+    "verifiedOn": "2026-10-27"
   },
   {
     "id": "suzuka",
@@ -94,55 +146,209 @@
       "side": 1,
       "offsetM": 28
     },
-    "official": "https://www.suzukacircuit.jp/eng/course_s/"
+    "official": "https://www.suzukacircuit.jp/eng/course_s/",
+    "verifiedOn": "2026-10-27"
   },
   {
-    "id": "spa",
-    "source": "be-1925",
+    "id": "bahrain",
+    "source": "bh-2002",
     "startIndex": 0,
-    "name": "Circuit de Spa-Francorchamps",
-    "country": "Belgio",
-    "km": 7.004,
-    "turns": 19,
+    "name": "Bahrain International Circuit",
+    "country": "Bahrein",
+    "km": 5.412,
+    "turns": 15,
     "direction": "Orario",
-    "widthM": 13,
+    "widthM": 15,
     "barrierM": 8,
-    "type": "Alta velocità",
-    "color": "#65c9f0",
-    "setting": "Stavelot · Belgio",
-    "description": "La Source apre il giro; la sequenza Eau Rouge–Raidillon porta sul Kemmel. Seguono Pouhon, Blanchimont e la chicane Bus Stop.",
+    "type": "Frenata e trazione",
+    "color": "#e0b378",
+    "setting": "Sakhir · Bahrein",
+    "description": "Configurazione Grand Prix, distinta dalle varianti Outer ed Endurance. Curve lente, trazione e la frenata combinata di curva 10 scandiscono il giro.",
     "traits": [
-      "Eau Rouge–Raidillon",
-      "Kemmel",
-      "Pouhon"
+      "Curva 1",
+      "Curva 10",
+      "Trazione"
     ],
     "sectorIndices": [
-      31,
-      113
+      23,
+      67
     ],
     "features": [
       {
-        "name": "Eau Rouge / Raidillon",
-        "index": 19
+        "name": "Curva 1",
+        "index": 4,
+        "speedKmh": 75
       },
       {
-        "name": "Pouhon",
-        "index": 85
+        "name": "Curva 10",
+        "index": 58,
+        "speedKmh": 70
+      }
+    ],
+    "pit": {
+      "entryM": -400,
+      "joinM": -180,
+      "laneEndM": 260,
+      "exitM": 500,
+      "side": 1,
+      "offsetM": 28
+    },
+    "official": "https://www.formula1.com/en/racing/2025/bahrain",
+    "verifiedOn": "2026-10-27"
+  },
+  {
+    "id": "jeddah",
+    "source": "sa-2021",
+    "startIndex": 0,
+    "name": "Jeddah Corniche Circuit",
+    "country": "Arabia Saudita",
+    "km": 6.174,
+    "turns": 27,
+    "direction": "Antiorario",
+    "widthM": 13,
+    "barrierM": 2,
+    "type": "Urbano veloce",
+    "color": "#9c9bfa",
+    "setting": "Jeddah · Arabia Saudita",
+    "description": "Il profilo costiero comprende la chicane iniziale, le esse ad alta velocità, il lungo tornante 13 e il tornante finale 27. Barriere vicine e rettilinei raccordati da curve veloci.",
+    "traits": [
+      "Esse veloci",
+      "Tornante 13",
+      "Tornante 27"
+    ],
+    "sectorIndices": [
+      41,
+      107
+    ],
+    "features": [
+      {
+        "name": "Chicane 1–2",
+        "index": 8,
+        "speedKmh": 85
       },
       {
-        "name": "Blanchimont",
-        "index": 130
+        "name": "Tornante 13",
+        "index": 57
+      },
+      {
+        "name": "Curva 27",
+        "index": 144,
+        "speedKmh": 75
+      }
+    ],
+    "pit": {
+      "entryM": -340,
+      "joinM": -180,
+      "laneEndM": 170,
+      "exitM": 340,
+      "side": -1,
+      "offsetM": 24
+    },
+    "official": "https://www.formula1.com/en/racing/2026/saudi-arabia",
+    "verifiedOn": "2026-10-27"
+  },
+  {
+    "id": "miami",
+    "source": "us-2022",
+    "startIndex": 0,
+    "name": "Miami International Autodrome",
+    "country": "Stati Uniti",
+    "km": 5.412,
+    "turns": 19,
+    "direction": "Antiorario",
+    "widthM": 14,
+    "barrierM": 3,
+    "type": "Semipermanente",
+    "color": "#f28fcd",
+    "setting": "Miami · Stati Uniti",
+    "description": "Le esse intorno all’Hard Rock Stadium conducono al rettilineo verso la parte lenta 14–15. Il lunghissimo allungo di ritorno termina al tornante 17.",
+    "traits": [
+      "Hard Rock Stadium",
+      "Chicane 14–15",
+      "Tornante 17"
+    ],
+    "sectorIndices": [
+      47,
+      83
+    ],
+    "features": [
+      {
+        "name": "Esse",
+        "index": 27
+      },
+      {
+        "name": "Chicane 14–15",
+        "index": 79,
+        "speedKmh": 65
+      },
+      {
+        "name": "Tornante 17",
+        "index": 90,
+        "speedKmh": 68
+      }
+    ],
+    "pit": {
+      "entryM": -330,
+      "joinM": -160,
+      "laneEndM": 180,
+      "exitM": 350,
+      "side": -1,
+      "offsetM": 26
+    },
+    "official": "https://www.formula1.com/en/racing/2026/miami",
+    "verifiedOn": "2026-10-27"
+  },
+  {
+    "id": "montreal",
+    "source": "ca-1978",
+    "startIndex": 0,
+    "name": "Circuit Gilles-Villeneuve",
+    "country": "Canada",
+    "km": 4.361,
+    "turns": 14,
+    "direction": "Orario",
+    "widthM": 13,
+    "barrierM": 3,
+    "type": "Semipermanente",
+    "color": "#ef737a",
+    "setting": "Montréal · Canada",
+    "description": "Chicane e frenate sull’isola di Notre-Dame: le prime due curve, il tornante dell’Épingle e la chicane finale del Muro dei Campioni.",
+    "traits": [
+      "Épingle",
+      "Muro dei Campioni",
+      "Rettilineo del Casino"
+    ],
+    "sectorIndices": [
+      37,
+      74
+    ],
+    "features": [
+      {
+        "name": "Curve 1–2",
+        "index": 12,
+        "speedKmh": 80
+      },
+      {
+        "name": "Épingle",
+        "index": 81,
+        "speedKmh": 65
+      },
+      {
+        "name": "Muro dei Campioni",
+        "index": 97,
+        "speedKmh": 95
       }
     ],
     "pit": {
       "entryM": -370,
-      "joinM": -130,
-      "laneEndM": 100,
-      "exitM": 650,
+      "joinM": -180,
+      "laneEndM": 160,
+      "exitM": 350,
       "side": 1,
-      "offsetM": 25
+      "offsetM": 24
     },
-    "official": "https://www.formula1.com/en/racing/2026/belgium"
+    "official": "https://www.formula1.com/en/racing/2026/canada",
+    "verifiedOn": "2026-10-27"
   },
   {
     "id": "monaco",
@@ -196,7 +402,103 @@
       "side": 1,
       "offsetM": 20
     },
-    "official": "https://www.formula1.com/en/racing/2026/monaco"
+    "official": "https://www.formula1.com/en/racing/2026/monaco",
+    "verifiedOn": "2026-10-27"
+  },
+  {
+    "id": "barcelona",
+    "source": "es-1991",
+    "startIndex": 0,
+    "name": "Circuit de Barcelona-Catalunya",
+    "country": "Spagna",
+    "km": 4.657,
+    "turns": 14,
+    "direction": "Orario",
+    "widthM": 14,
+    "barrierM": 8,
+    "type": "Misto",
+    "color": "#ffb44d",
+    "setting": "Montmeló · Spagna",
+    "description": "Configurazione GP senza la chicane finale: Curva 3 in appoggio, Campsa e le due curve veloci che riportano sul rettilineo.",
+    "traits": [
+      "Curva 3",
+      "Campsa",
+      "Finale veloce"
+    ],
+    "sectorIndices": [
+      35,
+      98
+    ],
+    "features": [
+      {
+        "name": "Curva 3",
+        "index": 30
+      },
+      {
+        "name": "Campsa",
+        "index": 93
+      }
+    ],
+    "pit": {
+      "entryM": -430,
+      "joinM": -220,
+      "laneEndM": 210,
+      "exitM": 430,
+      "side": 1,
+      "offsetM": 27
+    },
+    "official": "https://www.formula1.com/en/racing/2026/barcelona-catalunya",
+    "sectorMetres": [
+      1643,
+      3411
+    ],
+    "verifiedOn": "2026-10-27"
+  },
+  {
+    "id": "red-bull-ring",
+    "source": "at-1969",
+    "startIndex": 0,
+    "name": "Red Bull Ring",
+    "country": "Austria",
+    "km": 4.326,
+    "turns": 10,
+    "direction": "Orario",
+    "widthM": 13,
+    "barrierM": 6,
+    "type": "Potenza",
+    "color": "#ff7e67",
+    "setting": "Spielberg · Austria",
+    "description": "Tre allunghi e le frenate di curva 1, curva 3 e curva 4; la parte finale alterna appoggio e accelerazione. Lunghezza aggiornata alla misura FIA di 4,326 km.",
+    "traits": [
+      "Tre allunghi",
+      "Tornante curva 3",
+      "Rindt"
+    ],
+    "sectorIndices": [
+      17,
+      48
+    ],
+    "features": [
+      {
+        "name": "Curva 3",
+        "index": 15,
+        "speedKmh": 75
+      },
+      {
+        "name": "Rindt",
+        "index": 69
+      }
+    ],
+    "pit": {
+      "entryM": -360,
+      "joinM": -170,
+      "laneEndM": 180,
+      "exitM": 400,
+      "side": 1,
+      "offsetM": 25
+    },
+    "official": "https://www.redbullring.com/en/events-tickets/formula-1/formula-1-circuit/",
+    "verifiedOn": "2026-10-27"
   },
   {
     "id": "silverstone",
@@ -244,147 +546,311 @@
       "side": 1,
       "offsetM": 29
     },
-    "official": "https://www.formula1.com/en/racing/2026/great-britain"
+    "official": "https://www.formula1.com/en/racing/2026/great-britain",
+    "verifiedOn": "2026-10-27"
   },
   {
-    "id": "red-bull-ring",
-    "source": "at-1969",
+    "id": "spa",
+    "source": "be-1925",
     "startIndex": 0,
-    "name": "Red Bull Ring",
-    "country": "Austria",
-    "km": 4.326,
-    "turns": 10,
+    "name": "Circuit de Spa-Francorchamps",
+    "country": "Belgio",
+    "km": 7.004,
+    "turns": 19,
     "direction": "Orario",
     "widthM": 13,
-    "barrierM": 6,
-    "type": "Potenza",
-    "color": "#ff7e67",
-    "setting": "Spielberg · Austria",
-    "description": "Tre allunghi e le frenate di curva 1, curva 3 e curva 4; la parte finale alterna appoggio e accelerazione. Lunghezza aggiornata alla misura FIA di 4,326 km.",
+    "barrierM": 8,
+    "type": "Alta velocità",
+    "color": "#65c9f0",
+    "setting": "Stavelot · Belgio",
+    "description": "La Source apre il giro; la sequenza Eau Rouge–Raidillon porta sul Kemmel. Seguono Pouhon, Blanchimont e la chicane Bus Stop.",
     "traits": [
-      "Tre allunghi",
-      "Tornante curva 3",
-      "Rindt"
+      "Eau Rouge–Raidillon",
+      "Kemmel",
+      "Pouhon"
     ],
     "sectorIndices": [
-      17,
-      48
+      31,
+      113
     ],
     "features": [
       {
-        "name": "Curva 3",
-        "index": 15,
-        "speedKmh": 75
+        "name": "Eau Rouge / Raidillon",
+        "index": 19
       },
       {
-        "name": "Rindt",
-        "index": 69
+        "name": "Pouhon",
+        "index": 85
+      },
+      {
+        "name": "Blanchimont",
+        "index": 130
       }
     ],
     "pit": {
-      "entryM": -360,
-      "joinM": -170,
-      "laneEndM": 180,
-      "exitM": 400,
+      "entryM": -370,
+      "joinM": -130,
+      "laneEndM": 100,
+      "exitM": 650,
       "side": 1,
       "offsetM": 25
     },
-    "official": "https://www.redbullring.com/en/events-tickets/formula-1/formula-1-circuit/"
+    "official": "https://www.formula1.com/en/racing/2026/belgium",
+    "verifiedOn": "2026-10-27"
   },
   {
-    "id": "cota",
-    "source": "us-2012",
+    "id": "hungaroring",
+    "source": "hu-1986",
     "startIndex": 0,
-    "name": "Circuit of The Americas",
-    "country": "Stati Uniti",
-    "km": 5.513,
-    "turns": 20,
-    "direction": "Antiorario",
-    "widthM": 15,
-    "barrierM": 8,
+    "name": "Hungaroring",
+    "country": "Ungheria",
+    "km": 4.381,
+    "turns": 14,
+    "direction": "Orario",
+    "widthM": 13,
+    "barrierM": 5,
     "type": "Tecnico",
-    "color": "#f4ce62",
-    "setting": "Austin · Stati Uniti",
-    "description": "Il tornante di curva 1 introduce le esse del primo settore. Il lungo rettilineo opposto termina con la frenata di curva 12 e il settore dello stadio.",
+    "color": "#e4af68",
+    "setting": "Mogyoród · Ungheria",
+    "description": "La frenata di curva 1 introduce il tratto verso curva 2; la chicane 6–7 e le esse centrali portano ai due tornanti conclusivi prima del rettilineo.",
     "traits": [
-      "Esse iniziali",
-      "Rettilineo opposto",
-      "Settore stadio"
+      "Chicane 6–7",
+      "Esse centrali",
+      "Tornante finale"
     ],
     "sectorIndices": [
-      61,
+      45,
       104
     ],
     "features": [
       {
         "name": "Curva 1",
-        "index": 6,
-        "speedKmh": 78
+        "index": 9,
+        "speedKmh": 80
       },
       {
-        "name": "Esse",
-        "index": 45
+        "name": "Chicane 6–7",
+        "index": 68,
+        "speedKmh": 90
       },
       {
-        "name": "Stadio",
-        "index": 141
+        "name": "Curva 14",
+        "index": 134,
+        "speedKmh": 85
       }
     ],
     "pit": {
-      "entryM": -340,
-      "joinM": -150,
-      "laneEndM": 190,
-      "exitM": 420,
+      "entryM": -350,
+      "joinM": -160,
+      "laneEndM": 160,
+      "exitM": 350,
       "side": 1,
-      "offsetM": 28
+      "offsetM": 25
     },
-    "official": "https://www.formula1.com/en/racing/2026/united-states"
+    "official": "https://www.formula1.com/en/racing/2026/hungary",
+    "verifiedOn": "2026-10-27"
   },
   {
-    "id": "bahrain",
-    "source": "bh-2002",
+    "id": "zandvoort",
+    "source": "nl-1948",
     "startIndex": 0,
-    "name": "Bahrain International Circuit",
-    "country": "Bahrein",
-    "km": 5.412,
-    "turns": 15,
+    "name": "Circuit Zandvoort",
+    "country": "Paesi Bassi",
+    "km": 4.259,
+    "turns": 14,
     "direction": "Orario",
-    "widthM": 15,
-    "barrierM": 8,
-    "type": "Frenata e trazione",
-    "color": "#e0b378",
-    "setting": "Sakhir · Bahrein",
-    "description": "Configurazione Grand Prix, distinta dalle varianti Outer ed Endurance. Curve lente, trazione e la frenata combinata di curva 10 scandiscono il giro.",
+    "widthM": 12.5,
+    "barrierM": 4,
+    "type": "Curve in appoggio",
+    "color": "#ffa05f",
+    "setting": "Zandvoort · Paesi Bassi",
+    "description": "Tarzan, il tornante Hugenholtz e le curve fra le dune rendono riconoscibile il giro. La curva finale Arie Luyendyk riconduce sul rettilineo; le sopraelevazioni sono rappresentate solo in pianta.",
     "traits": [
-      "Curva 1",
-      "Curva 10",
-      "Trazione"
+      "Tarzan",
+      "Hugenholtz",
+      "Arie Luyendyk"
     ],
     "sectorIndices": [
-      23,
-      67
+      33,
+      77
+    ],
+    "features": [
+      {
+        "name": "Tarzan",
+        "index": 7
+      },
+      {
+        "name": "Hugenholtz",
+        "index": 25,
+        "speedKmh": 85
+      },
+      {
+        "name": "Arie Luyendyk",
+        "index": 108
+      }
+    ],
+    "pit": {
+      "entryM": -310,
+      "joinM": -150,
+      "laneEndM": 150,
+      "exitM": 330,
+      "side": 1,
+      "offsetM": 24
+    },
+    "official": "https://www.formula1.com/en/racing/2026/netherlands",
+    "verifiedOn": "2026-10-27"
+  },
+  {
+    "id": "monza",
+    "source": "it-1922",
+    "startIndex": 0,
+    "name": "Monza National Autodrome",
+    "country": "Italia",
+    "km": 5.793,
+    "turns": 11,
+    "direction": "Orario",
+    "widthM": 12.5,
+    "barrierM": 7,
+    "type": "Alta velocità",
+    "color": "#8ee0a0",
+    "setting": "Monza · Italia",
+    "description": "Variante del Rettifilo, Curva Grande, Roggia, le due Lesmo e Ascari precedono la Curva Alboreto, storicamente Parabolica.",
+    "traits": [
+      "Rettifilo / Roggia",
+      "Ascari",
+      "Curva Alboreto"
+    ],
+    "sectorIndices": [
+      44,
+      83
+    ],
+    "features": [
+      {
+        "name": "Rettifilo",
+        "index": 8,
+        "speedKmh": 75
+      },
+      {
+        "name": "Ascari",
+        "index": 80
+      },
+      {
+        "name": "Alboreto / Parabolica",
+        "index": 106
+      }
+    ],
+    "pit": {
+      "entryM": -440,
+      "joinM": -220,
+      "laneEndM": 260,
+      "exitM": 520,
+      "side": 1,
+      "offsetM": 26
+    },
+    "official": "https://www.formula1.com/en/racing/2026/italy",
+    "verifiedOn": "2026-10-27"
+  },
+  {
+    "id": "madring",
+    "source": "es-2026",
+    "startIndex": 0,
+    "name": "Madring",
+    "country": "Madrid, Spagna",
+    "km": 5.414,
+    "turns": 22,
+    "direction": "Orario",
+    "widthM": 14,
+    "barrierM": 3,
+    "type": "Semipermanente",
+    "color": "#d7a0ef",
+    "setting": "Madrid · Spagna",
+    "description": "Ricostruzione approssimata del progetto Madring nell’area IFEMA–Valdebebas, con la curva La Monumental. La sagoma disponibile è preliminare: non è una replica certificata del layout definitivo 2026.",
+    "traits": [
+      "IFEMA / Valdebebas",
+      "La Monumental",
+      "Sagoma preliminare"
+    ],
+    "sectorIndices": [
+      30,
+      78
+    ],
+    "features": [
+      {
+        "name": "Hortaleza",
+        "index": 18
+      },
+      {
+        "name": "La Monumental",
+        "index": 59
+      },
+      {
+        "name": "IFEMA",
+        "index": 101
+      }
+    ],
+    "pit": {
+      "entryM": -330,
+      "joinM": -160,
+      "laneEndM": 180,
+      "exitM": 370,
+      "side": 1,
+      "offsetM": 27
+    },
+    "official": "https://www.formula1.com/en/racing/2026/spain",
+    "layoutStatus": "preliminary",
+    "accuracy": "Ricostruzione 2D approssimata del progetto preliminare; conformità al layout definitivo e omologazione FIA non verificate. Lunghezza F1 pubblicata: 5,414 km; 22 curve. Box, larghezze e settori adattati.",
+    "verifiedOn": "2026-10-27"
+  },
+  {
+    "id": "baku",
+    "source": "az-2016",
+    "startIndex": 0,
+    "name": "Baku City Circuit",
+    "country": "Azerbaigian",
+    "km": 6.003,
+    "turns": 20,
+    "direction": "Antiorario",
+    "widthM": 12,
+    "barrierM": 2,
+    "type": "Urbano veloce",
+    "color": "#76c4e8",
+    "setting": "Baku · Azerbaigian",
+    "description": "Le curve ad angolo retto sul lungomare conducono al passaggio stretto del castello. Il tratto in discesa e le pieghe finali riportano al lunghissimo rettilineo di partenza.",
+    "traits": [
+      "Castello",
+      "Città vecchia",
+      "Rettilineo sul mare"
+    ],
+    "sectorIndices": [
+      28,
+      68
     ],
     "features": [
       {
         "name": "Curva 1",
         "index": 4,
-        "speedKmh": 75
+        "speedKmh": 80
       },
       {
-        "name": "Curva 10",
-        "index": 58,
-        "speedKmh": 70
+        "name": "Castello",
+        "index": 41,
+        "speedKmh": 65
+      },
+      {
+        "name": "Curva 16",
+        "index": 69
       }
     ],
     "pit": {
-      "entryM": -400,
-      "joinM": -180,
-      "laneEndM": 260,
-      "exitM": 500,
-      "side": 1,
-      "offsetM": 28
+      "entryM": -350,
+      "joinM": -170,
+      "laneEndM": 210,
+      "exitM": 440,
+      "side": -1,
+      "offsetM": 23
     },
-    "official": "https://www.formula1.com/en/racing/2025/bahrain"
+    "official": "https://www.formula1.com/en/racing/2026/azerbaijan",
+    "verifiedOn": "2026-10-27"
   },
   {
     "id": "singapore",
@@ -433,55 +899,308 @@
       "side": -1,
       "offsetM": 24
     },
-    "official": "https://www.formula1.com/en/racing/2026/singapore"
+    "official": "https://www.formula1.com/en/racing/2026/singapore",
+    "verifiedOn": "2026-10-27"
   },
   {
-    "id": "monza",
-    "source": "it-1922",
+    "id": "cota",
+    "source": "us-2012",
     "startIndex": 0,
-    "name": "Autodromo Nazionale Monza",
-    "country": "Italia",
-    "km": 5.793,
-    "turns": 11,
-    "direction": "Orario",
-    "widthM": 12.5,
-    "barrierM": 7,
-    "type": "Alta velocità",
-    "color": "#8ee0a0",
-    "setting": "Monza · Italia",
-    "description": "Variante del Rettifilo, Curva Grande, Roggia, le due Lesmo e Ascari precedono la Curva Alboreto, storicamente Parabolica.",
+    "name": "Circuit of The Americas",
+    "country": "Stati Uniti",
+    "km": 5.513,
+    "turns": 20,
+    "direction": "Antiorario",
+    "widthM": 15,
+    "barrierM": 8,
+    "type": "Tecnico",
+    "color": "#f4ce62",
+    "setting": "Austin · Stati Uniti",
+    "description": "Il tornante di curva 1 introduce le esse del primo settore. Il lungo rettilineo opposto termina con la frenata di curva 12 e il settore dello stadio.",
     "traits": [
-      "Rettifilo / Roggia",
-      "Ascari",
-      "Curva Alboreto"
+      "Esse iniziali",
+      "Rettilineo opposto",
+      "Settore stadio"
     ],
     "sectorIndices": [
-      44,
-      83
+      61,
+      104
     ],
     "features": [
       {
-        "name": "Rettifilo",
-        "index": 8,
-        "speedKmh": 75
+        "name": "Curva 1",
+        "index": 6,
+        "speedKmh": 78
       },
       {
-        "name": "Ascari",
-        "index": 80
+        "name": "Esse",
+        "index": 45
       },
       {
-        "name": "Alboreto / Parabolica",
-        "index": 106
+        "name": "Stadio",
+        "index": 141
       }
     ],
     "pit": {
-      "entryM": -440,
-      "joinM": -220,
-      "laneEndM": 260,
-      "exitM": 520,
+      "entryM": -340,
+      "joinM": -150,
+      "laneEndM": 190,
+      "exitM": 420,
+      "side": 1,
+      "offsetM": 28
+    },
+    "official": "https://www.formula1.com/en/racing/2026/united-states",
+    "verifiedOn": "2026-10-27"
+  },
+  {
+    "id": "mexico",
+    "source": "mx-1962",
+    "startIndex": 0,
+    "name": "Autódromo Hermanos Rodríguez",
+    "country": "Messico",
+    "km": 4.304,
+    "turns": 17,
+    "direction": "Orario",
+    "widthM": 14,
+    "barrierM": 5,
+    "type": "Tecnico",
+    "color": "#83ce8d",
+    "setting": "Città del Messico · Messico",
+    "description": "Il rettilineo principale termina nella chicane 1–3. Le esse centrali precedono il Foro Sol; il passaggio nello stadio sostituisce la vecchia Peraltada completa.",
+    "traits": [
+      "Chicane 1–3",
+      "Esse",
+      "Foro Sol"
+    ],
+    "sectorIndices": [
+      34,
+      70
+    ],
+    "features": [
+      {
+        "name": "Chicane 1–3",
+        "index": 15,
+        "speedKmh": 85
+      },
+      {
+        "name": "Esse",
+        "index": 58
+      },
+      {
+        "name": "Foro Sol",
+        "index": 84,
+        "speedKmh": 65
+      }
+    ],
+    "pit": {
+      "entryM": -380,
+      "joinM": -170,
+      "laneEndM": 240,
+      "exitM": 480,
       "side": 1,
       "offsetM": 26
     },
-    "official": "https://www.formula1.com/en/racing/2026/italy"
+    "official": "https://www.formula1.com/en/racing/2026/mexico",
+    "verifiedOn": "2026-10-27"
+  },
+  {
+    "id": "interlagos",
+    "source": "br-1940",
+    "startIndex": 0,
+    "name": "Autódromo José Carlos Pace (Interlagos)",
+    "country": "Brasile",
+    "km": 4.309,
+    "turns": 15,
+    "direction": "Antiorario",
+    "widthM": 14,
+    "barrierM": 6,
+    "type": "Misto",
+    "color": "#95ce5e",
+    "setting": "São Paulo · Brasile",
+    "description": "La S do Senna e la Curva do Sol lanciano sul rettilineo opposto. Seguono Descida do Lago, Miolo e Junção, prima della lunga risalita verso il traguardo. Dislivelli adattati in 2D.",
+    "traits": [
+      "S do Senna",
+      "Miolo",
+      "Junção"
+    ],
+    "sectorIndices": [
+      34,
+      137
+    ],
+    "features": [
+      {
+        "name": "S do Senna",
+        "index": 11
+      },
+      {
+        "name": "Miolo",
+        "index": 99,
+        "speedKmh": 80
+      },
+      {
+        "name": "Junção",
+        "index": 153,
+        "speedKmh": 85
+      }
+    ],
+    "pit": {
+      "entryM": -390,
+      "joinM": -180,
+      "laneEndM": 180,
+      "exitM": 400,
+      "side": -1,
+      "offsetM": 27
+    },
+    "official": "https://www.formula1.com/en/racing/2026/brazil",
+    "verifiedOn": "2026-10-27"
+  },
+  {
+    "id": "las-vegas",
+    "source": "us-2023",
+    "startIndex": 0,
+    "name": "Las Vegas Strip Circuit",
+    "country": "Stati Uniti",
+    "km": 6.201,
+    "turns": 17,
+    "direction": "Antiorario",
+    "widthM": 14,
+    "barrierM": 2.5,
+    "type": "Urbano notturno",
+    "color": "#e0b9f6",
+    "setting": "Las Vegas · Stati Uniti",
+    "description": "Le curve intorno alla Sphere conducono al tratto sulla Strip. Il lungo rettilineo e la frenata della chicane finale riportano verso i box e il tornante iniziale.",
+    "traits": [
+      "Sphere",
+      "Las Vegas Strip",
+      "Chicane finale"
+    ],
+    "sectorIndices": [
+      24,
+      76
+    ],
+    "features": [
+      {
+        "name": "Curva 1",
+        "index": 7,
+        "speedKmh": 70
+      },
+      {
+        "name": "Sphere",
+        "index": 35
+      },
+      {
+        "name": "Strip",
+        "index": 76
+      }
+    ],
+    "pit": {
+      "entryM": -300,
+      "joinM": -150,
+      "laneEndM": 130,
+      "exitM": 300,
+      "side": -1,
+      "offsetM": 26
+    },
+    "official": "https://www.formula1.com/en/racing/2026/las-vegas",
+    "verifiedOn": "2026-10-27"
+  },
+  {
+    "id": "lusail",
+    "source": "qa-2004",
+    "startIndex": 0,
+    "name": "Lusail International Circuit",
+    "country": "Qatar",
+    "km": 5.419,
+    "turns": 16,
+    "direction": "Orario",
+    "widthM": 14,
+    "barrierM": 7,
+    "type": "Curve veloci",
+    "color": "#d39aaa",
+    "setting": "Lusail · Qatar",
+    "description": "Il rettilineo principale precede una sequenza continua di curve medie e veloci. Le tre destre 12–13–14 sono il tratto distintivo; curva 16 riporta alla partenza.",
+    "traits": [
+      "Curve 12–13–14",
+      "Appoggio continuo",
+      "Curva 16"
+    ],
+    "sectorIndices": [
+      38,
+      76
+    ],
+    "features": [
+      {
+        "name": "Curva 6",
+        "index": 39
+      },
+      {
+        "name": "Curve 12–13–14",
+        "index": 87
+      },
+      {
+        "name": "Curva 16",
+        "index": 103
+      }
+    ],
+    "pit": {
+      "entryM": -380,
+      "joinM": -180,
+      "laneEndM": 220,
+      "exitM": 430,
+      "side": 1,
+      "offsetM": 27
+    },
+    "official": "https://www.formula1.com/en/racing/2026/qatar",
+    "verifiedOn": "2026-10-27"
+  },
+  {
+    "id": "yas-marina",
+    "source": "ae-2009",
+    "startIndex": 0,
+    "name": "Yas Marina Circuit",
+    "country": "Abu Dhabi, Emirati Arabi Uniti",
+    "km": 5.281,
+    "turns": 16,
+    "direction": "Antiorario",
+    "widthM": 14,
+    "barrierM": 5,
+    "type": "Misto",
+    "color": "#78cfd9",
+    "setting": "Abu Dhabi · Emirati Arabi Uniti",
+    "description": "Configurazione dal 2021 a 16 curve: tornante 5 senza la vecchia chicane, due lunghi rettilinei, curva 9 ampia e passaggio sotto l’hotel. Box adattati in superficie al motore 2D.",
+    "traits": [
+      "Tornante 5",
+      "Curva 9",
+      "Hotel"
+    ],
+    "sectorIndices": [
+      32,
+      63
+    ],
+    "features": [
+      {
+        "name": "Tornante 5",
+        "index": 33,
+        "speedKmh": 70
+      },
+      {
+        "name": "Curva 9",
+        "index": 76
+      },
+      {
+        "name": "Hotel",
+        "index": 105
+      }
+    ],
+    "pit": {
+      "entryM": -370,
+      "joinM": -170,
+      "laneEndM": 170,
+      "exitM": 350,
+      "side": -1,
+      "offsetM": 26
+    },
+    "official": "https://www.formula1.com/en/racing/2026/united-arab-emirates",
+    "verifiedOn": "2026-10-27"
   }
 ]

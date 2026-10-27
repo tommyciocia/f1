@@ -1,7 +1,7 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict');
 const {game,checkSeats}=require('./helpers/game.cjs');
-const expected=[['barcelona',4.657,14],['suzuka',5.807,18],['spa',7.004,19],['monaco',3.337,19],['silverstone',5.891,18],['red-bull-ring',4.326,10],['cota',5.513,20],['bahrain',5.412,15],['singapore',4.927,19],['monza',5.793,11]];
+const expected=[['albert-park',5.278,14],['shanghai',5.451,16],['suzuka',5.807,18],['bahrain',5.412,15],['jeddah',6.174,27],['miami',5.412,19],['montreal',4.361,14],['monaco',3.337,19],['barcelona',4.657,14],['red-bull-ring',4.326,10],['silverstone',5.891,18],['spa',7.004,19],['hungaroring',4.381,14],['zandvoort',4.259,14],['monza',5.793,11],['madring',5.414,22],['baku',6.003,20],['singapore',4.927,19],['cota',5.513,20],['mexico',4.304,17],['interlagos',4.309,15],['las-vegas',6.201,17],['lusail',5.419,16],['yas-marina',5.281,16]];
 function intersections(points,closed=true){
  let count=0;const n=points.length,limit=closed?n:n-1;
  for(let i=0;i<limit;i++)for(let j=i+2;j<limit;j++){
@@ -15,9 +15,9 @@ function intersections(points,closed=true){
  return count;
 }
 
-test('registro: esattamente i 10 circuiti reali, dati verificati e geometrie indipendenti',()=>{
+test('registro: esattamente i 24 circuiti richiesti, dati verificati e geometrie indipendenti',()=>{
  const g=game(),data=g.run('CIRCUIT_DATA.map(c=>({id:c.id,km:c.lengthKm,turns:c.turns,country:c.country,source:c.geometrySource,points:JSON.stringify(c.points),accuracy:c.accuracy}))');
- assert.deepEqual(Array.from(data,x=>x.id),expected.map(x=>x[0]));assert.equal(new Set(data.map(c=>c.points)).size,10);
+ assert.deepEqual(Array.from(data,x=>x.id),expected.map(x=>x[0]));assert.equal(new Set(data.map(c=>c.points)).size,24);
  data.forEach((c,i)=>{assert.ok(Math.abs(c.km-expected[i][1])<1e-9);assert.equal(c.turns,expected[i][2]);assert.ok(c.country&&c.source.includes('8094e957')&&c.accuracy.includes('approssimata'));});
  assert.equal(g.run("CIRCUIT_DATA.find(c=>c.id==='singapore').reverse"),true);
 });
@@ -64,12 +64,12 @@ test('sorpassi: spazio sui rettilinei larghi, rientro in traiettoria e prudenza 
 for(const [id] of expected){
  test(id+': geometria, direzione, 23 caselle, 12 box, settori e mappa',()=>{
   const g=game({circuitId:id});checkSeats(g);
-  const info=g.run(`(()=>{render();let area=0;T.forEach((p,i)=>{const q=T[(i+1)%N];area+=p.x*q.y-q.x*p.y;});return{samples:T.map(p=>({x:p.x,y:p.y})),pit:activeCircuit.pitData.samples.map(p=>({x:p.x,y:p.y})),area,positions:new Set(cars.map(c=>c.x+':'+c.y)).size,grid:cars.every((c,k)=>{const q=gridSlot(k);return c.x===q.x&&c.y===q.y&&Math.abs(c.d)+20<TW/2;}),minGridGap:Math.min(...cars.flatMap((c,i)=>cars.slice(i+1).map(o=>Math.hypot(c.x-o.x,c.y-o.y)))),
+  const info=g.run(`(()=>{render();let area=0;T.forEach((p,i)=>{const q=T[(i+1)%N];area+=p.x*q.y-q.x*p.y;});return{samples:T.map(p=>({x:p.x,y:p.y})),pit:activeCircuit.pitData.samples.map(p=>({x:p.x,y:p.y})),area,positions:new Set(cars.map(c=>c.x+':'+c.y)).size,grid:cars.every((c,k)=>{const q=gridSlot(k);return c.x===q.x&&c.y===q.y&&c.a===q.ang&&Math.abs(c.d)+20<TW/2;}),minGridGap:Math.min(...cars.flatMap((c,i)=>cars.slice(i+1).map(o=>Math.hypot(c.x-o.x,c.y-o.y)))),
    finite:T.every(p=>[p.x,p.y,p.len,p.vc].every(Number.isFinite)&&p.len>0),sectors:SECTOR_MARKS.length===2&&SECTOR_MARKS[0]>0&&SECTOR_MARKS[0]<SECTOR_MARKS[1]&&SECTOR_MARKS[1]<L,
    join:Math.hypot(pitPoint(PIT.exitEnd).x-pointAtDistance(PIT.exitEnd,activeCircuit,true).x,pitPoint(PIT.exitEnd).y-pointAtDistance(PIT.exitEnd,activeCircuit,true).y),roads:cars.every(c=>c.pit.route.length>0),map:circuitMap(activeCircuit,true).includes('<svg')};})()`);
-  assert.ok(info.grid&&info.finite&&info.sectors&&info.roads&&info.map);assert.equal(info.positions,23);assert.ok(info.minGridGap>75);assert.ok(info.join<1e-7);
+  assert.ok(info.grid&&info.finite&&info.sectors&&info.roads&&info.map,JSON.stringify({...info,samples:undefined,pit:undefined}));assert.equal(info.positions,23);assert.ok(info.minGridGap>75);assert.ok(info.join<1e-7);
   assert.equal(intersections(info.samples),id==='suzuka'?1:0,'Incroci del centro pista');assert.equal(intersections(info.pit,false),0,'La corsia box si incrocia');
-  if(id!=='suzuka')assert.equal(info.area>0,!['cota','singapore'].includes(id),'Senso di marcia');
+  if(id!=='suzuka')assert.equal(info.area>0,!['jeddah','miami','baku','singapore','cota','interlagos','las-vegas','yas-marina'].includes(id),'Senso di marcia');
  });
 
  test(id+': collisioni tra vetture, barriere e rilevamento manuale di giri e settori',()=>{
@@ -82,7 +82,7 @@ for(const [id] of expected){
    for(let k=1;k<=N*2;k++){const p=T[k%N];Object.assign(pl,{x:p.x,y:p.y,a:p.ang,vx:0,vy:0,inp:{st:0,thr:0,brk:0,rev:0}});raceTime+=.05;stepCar(pl,.01);}
    return{gap,wallDistance,limit,manualLaps:pl.qLaps,best:pl.best,expected:N*.05,sectors:pl.bestSecs.slice()};
   })()`);
-  assert.ok(result.gap>=48-1e-7);assert.ok(result.wallDistance<=result.limit+3,JSON.stringify(result));assert.equal(result.manualLaps,1);assert.ok(Math.abs(result.best-result.expected)<1e-6);assert.ok(result.sectors.every(t=>t>0&&t<1e8));
+  assert.ok(result.gap>=48-1e-7);assert.ok(result.wallDistance<=result.limit+3,JSON.stringify(result));assert.equal(result.manualLaps,1);assert.ok(Math.abs(result.best-result.expected)<1e-6);assert.ok(result.sectors.every(t=>t>0&&t<1e8));assert.ok(Math.abs(result.sectors.reduce((a,b)=>a+b,0)-result.best)<1e-6);
  });
 
  test(id+': Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale',()=>{

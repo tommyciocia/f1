@@ -4,6 +4,7 @@ const fs=require('node:fs'),path=require('node:path');
 const root=path.resolve(__dirname,'..'),folder=path.join(root,'assets/circuits');
 const defs=JSON.parse(fs.readFileSync(path.join(folder,'circuits.json'),'utf8'));
 const manifest=JSON.parse(fs.readFileSync(path.join(folder,'source/manifest.json'),'utf8'));
+if(new Set(defs.map(c=>c.id)).size!==defs.length||new Set(defs.map(c=>c.source)).size!==defs.length)throw Error('Circuiti duplicati nel registro');
 const circuits=defs.map(def=>{
  const json=JSON.parse(fs.readFileSync(path.join(folder,'source',def.source+'.geojson'),'utf8'));
  const raw=(json.features?.[0]||json).geometry.coordinates;
@@ -14,7 +15,7 @@ const circuits=defs.map(def=>{
  const points=coords.map((_,i)=>project(coords[(def.startIndex+(def.reverse?-i:i)+coords.length)%coords.length]));
  return{...def,points,sectorAnchors:def.sectorIndices.map(i=>project(coords[i])),features:def.features.map(f=>({...f,point:project(coords[f.index])})),
   tunnelAnchors:def.tunnelIndices?.map(i=>project(coords[i])),sourceCommit:manifest.commit,
-  geometrySource:manifest.files.find(x=>x.id===def.source).url,accuracy:'Ricostruzione 2D approssimata da dati geografici; box e larghezze adattati al gioco.'};
+  geometrySource:manifest.files.find(x=>x.id===def.source).url,accuracy:def.accuracy||'Ricostruzione 2D approssimata da dati geografici; box, larghezze e settori adattati al gioco.'};
 });
 fs.writeFileSync(path.join(root,'js/circuitData.js'),"'use strict';\n/* Generato da scripts/build-circuits.cjs. Dati geometrici MIT: assets/circuits/LICENSE-data.txt. */\nconst CIRCUITS=[\n"+circuits.map(c=>JSON.stringify(c)).join(',\n')+'\n];\n');
 console.log('Registro offline generato: '+circuits.length+' circuiti reali.');

@@ -30,23 +30,26 @@ function circuitMap(c,large=false){
 }
 function renderCircuits(){
  updateCircuitLabels();
- $('circuitGrid').innerHTML=CIRCUIT_DATA.map((c,i)=>'<button type="button" class="circuit-card" data-circuit="'+c.id+'" style="--circuit-color:'+c.color+'" aria-controls="circuitPreview" aria-label="Anteprima '+esc(c.name)+'"><span class="circuit-card-top"><span>'+String(i+1).padStart(2,'0')+' / '+c.type+'</span><span class="circuit-card-status"></span></span>'+circuitMap(c)+'<strong>'+esc(c.name)+'</strong><span class="circuit-card-meta">'+circuitKm(c)+' km <i>·</i> '+c.turns+' curve</span><small>'+esc(c.country)+' <span>ANTEPRIMA ↗</span></small></button>').join('');
+ $('circuitGrid').innerHTML=CIRCUIT_DATA.map((c,i)=>'<article class="circuit-card" data-circuit-card="'+c.id+'" style="--circuit-color:'+c.color+'"><span class="circuit-card-top"><span>'+String(i+1).padStart(2,'0')+' / '+c.type+'</span><span class="circuit-card-status"></span></span>'+circuitMap(c)+'<strong>'+esc(c.name)+'</strong><span class="circuit-card-meta">'+circuitKm(c)+' km <i>·</i> '+c.turns+' curve</span><small>'+esc(c.country)+'</small>'+(c.layoutStatus==='preliminary'?'<small class="circuit-preliminary">SAGOMA PRELIMINARE</small>':'')+'<div class="circuit-card-actions"><button type="button" data-circuit="'+c.id+'" aria-controls="circuitPreview" aria-label="Dettagli '+esc(c.name)+'">DETTAGLI ↗</button><button type="button" class="circuit-card-select" data-select-circuit="'+c.id+'" aria-label="Seleziona '+esc(c.name)+'">SELEZIONA CIRCUITO</button></div></article>').join('');
  previewCircuit(activeCircuit.id);
 }
 function previewCircuit(id){
  const c=CIRCUIT_DATA.find(c=>c.id===id);if(!c)return;
- previewCircuitId=c.id;$('circuitPreview').innerHTML=circuitMap(c,true)+'<div class="circuit-map-legend"><span>━ Tracciato</span><span>━ Box</span><span>▦ Partenza / arrivo</span></div>';
+ previewCircuitId=c.id;$('circuitPreview').innerHTML=circuitMap(c,true)+'<div class="circuit-map-legend"><span>━ Tracciato</span><span>━ Box</span><span>▦ S3 / partenza / arrivo</span></div>';
  $('circuitLocation').textContent=c.country.toUpperCase()+' / '+c.type;
  $('circuitName').textContent=c.name;$('circuitDescription').textContent=c.description;
+ $('circuitAccuracy').textContent=c.accuracy;
  $('circuitStats').innerHTML='<div><dt>LUNGHEZZA</dt><dd>'+circuitKm(c)+' <small>km</small></dd></div><div><dt>CURVE</dt><dd>'+c.turns+'</dd></div><div><dt>DIREZIONE</dt><dd class="circuit-direction">'+esc(c.direction)+'</dd></div>';
  $('circuitTraits').innerHTML=c.traits.map(t=>'<span>'+esc(t)+'</span>').join('');
  $('circuitPreview').style.setProperty('--circuit-color',c.color);
  const selected=c.id===activeCircuit.id;$('selectCircuitBtn').disabled=selected;
  $('selectCircuitBtn').textContent=selected?'✓ CIRCUITO SELEZIONATO':'SELEZIONA CIRCUITO';
- document.querySelectorAll('[data-circuit]').forEach(button=>{
-  const current=button.dataset.circuit===activeCircuit.id,preview=button.dataset.circuit===id;
-  button.classList.toggle('selected',current);button.classList.toggle('previewing',preview);button.setAttribute('aria-pressed',String(preview));
-  const badge=button.querySelector('.circuit-card-status');if(badge)badge.textContent=current?'✓ SELEZIONATO':preview?'ANTEPRIMA':'';
+ document.querySelectorAll('[data-circuit-card]').forEach(card=>{
+  const current=card.dataset.circuitCard===activeCircuit.id,preview=card.dataset.circuitCard===id;
+  card.classList.toggle('selected',current);card.classList.toggle('previewing',preview);
+  card.querySelector('[data-circuit]').setAttribute('aria-pressed',String(preview));
+  const select=card.querySelector('[data-select-circuit]');select.disabled=current;select.textContent=current?'✓ SELEZIONATO':'SELEZIONA CIRCUITO';
+  const badge=card.querySelector('.circuit-card-status');if(badge)badge.textContent=current?'✓ SELEZIONATO':preview?'ANTEPRIMA':'';
  });
 }
 updateCircuitLabels();

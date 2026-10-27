@@ -69,19 +69,23 @@ nel browser con il controller collegato, usando il pannello di diagnostica.
 
 ## Circuiti
 
-La Home include **CIRCUITI**, con esattamente i dieci circuiti reali richiesti:
-Barcelona-Catalunya, Suzuka, Spa-Francorchamps, Monaco, Silverstone, Red Bull Ring,
-Circuit of The Americas, Bahrain, Marina Bay e Monza. Il catalogo inventato è stato
-sostituito, riutilizzando il motore di movimento, qualifiche, gare e pneumatici.
+La Home include **CIRCUITI**, con esattamente le 24 sedi dell’elenco 2026 iniziale:
+Albert Park, Shanghai, Suzuka, Bahrain, Jeddah, Miami, Montréal, Monaco,
+Barcelona-Catalunya, Red Bull Ring, Silverstone, Spa-Francorchamps, Hungaroring,
+Zandvoort, Monza, Madring, Baku, Marina Bay, Circuit of The Americas, Città del
+Messico, Interlagos, Las Vegas, Lusail e Yas Marina. Le dieci piste ufficiali
+preesistenti sono conservate; sono state aggiunte le 14 mancanti.
 
-Una scheda apre la mappa ingrandita; **SELEZIONA CIRCUITO** applica e salva la scelta
+Ogni scheda ha **DETTAGLI** per la mappa ingrandita e **SELEZIONA CIRCUITO** per salvare la scelta
 nel browser. La selezione resta anche dopo il ritorno alla Home e la riapertura
 del gioco. Il cambio di pista azzera una vecchia griglia di qualifica e può avvenire
 solo dalla Home. I vecchi ID non più presenti vengono migrati a Barcelona.
 
 Le mappe sono **ricostruzioni 2D approssimate da coordinate geografiche**. Nomi,
 lunghezze e curve sono verificati sulle fonti ufficiali; box, larghezze e settori
-sono adattati al gioco. Suzuka dispone di due livelli per rendering, recuperi e
+sono adattati al gioco. **Madring usa una sagoma preliminare**, scalata ai 5,414 km
+pubblicati da F1, e non è presentato come replica del layout definitivo omologato.
+Suzuka dispone di due livelli per rendering, recuperi e
 collisioni; Monaco conserva tornante e tunnel. Anteprime, minimappa e gara usano
 la medesima geometria. Le anteprime possono ruotarla per renderla leggibile.
 

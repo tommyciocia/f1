@@ -34,7 +34,7 @@
 <div id="menu" class="panel">
   <h1>F1 <em>Racing</em> Simulator</h1>
   <button data-act="play" class="main">GIOCA</button>
-  <button data-go="circuits" class="home-circuits">CIRCUITI <span>10 tracciati · scegli la tua sfida →</span></button>
+  <button data-go="circuits" class="home-circuits">CIRCUITI <span>24 tracciati F1 2026 · scegli la tua sfida →</span></button>
   <p id="homeCircuit" class="home-circuit"></p>
   <button data-go="cars">SELEZIONA AUTO</button>
   <button data-go="paddock">GESTISCI PADDOCK</button>
@@ -44,12 +44,12 @@
 </div>
 
 <section id="circuits" class="panel hidden" aria-labelledby="circuitsTitle">
-  <header class="circuits-header"><div><p class="circuit-eyebrow">F1 RACING SIMULATOR / CALENDARIO</p><h2 id="circuitsTitle">CIRCUITI<span>10</span></h2></div><button data-go="menu" class="circuit-back">← HOME</button></header>
+  <header class="circuits-header"><div><p class="circuit-eyebrow">F1 RACING SIMULATOR / SELEZIONE 2026</p><h2 id="circuitsTitle">CIRCUITI<span>24</span></h2></div><button data-go="menu" class="circuit-back">← HOME</button></header>
   <p id="circuitCurrent" class="circuit-current" role="status" aria-live="polite"></p>
-  <p class="circuit-accuracy">Configurazioni F1 · Ricostruzioni 2D da mappe geografiche. Box, larghezze e settori adattati al gioco.</p>
-  <div class="circuit-hero"><div id="circuitPreview" class="circuit-preview"></div><div class="circuit-detail"><p id="circuitLocation" class="circuit-eyebrow"></p><h3 id="circuitName"></h3><p id="circuitDescription"></p><dl id="circuitStats" class="circuit-stats"></dl><div id="circuitTraits" class="circuit-traits"></div><button data-act="selectcircuit" id="selectCircuitBtn" class="main">SELEZIONA CIRCUITO</button></div></div>
+  <p class="circuit-accuracy">24 sedi dell’elenco 2026 iniziale · Ricostruzioni 2D approssimate. Box, larghezze e settori adattati al gioco; Madring usa una sagoma preliminare.</p>
+  <div class="circuit-hero"><div id="circuitPreview" class="circuit-preview"></div><div class="circuit-detail"><p id="circuitLocation" class="circuit-eyebrow"></p><h3 id="circuitName"></h3><p id="circuitDescription"></p><p id="circuitAccuracy" class="circuit-accuracy"></p><dl id="circuitStats" class="circuit-stats"></dl><div id="circuitTraits" class="circuit-traits"></div><button data-act="selectcircuit" id="selectCircuitBtn" class="main">SELEZIONA CIRCUITO</button></div></div>
   <div class="circuit-grid-heading"><h3>SCEGLI IL TUO TRACCIATO</h3><span>Qualifiche e gara · 23 vetture</span></div>
-  <div id="circuitGrid" class="circuit-grid" aria-label="I 10 circuiti disponibili"></div>
+  <div id="circuitGrid" class="circuit-grid" aria-label="I 24 circuiti disponibili"></div>
 </section>
 
 <div id="cars" class="panel">

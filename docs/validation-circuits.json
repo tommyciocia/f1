@@ -1,56 +1,38 @@
 {
-  "date": "2026-10-26",
-  "automatedTests": 135,
-  "passed": 135,
+  "date": "2026-10-27",
+  "automatedTests": 191,
+  "passed": 191,
   "failed": 0,
   "testRuns": [
     {
-      "source": "f1-real-final-a.txt",
-      "tests": 12,
-      "passed": 12,
+      "tests": "tests/circuits.cjs",
+      "count": 101,
+      "passed": 101,
       "failed": 0
     },
     {
-      "source": "f1-real-final-b.txt",
-      "tests": 12,
-      "passed": 12,
-      "failed": 0
-    },
-    {
-      "source": "f1-real-final-c.txt",
-      "tests": 16,
-      "passed": 16,
-      "failed": 0
-    },
-    {
-      "source": "f1-real-final-d.txt",
-      "tests": 5,
-      "passed": 5,
-      "failed": 0
-    },
-    {
-      "source": "f1-real-regression-final2.txt",
-      "tests": 90,
+      "tests": "regressioni (7 file)",
+      "count": 90,
       "passed": 90,
       "failed": 0
     }
   ],
   "browserScriptsPassed": [
+    "tests/browser-circuits.cjs",
     "tests/browser.cjs",
     "tests/browser-controls.cjs",
-    "tests/browser-tyres.cjs",
-    "tests/browser-circuits.cjs"
+    "tests/browser-tyres.cjs"
   ],
   "browserJavaScriptErrors": 0,
-  "browserMeanUpdateAndRenderMs": 1.52,
+  "browserMeanUpdateAndRenderMs": 1.08,
   "settings": {
-    "qualifyingMinutes": [
+    "qualiMinutes": [
       4,
       4,
       4
     ],
     "raceLaps": 2,
-    "raceCompound": "MEDIUM",
+    "raceStartCompound": "MEDIUM",
     "racePlayerStats": [
       0.8,
       0.8,
@@ -61,28 +43,40 @@
     "physicsStepSeconds": 0.05,
     "playerDrivenByAIOnlyInSimulationTests": true
   },
-  "tests": "tests/circuits.cjs",
+  "limitations": [
+    "Tutte le geometrie, larghezze, box e settori sono ricostruzioni 2D adattate, non rilievi FIA.",
+    "Madring: sagoma preliminare; conformità al layout definitivo e certificazione di omologazione non verificate.",
+    "La prova dei giri e settori nel ramo manuale posiziona la vettura lungo i campioni: non è una guida umana completa.",
+    "Durate complete 18/15/12 minuti e controller fisico non ripetuti su tutte le piste."
+  ],
   "circuits": [
     {
-      "id": "barcelona",
-      "name": "Circuit de Barcelona-Catalunya",
-      "lengthKm": 4.657,
+      "id": "albert-park",
+      "name": "Albert Park Grand Prix Circuit",
+      "lengthKm": 5.278,
       "turns": 14,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
       "qualifiche": [
         {
           "participants": 23,
           "timed": 23,
-          "time": 310.0000000000362
+          "time": 291.65000000003204
         },
         {
           "participants": 17,
           "timed": 17,
-          "time": 310.0000000000362
+          "time": 287.70000000003114
         },
         {
           "participants": 10,
           "timed": 10,
-          "time": 310.0000000000362
+          "time": 279.80000000002934
         }
       ],
       "gara": {
@@ -90,8 +84,8 @@
         "entered": true,
         "initialLap": 0,
         "pitCrossings": 1,
-        "maxPitSpeed": 79.8720747565315,
-        "maxPitStep": 12.545237034423991,
+        "maxPitSpeed": 79.78423148660887,
+        "maxPitStep": 12.466272078335566,
         "finite": true,
         "inside": true,
         "autoStops": 0,
@@ -106,11 +100,82 @@
         "finished": 23,
         "stops": 0,
         "compound": "MEDIUM",
-        "condition": 0.7277292262121505,
+        "condition": 0.7218992264471125,
         "dsq": false,
-        "best": 107.74999999999588,
+        "best": 110.80000000002234,
         "pending": [],
-        "persisted": "barcelona"
+        "persisted": "albert-park"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
+      }
+    },
+    {
+      "id": "shanghai",
+      "name": "Shanghai International Circuit",
+      "lengthKm": 5.451,
+      "turns": 16,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 313.35000000003697
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 307.90000000003573
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 300.15000000003397
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.82650255814548,
+        "maxPitStep": 12.522855381245977,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7242635419676587,
+        "dsq": false,
+        "best": 112.35000000002555,
+        "pending": [],
+        "persisted": "shanghai"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
       }
     },
     {
@@ -118,6 +183,13 @@
       "name": "Suzuka International Racing Course",
       "lengthKm": 5.807,
       "turns": 18,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
       "qualifiche": [
         {
           "participants": 23,
@@ -161,256 +233,13 @@
         "best": 126.50000000002873,
         "pending": [],
         "persisted": "suzuka"
-      }
-    },
-    {
-      "id": "spa",
-      "name": "Circuit de Spa-Francorchamps",
-      "lengthKm": 7.004,
-      "turns": 19,
-      "qualifiche": [
-        {
-          "participants": 23,
-          "timed": 23,
-          "time": 319.6500000000384
-        },
-        {
-          "participants": 17,
-          "timed": 17,
-          "time": 319.6500000000384
-        },
-        {
-          "participants": 10,
-          "timed": 10,
-          "time": 349.6500000000452
-        }
-      ],
-      "gara": {
-        "state": "done",
-        "entered": true,
-        "initialLap": 0,
-        "pitCrossings": 1,
-        "maxPitSpeed": 79.83618770776444,
-        "maxPitStep": 12.525543144557354,
-        "finite": true,
-        "inside": true,
-        "autoStops": 0,
-        "phases": [
-          "track",
-          "approach",
-          "entry",
-          "lane",
-          "exit"
-        ],
-        "lap": 2,
-        "finished": 23,
-        "stops": 0,
-        "compound": "MEDIUM",
-        "condition": 0.7219028701845173,
-        "dsq": false,
-        "best": 135.90000000003087,
-        "pending": [],
-        "persisted": "spa"
-      }
-    },
-    {
-      "id": "monaco",
-      "name": "Circuit de Monaco",
-      "lengthKm": 3.337,
-      "turns": 19,
-      "qualifiche": [
-        {
-          "participants": 23,
-          "timed": 23,
-          "time": 277.4500000000288
-        },
-        {
-          "participants": 17,
-          "timed": 17,
-          "time": 316.9000000000378
-        },
-        {
-          "participants": 10,
-          "timed": 10,
-          "time": 309.30000000003605
-        }
-      ],
-      "gara": {
-        "state": "done",
-        "entered": true,
-        "initialLap": 0,
-        "pitCrossings": 1,
-        "maxPitSpeed": 79.7943961389874,
-        "maxPitStep": 12.515744615062522,
-        "finite": true,
-        "inside": true,
-        "autoStops": 0,
-        "phases": [
-          "track",
-          "approach",
-          "entry",
-          "lane",
-          "exit"
-        ],
-        "lap": 2,
-        "finished": 23,
-        "stops": 0,
-        "compound": "MEDIUM",
-        "condition": 0.72534721993905,
-        "dsq": false,
-        "best": 89.25000000001162,
-        "pending": [],
-        "persisted": "monaco"
-      }
-    },
-    {
-      "id": "silverstone",
-      "name": "Silverstone Circuit",
-      "lengthKm": 5.891,
-      "turns": 18,
-      "qualifiche": [
-        {
-          "participants": 23,
-          "timed": 23,
-          "time": 329.90000000004073
-        },
-        {
-          "participants": 17,
-          "timed": 17,
-          "time": 325.60000000003976
-        },
-        {
-          "participants": 10,
-          "timed": 10,
-          "time": 316.4500000000377
-        }
-      ],
-      "gara": {
-        "state": "done",
-        "entered": true,
-        "initialLap": 0,
-        "pitCrossings": 1,
-        "maxPitSpeed": 79.81556091880607,
-        "maxPitStep": 12.471171097723564,
-        "finite": true,
-        "inside": true,
-        "autoStops": 0,
-        "phases": [
-          "track",
-          "approach",
-          "entry",
-          "lane",
-          "exit"
-        ],
-        "lap": 2,
-        "finished": 23,
-        "stops": 0,
-        "compound": "MEDIUM",
-        "condition": 0.7239711470721791,
-        "dsq": false,
-        "best": 121.84999999999503,
-        "pending": [],
-        "persisted": "silverstone"
-      }
-    },
-    {
-      "id": "red-bull-ring",
-      "name": "Red Bull Ring",
-      "lengthKm": 4.326,
-      "turns": 10,
-      "qualifiche": [
-        {
-          "participants": 23,
-          "timed": 23,
-          "time": 303.8000000000348
-        },
-        {
-          "participants": 17,
-          "timed": 17,
-          "time": 298.35000000003356
-        },
-        {
-          "participants": 10,
-          "timed": 10,
-          "time": 289.95000000003165
-        }
-      ],
-      "gara": {
-        "state": "done",
-        "entered": true,
-        "initialLap": 0,
-        "pitCrossings": 1,
-        "maxPitSpeed": 79.83859811899003,
-        "maxPitStep": 12.509853476999734,
-        "finite": true,
-        "inside": true,
-        "autoStops": 0,
-        "phases": [
-          "track",
-          "approach",
-          "entry",
-          "lane",
-          "exit"
-        ],
-        "lap": 2,
-        "finished": 23,
-        "stops": 0,
-        "compound": "MEDIUM",
-        "condition": 0.7264667047740003,
-        "dsq": false,
-        "best": 88.25000000001074,
-        "pending": [],
-        "persisted": "red-bull-ring"
-      }
-    },
-    {
-      "id": "cota",
-      "name": "Circuit of The Americas",
-      "lengthKm": 5.513,
-      "turns": 20,
-      "qualifiche": [
-        {
-          "participants": 23,
-          "timed": 23,
-          "time": 329.45000000004063
-        },
-        {
-          "participants": 17,
-          "timed": 17,
-          "time": 324.8000000000396
-        },
-        {
-          "participants": 10,
-          "timed": 10,
-          "time": 316.1500000000376
-        }
-      ],
-      "gara": {
-        "state": "done",
-        "entered": true,
-        "initialLap": 0,
-        "pitCrossings": 1,
-        "maxPitSpeed": 79.77249954537847,
-        "maxPitStep": 12.464437388973682,
-        "finite": true,
-        "inside": true,
-        "autoStops": 0,
-        "phases": [
-          "track",
-          "approach",
-          "entry",
-          "lane",
-          "exit"
-        ],
-        "lap": 2,
-        "finished": 23,
-        "stops": 0,
-        "compound": "MEDIUM",
-        "condition": 0.7208234142612773,
-        "dsq": false,
-        "best": 122.95000000002796,
-        "pending": [],
-        "persisted": "cota"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
       }
     },
     {
@@ -418,6 +247,13 @@
       "name": "Bahrain International Circuit",
       "lengthKm": 5.412,
       "turns": 15,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
       "qualifiche": [
         {
           "participants": 23,
@@ -461,28 +297,42 @@
         "best": 121.14999999999512,
         "pending": [],
         "persisted": "bahrain"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
       }
     },
     {
-      "id": "singapore",
-      "name": "Marina Bay Street Circuit",
-      "lengthKm": 4.927,
-      "turns": 19,
+      "id": "jeddah",
+      "name": "Jeddah Corniche Circuit",
+      "lengthKm": 6.174,
+      "turns": 27,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
       "qualifiche": [
         {
           "participants": 23,
           "timed": 23,
-          "time": 303.10000000003464
+          "time": 343.0500000000437
         },
         {
           "participants": 17,
           "timed": 17,
-          "time": 297.40000000003334
+          "time": 336.3500000000422
         },
         {
           "participants": 10,
           "timed": 10,
-          "time": 290.6000000000318
+          "time": 328.0500000000403
         }
       ],
       "gara": {
@@ -490,8 +340,8 @@
         "entered": true,
         "initialLap": 0,
         "pitCrossings": 1,
-        "maxPitSpeed": 79.80063225296821,
-        "maxPitStep": 12.468836759427411,
+        "maxPitSpeed": 79.75815174384309,
+        "maxPitStep": 12.46219350665577,
         "finite": true,
         "inside": true,
         "autoStops": 0,
@@ -506,18 +356,608 @@
         "finished": 23,
         "stops": 0,
         "compound": "MEDIUM",
-        "condition": 0.7269127484664264,
+        "condition": 0.7166681127134938,
         "dsq": false,
-        "best": 112.65000000002313,
+        "best": 130.15000000002956,
         "pending": [],
-        "persisted": "singapore"
+        "persisted": "jeddah"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
+      }
+    },
+    {
+      "id": "miami",
+      "name": "Miami International Autodrome",
+      "lengthKm": 5.412,
+      "turns": 19,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 308.85000000003595
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 302.5000000000345
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 293.95000000003256
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.7959616585239,
+        "maxPitStep": 12.490500874101834,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.718966741989014,
+        "dsq": false,
+        "best": 115.25000000002514,
+        "pending": [],
+        "persisted": "miami"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
+      }
+    },
+    {
+      "id": "montreal",
+      "name": "Circuit Gilles-Villeneuve",
+      "lengthKm": 4.361,
+      "turns": 14,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 284.60000000003043
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 284.60000000003043
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 312.1000000000367
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.78302809048853,
+        "maxPitStep": 12.466083880924792,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7248217496260215,
+        "dsq": false,
+        "best": 97.60000000001436,
+        "pending": [],
+        "persisted": "montreal"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
+      }
+    },
+    {
+      "id": "monaco",
+      "name": "Circuit de Monaco",
+      "lengthKm": 3.337,
+      "turns": 19,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 277.4500000000288
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 316.9000000000378
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 309.30000000003605
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.7943961389874,
+        "maxPitStep": 12.515744615062522,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.72534721993905,
+        "dsq": false,
+        "best": 89.25000000001162,
+        "pending": [],
+        "persisted": "monaco"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
+      }
+    },
+    {
+      "id": "barcelona",
+      "name": "Circuit de Barcelona-Catalunya",
+      "lengthKm": 4.657,
+      "turns": 14,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 310.0000000000362
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 310.0000000000362
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 310.0000000000362
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.8720747565315,
+        "maxPitStep": 12.545237034423991,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7277292262121505,
+        "dsq": false,
+        "best": 107.74999999999588,
+        "pending": [],
+        "persisted": "barcelona"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
+      }
+    },
+    {
+      "id": "red-bull-ring",
+      "name": "Red Bull Ring",
+      "lengthKm": 4.326,
+      "turns": 10,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 303.8000000000348
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 298.35000000003356
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 289.95000000003165
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.83859811899003,
+        "maxPitStep": 12.509853476999734,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7264667047740003,
+        "dsq": false,
+        "best": 88.25000000001074,
+        "pending": [],
+        "persisted": "red-bull-ring"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
+      }
+    },
+    {
+      "id": "silverstone",
+      "name": "Silverstone Circuit",
+      "lengthKm": 5.891,
+      "turns": 18,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 329.90000000004073
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 325.60000000003976
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 316.4500000000377
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.81556091880607,
+        "maxPitStep": 12.471171097723564,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7239711470721791,
+        "dsq": false,
+        "best": 121.84999999999503,
+        "pending": [],
+        "persisted": "silverstone"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
+      }
+    },
+    {
+      "id": "spa",
+      "name": "Circuit de Spa-Francorchamps",
+      "lengthKm": 7.004,
+      "turns": 19,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 319.6500000000384
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 319.6500000000384
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 349.6500000000452
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.83618770776444,
+        "maxPitStep": 12.525543144557354,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7219028701845173,
+        "dsq": false,
+        "best": 135.90000000003087,
+        "pending": [],
+        "persisted": "spa"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
+      }
+    },
+    {
+      "id": "hungaroring",
+      "name": "Hungaroring",
+      "lengthKm": 4.381,
+      "turns": 14,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 310.70000000003637
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 310.70000000003637
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 310.70000000003637
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.77826980007782,
+        "maxPitStep": 12.465339609932832,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7240583657488019,
+        "dsq": false,
+        "best": 104.40000000001899,
+        "pending": [],
+        "persisted": "hungaroring"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
+      }
+    },
+    {
+      "id": "zandvoort",
+      "name": "Circuit Zandvoort",
+      "lengthKm": 4.259,
+      "turns": 14,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 295.20000000003284
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 295.20000000003284
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 295.20000000003284
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.77864784418698,
+        "maxPitStep": 12.466800470435398,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7226057018859977,
+        "dsq": false,
+        "best": 100.30000000001586,
+        "pending": [],
+        "persisted": "zandvoort"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
       }
     },
     {
       "id": "monza",
-      "name": "Autodromo Nazionale Monza",
+      "name": "Monza National Autodrome",
       "lengthKm": 5.793,
       "turns": 11,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
       "qualifiche": [
         {
           "participants": 23,
@@ -561,6 +1001,589 @@
         "best": 117.40000000002462,
         "pending": [],
         "persisted": "monza"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
+      }
+    },
+    {
+      "id": "madring",
+      "name": "Madring",
+      "lengthKm": 5.414,
+      "turns": 22,
+      "layoutStatus": "preliminary",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 331.4000000000411
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 325.15000000003965
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 315.85000000003754
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.77822014777489,
+        "maxPitStep": 12.465331987135144,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7194788695496297,
+        "dsq": false,
+        "best": 123.30000000002804,
+        "pending": [],
+        "persisted": "madring"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
+      }
+    },
+    {
+      "id": "baku",
+      "name": "Baku City Circuit",
+      "lengthKm": 6.003,
+      "turns": 20,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 337.2500000000424
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 331.30000000004105
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 322.350000000039
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.79265591329111,
+        "maxPitStep": 12.467589474439322,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7198204875944657,
+        "dsq": false,
+        "best": 126.70000000002878,
+        "pending": [],
+        "persisted": "baku"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
+      }
+    },
+    {
+      "id": "singapore",
+      "name": "Marina Bay Street Circuit",
+      "lengthKm": 4.927,
+      "turns": 19,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 303.10000000003464
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 297.40000000003334
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 290.6000000000318
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.80063225296821,
+        "maxPitStep": 12.468836759427411,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7269127484664264,
+        "dsq": false,
+        "best": 112.65000000002313,
+        "pending": [],
+        "persisted": "singapore"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
+      }
+    },
+    {
+      "id": "cota",
+      "name": "Circuit of The Americas",
+      "lengthKm": 5.513,
+      "turns": 20,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 329.45000000004063
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 324.8000000000396
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 316.1500000000376
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.77249954537847,
+        "maxPitStep": 12.464437388973682,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7208234142612773,
+        "dsq": false,
+        "best": 122.95000000002796,
+        "pending": [],
+        "persisted": "cota"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
+      }
+    },
+    {
+      "id": "mexico",
+      "name": "Autódromo Hermanos Rodríguez",
+      "lengthKm": 4.304,
+      "turns": 17,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 299.7500000000339
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 299.7500000000339
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 299.7500000000339
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.81683402893393,
+        "maxPitStep": 12.476991683922611,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7300645943772606,
+        "dsq": false,
+        "best": 96.8999999999965,
+        "pending": [],
+        "persisted": "mexico"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
+      }
+    },
+    {
+      "id": "interlagos",
+      "name": "Autódromo José Carlos Pace (Interlagos)",
+      "lengthKm": 4.309,
+      "turns": 15,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 291.500000000032
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 291.500000000032
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 291.500000000032
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.89250221564777,
+        "maxPitStep": 12.561380939025378,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7276348054528282,
+        "dsq": false,
+        "best": 96.30000000001584,
+        "pending": [],
+        "persisted": "interlagos"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
+      }
+    },
+    {
+      "id": "las-vegas",
+      "name": "Las Vegas Strip Circuit",
+      "lengthKm": 6.201,
+      "turns": 17,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 323.90000000003937
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 315.05000000003736
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 307.6500000000357
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.7317733481924,
+        "maxPitStep": 12.4580490541423,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7145048641360531,
+        "dsq": false,
+        "best": 116.80000000002656,
+        "pending": [],
+        "persisted": "las-vegas"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
+      }
+    },
+    {
+      "id": "lusail",
+      "name": "Lusail International Circuit",
+      "lengthKm": 5.419,
+      "turns": 16,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 310.10000000003623
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 304.750000000035
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 299.10000000003373
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.78833265314731,
+        "maxPitStep": 12.46691290678903,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7224581859985906,
+        "dsq": false,
+        "best": 120.75000000002622,
+        "pending": [],
+        "persisted": "lusail"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
+      }
+    },
+    {
+      "id": "yas-marina",
+      "name": "Yas Marina Circuit",
+      "lengthKm": 5.281,
+      "turns": 16,
+      "layoutStatus": "approximate-2d",
+      "testsPassed": [
+        "geometria, direzione, 23 caselle, 12 box, settori e mappa",
+        "collisioni tra vetture, barriere e rilevamento manuale di giri e settori",
+        "Q1/Q2/Q3 reali, SOFT bloccate, rilascio regolare e griglia finale",
+        "gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico"
+      ],
+      "qualifiche": [
+        {
+          "participants": 23,
+          "timed": 23,
+          "time": 296.7000000000332
+        },
+        {
+          "participants": 17,
+          "timed": 17,
+          "time": 291.600000000032
+        },
+        {
+          "participants": 10,
+          "timed": 10,
+          "time": 283.1500000000301
+        }
+      ],
+      "gara": {
+        "state": "done",
+        "entered": true,
+        "initialLap": 0,
+        "pitCrossings": 1,
+        "maxPitSpeed": 79.75179635731142,
+        "maxPitStep": 12.461199534792675,
+        "finite": true,
+        "inside": true,
+        "autoStops": 0,
+        "phases": [
+          "track",
+          "approach",
+          "entry",
+          "lane",
+          "exit"
+        ],
+        "lap": 2,
+        "finished": 23,
+        "stops": 0,
+        "compound": "MEDIUM",
+        "condition": 0.7205243589104442,
+        "dsq": false,
+        "best": 110.45000000002216,
+        "pending": [],
+        "persisted": "yas-marina"
+      },
+      "browser": {
+        "selection": true,
+        "previewUsesRaceGeometry": true,
+        "persistenceOnHomeAndReload": true,
+        "raceAndQualifyingStart": true,
+        "javascriptErrors": 0
       }
     }
   ]

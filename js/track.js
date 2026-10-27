@@ -88,7 +88,7 @@ const differentTrackLevels=(a,b)=>Math.abs(carTrackHeight(a)-carTrackHeight(b))>
 const mm=document.createElement('canvas');mm.width=200;mm.height=150;
 const mX=p=>10+(p.x-bx0)*mS,mY=p=>10+(p.y-by0)*mS;
 function loadCircuit(id){
- activeCircuit=CIRCUIT_DATA.find(c=>c.id===id)||CIRCUIT_DATA[0];TW=activeCircuit.width;BAR=activeCircuit.barrier;
+ activeCircuit=CIRCUIT_DATA.find(c=>c.id===id)||CIRCUIT_DATA.find(c=>c.id==='barcelona')||CIRCUIT_DATA[0];TW=activeCircuit.width;BAR=activeCircuit.barrier;
  CP=activeCircuit.points;T=activeCircuit.samples;N=T.length;L=activeCircuit.length;path=activeCircuit.path;
  SECTOR_MARKS=activeCircuit.sectorMarks;SECTOR_LINES=SECTOR_MARKS.map(s=>pointAtDistance(s));rebuildMiniTrack();return activeCircuit;
 }

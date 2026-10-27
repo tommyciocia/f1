@@ -41,6 +41,63 @@
     {
       "id": "it-1922",
       "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/it-1922.geojson"
+    },
+    {
+      "id": "au-1953",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/au-1953.geojson"
+    },
+    {
+      "id": "cn-2004",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/cn-2004.geojson"
+    },
+    {
+      "id": "sa-2021",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/sa-2021.geojson"
+    },
+    {
+      "id": "us-2022",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/us-2022.geojson"
+    },
+    {
+      "id": "ca-1978",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/ca-1978.geojson"
+    },
+    {
+      "id": "hu-1986",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/hu-1986.geojson"
+    },
+    {
+      "id": "nl-1948",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/nl-1948.geojson"
+    },
+    {
+      "id": "es-2026",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/es-2026.geojson",
+      "note": "Geometria preliminare: il dataset dichiara 5,474 km; non certifica il layout definitivo 2026."
+    },
+    {
+      "id": "az-2016",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/az-2016.geojson"
+    },
+    {
+      "id": "mx-1962",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/mx-1962.geojson"
+    },
+    {
+      "id": "br-1940",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/br-1940.geojson"
+    },
+    {
+      "id": "us-2023",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/us-2023.geojson"
+    },
+    {
+      "id": "qa-2004",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/qa-2004.geojson"
+    },
+    {
+      "id": "ae-2009",
+      "url": "https://raw.githubusercontent.com/bacinger/f1-circuits/8094e957b8d6aa8b9f4510c93968556cccd30e02/circuits/ae-2009.geojson"
     }
   ]
 }
