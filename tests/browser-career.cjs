@@ -11,7 +11,11 @@ const {pathToFileURL}=require('node:url'),{chromium}=require('playwright');
   await page.goto(pathToFileURL(path.join(__dirname,'../index.html')).href);
   async function enterTeam(){
    await page.locator('#menu [data-act="career"]').click();await page.locator('[data-career-slot="team"]').click();
-   if(await page.locator('#careerSetup').isVisible())await page.locator('#careerCreateForm [type="submit"]').click();
+   if(await page.locator('#careerSetup').isVisible()){
+    await page.locator('#careerTeamName').fill('Team Test');await page.locator('#careerDriverName').fill('Pilota Test');
+    await page.locator('#careerDriverCode').fill('TST');await page.locator('#careerDriverNumber').fill('28');
+    await page.locator('#careerCreateForm [type="submit"]').click();
+   }
   }
   await enterTeam();
   assert.ok(await page.locator('#career').isVisible());assert.equal(await page.locator('[data-career-driver]').count(),23);assert.equal(await page.locator('[data-career-team]').count(),12);

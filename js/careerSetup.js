@@ -17,7 +17,7 @@ function renderCareerSetup(){
  $('careerReplacementFields').classList.toggle('hidden',team);$('careerTeamFields').classList.toggle('hidden',!team);$('careerTeamNameField').classList.toggle('hidden',!team);
  $('careerTeamName').required=team;
  $('careerReplaceDriver').innerHTML=S.roster.map((d,i)=>'<option value="'+i+'">'+esc(d[1])+' · '+esc(teamName(d[3]))+'</option>').join('');$('careerReplaceDriver').value='0';
- for(const [id,key] of [['careerTeamName','name'],['careerDriverName','driver'],['careerDriverCode','code'],['careerDriverNumber','num'],['careerPrimaryColor','c1'],['careerAccentColor','c2']])$(id).value=S.my[key]||DEF.my[key];
+ for(const [id,key] of [['careerTeamName','name'],['careerDriverName','driver'],['careerDriverCode','code'],['careerDriverNumber','num'],['careerPrimaryColor','c1'],['careerAccentColor','c2']])$(id).value=S.my[key];
  document.querySelectorAll('[data-career-stat]').forEach(el=>el.value=S.myStats[+el.dataset.careerStat]);
  $('careerSetupError').textContent='';renderCareerSeat();
 }
