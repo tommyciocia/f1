@@ -1,6 +1,6 @@
 'use strict';
-/* Box: percorsi dedicati; transito X senza fermate o cambi gomme automatici. */
-const PIT={speedLimit:80/.32,laneD:-290,stallD:-470,exitD:0,mergeLength:300,releaseInterval:.5,tyreServiceTime:2.8,serviceAllowed:false};
+/* Box: ingresso X, fermata alla piazzola e cambio gomme confermato dal giocatore. */
+const PIT={speedLimit:80/.32,laneD:-290,stallD:-470,exitD:0,mergeLength:300,releaseInterval:.5,tyreServiceTime:2.8,serviceAllowed:true};
 const pitActive=c=>!!c.pit&&c.pit.phase!=='track';
 const pitAutopilot=c=>pitActive(c)&&c.go&&c.pit.auto!==false;
 const pitLimited=c=>pitAutopilot(c)?c.pit.phase!=='approach':!!c.pit?.onLane;
@@ -71,7 +71,7 @@ function pitTrackPosition(c){
  const p=botPointAt(bestS);return{s:bestS,i:p.i,d:(c.x-p.x)*p.nx+(c.y-p.y)*p.ny};
 }
 function pitEntryInfo(c){
- if(!c||!c.go||c.fin||c.qd||pitAutopilot(c)||state==='quali'&&(qEnd||!c.qActive)||(state!=='racing'&&state!=='quali'))return null;
+ if(!c||!c.go||c.fin||c.qd||pitAutopilot(c)||c.pit?.phase==='waiting'||c.pit?.phase==='service'||state==='quali'&&(qEnd||!c.qActive)||(state!=='racing'&&state!=='quali'))return null;
  const near=pitCoordinate(c.trackS);if(!c.pit.onLane&&(near<PIT.entryZoneStart-100||near>PIT.exitEnd+100))return null;
  const surface=nearestPitPoint(c),p=pitTrackPosition(c);p.s=pitCoordinate(p.s);
  const inside=surface.distance<42&&surface.s>=PIT.laneStart&&surface.s<PIT.exitEnd-40;
@@ -241,6 +241,7 @@ function pitInput(c){
 }
 function updatePitPhase(c){
  if(c.pit.phase==='waiting'||c.pit.phase==='service')return;
+ if(c.fin)c.pit.stopPending=false;
  if(c.pit.progress>=c.pit.route.length-1e-6){
   c.pit.phase='track';c.pit.auto=false;c.pit.onLane=false;c.lane=c.d;c.launchLane=c.d;c.launchT=1.5;c.stuck=0;c.pit.yielding=false;
  }else if(c.pit.stopPending&&c.pit.progress>=c.pit.route.stopAt-1e-6){

@@ -19,9 +19,13 @@ function startQuali(){
  startQualiSession(cars.map(c=>c.id));
 }
 function resetQualiLap(c){c.qLapActive=false;c.qLapValid=false;c.qLapSectors=0;c.qLapDistance=0;}
+// Il diritto a raggiungere il traguardo è distinto dalla validità del tempo.
+function qualiLapInProgress(c){
+ return c.go&&onTrack(c)&&!(c.isP&&(c.pit.onLane||Math.abs(c.d)>TW/2+5&&pitRoadSurface(c).road));
+}
 function invalidateQualiLap(c){
  resetQualiLap(c);
- if(state==='quali'&&qEnd&&c.qActive)completeQualiRun(c);
+ if(state==='quali'&&qEnd&&c.qActive&&!qualiLapInProgress(c))completeQualiRun(c);
 }
 function startQualiSession(ids){
  const eligible=new Set(ids);resetQualiRelease();raceTime=0;qEnd=false;qEndT=0;qualiFinishGrace=75;
@@ -29,6 +33,7 @@ function startQualiSession(ids){
  for(const c of cars){
   c.qActive=eligible.has(c.id);c.qd=!c.qActive;c.ai=!c.isP;c.best=1e9;c.qBestSetAt=Infinity;c.qLaps=0;c.qOutcome=c.qActive?null:'eliminato';
   c.lap=-1;c.lapStart=0;c.secs=[null,null,null];c.bestSecs=[1e9,1e9,1e9];c.secDelta=[null,null,null];c.secState=['wait','wait','wait'];c.secStart=0;c.activeSec=0;
+  c.lastSecs=[null,null,null];c.lastDelta=[null,null,null];c.lastState=['wait','wait','wait'];
   c.inp={st:0,thr:0,brk:0,hb:false};c.passTarget=null;c.passSide=0;c.passHold=0;c.recoveryT=0;c.launchT=0;c.stuck=0;resetQualiLap(c);resetTyres(c);
   // Un transito richiesto con P nella fase precedente non sostituisce la piazzola assegnata.
   c.pit.route=makePitRoute(c.pit.stallS);c.pit.requested=false;c.pit.fromTrack=false;c.pit.yielding=false;parkInGarage(c);
@@ -71,11 +76,11 @@ function expireQualiSession(){
  const active=qualiParticipants();
  // Limite di sicurezza finito per un giocatore fermo sul suo ultimo giro.
  qualiFinishGrace=Math.max(75,...active.map(c=>T.reduce((time,q)=>time+q.len/Math.max(100,Math.min(c.top,q.vc*c.cs)*.7),0)));
- for(const c of active)if(!c.qLapActive||!c.qLapValid||!onTrack(c))completeQualiRun(c);
+ for(const c of active)if(!qualiLapInProgress(c))completeQualiRun(c);
  banner(qualiStage().name+' · TEMPO SCADUTO: completa il giro già iniziato',2500);beep(660,.3);
 }
 // Il salto manuale conclude subito la fase con i tempi già completati.
-// La scadenza naturale continua invece ad attendere i giri lanciati validi.
+// La scadenza naturale attende il traguardo anche se il tentativo è annullato.
 function endQuali(){
  if(!quali||quali.finished||(state!=='quali'&&state!=='paused'))return;
  if(state==='paused'){state='quali';hideAll();}
@@ -87,7 +92,7 @@ function checkQualiTime(){
  if(state!=='quali'||!quali)return;
  if(!qEnd&&raceTime>=qualiStage().duration)expireQualiSession();
  if(qEnd){
-  if(raceTime-qEndT>qualiFinishGrace)for(const c of qualiParticipants())if(!c.qd)completeQualiRun(c);
+  if(raceTime-qEndT>qualiFinishGrace)for(const c of qualiParticipants())if(!c.qd&&(!c.isP||c.ai||Math.hypot(c.vx,c.vy)<1))completeQualiRun(c);
   if(qualiParticipants().every(c=>c.qd))finishQualiSession();
  }
 }
@@ -110,22 +115,24 @@ function finishQualiSession(){
  }else state='qbetween';
  showQualiResults();if(engG)engG.gain.value=0;
 }
-function qualiLapProgress(c,a,b){
+function qualiLapProgress(c,a,b,from=T[a].s,to=T[b].s){
  if(!c.qActive||c.qd)return;
- if(c.qLapActive&&movedForward(a,b)){
-  const distance=(T[b].s-T[a].s+L)%L;c.qLapDistance+=distance;
-  if(distance>L*.08)c.qLapValid=false; // un salto di segmento non crea un giro valido
+ if(c.qLapActive){
+  const distance=signedTrackDistance(from,to);
+  // Nessun track limit: la distanza conta anche quando la vettura è fuori pista.
+  c.qLapDistance=Math.max(0,c.qLapDistance+distance);
+  if(Math.abs(distance)>L*.08)c.qLapValid=false; // un salto di posizione non crea un giro valido
  }
- if(a>N*.75&&b<N*.25){
+ if(crossedMark(a,b,0,from,to)){
   c.lap++;
   if(c.qLapActive&&c.qLapValid&&c.qLapSectors===3&&c.qLapDistance>=L*.95){
    const time=raceTime-c.lapStart;
-   if(validQualiTime(time)){c.qLaps++;if(time<c.best){c.best=time;c.qBestSetAt=raceTime;if(c.isP)banner(qualiStage().name+' · '+fmt(time),1500);}}
+   if(validQualiTime(time)){c.qLaps++;if(time<c.best){c.best=time;c.qBestSetAt=raceTime;c.qualiTimes[quali.stage]=time;if(c.isP){tickT=0;banner(qualiStage().name+' · '+fmt(time),1500);}}}
   }
   resetQualiLap(c);
   if(qEnd||raceTime>=qualiStage().duration){completeQualiRun(c);return;}
   c.lapStart=raceTime;c.qLapActive=true;c.qLapValid=true;
- }else if(a<N*.25&&b>N*.75){c.lap--;invalidateQualiLap(c);}
+ }else if(crossedMark(b,a,0,to,from)){c.lap--;invalidateQualiLap(c);}
 }
 function qualiCameraCar(){
  if(!quali||pl.qActive)return pl;
@@ -142,7 +149,7 @@ function qualiTable(final=false){
   const time=prior?c.qualiTimes[c.qEliminatedAt]:c.best;
   const delta=!prior&&leader&&validQualiTime(time)?i===0?'LEADER':'+'+(time-leader.best).toFixed(3):'—';
   const cells=final?c.qualiTimes.map(t=>'<td>'+fmt(t)+'</td>').join('')+'<td>'+(i===0&&validQualiTime(quali.finalGrid[0].time)?'POLE':quali.finalGrid[i].source)+'</td>':'<td>'+fmt(time)+'</td><td>'+delta+'</td><td>'+status+'</td>';
-  return '<tr data-driver-id="'+esc(c.id)+'" class="'+[c.isP?'me':'',eliminated?'q-eliminated':'',!final&&cut&&i===cut?'q-cut':'',!final&&cut&&i>=cut&&i<current.length?'q-danger':'',quali.stage===2&&i===0?'q-pole':''].filter(Boolean).join(' ')+'"><td>'+(i+1)+'</td><td style="border-left:3px solid '+c.col+'">'+esc(c.name)+tyreBadge(c)+'</td><td>'+esc(c.tname)+'</td>'+cells+'</tr>';
+  return '<tr data-driver-id="'+esc(c.id)+'" class="'+[c.isP?'me':'',eliminated?'q-eliminated':'',!final&&cut&&i===cut?'q-cut':'',!final&&cut&&i>=cut&&i<current.length?'q-danger':'',quali.stage===2&&i===0?'q-pole':''].filter(Boolean).join(' ')+'"><td>'+(i+1)+'</td><td style="border-left:3px solid '+safeColor(c.col,'#ffffff')+'">'+esc(c.name)+tyreBadge(c)+'</td><td>'+esc(c.tname)+'</td>'+cells+'</tr>';
  }).join('')+'</tbody></table>';
 }
 function showQualiResults(){

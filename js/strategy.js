@@ -1,7 +1,9 @@
 'use strict';
 /* Strategia IA: una prima sosta individuale e confronto fra degrado e tempo ai box.
    Tutte le decisioni avvengono all'ingresso reale; nessuna sosta simulata a distanza. */
-function remainingRaceLaps(c){return Math.max(0,S.laps-Math.max(0,c.lap)-clamp(c.trackS/L,0,1));}
+function remainingRaceLaps(c){return Math.max(0,S.laps-Math.max(0,prog(c)/L));}
+// Le piazzole oltre il traguardo vanno raggiunte prima dell'ultimo passaggio.
+const lastPitLap=c=>Math.max(1,S.laps-(c.pit.stallS>=0?2:1));
 function planAiPitStop(c){
  if(!PIT.serviceAllowed){c.strategy={profile:0,lapTime:T.reduce((t,q)=>t+q.len/Math.max(100,Math.min(c.top,q.vc*c.cs)),0),nextStopLap:Infinity,decisionLap:null};return;}
  const profile=(c.aiId*7%11)/10;
@@ -11,7 +13,7 @@ function planAiPitStop(c){
  // il primo o il secondo; mai al via e mai dopo aver preso la bandiera.
  const firstFraction={SOFT:.32,MEDIUM:.52,HARD:.67}[c.tyres.compound]+(profile-.5)*.14;
  const target=c.pitStops?Math.max(0,c.lap)+stint:Math.min(stint,S.laps*firstFraction);
- c.strategy={profile,lapTime,nextStopLap:mode==='race'&&S.laps>2?clamp(Math.round(target),1,S.laps-1):Infinity,decisionLap:null,expectedPitLoss:0,expectedGain:0};
+ c.strategy={profile,lapTime,nextStopLap:mode==='race'&&S.laps>2?clamp(Math.round(target),1,lastPitLap(c)):Infinity,decisionLap:null,expectedPitLoss:0,expectedGain:0};
 }
 function estimatedPitLoss(c){
  const distance=PIT.exitEnd-PIT.entryStart;
@@ -66,10 +68,10 @@ function estimatedRunTime(c,compound,condition,remaining,plans=freshAiTyrePlans(
  return time;
 }
 function updateAiPitStrategy(c){
- if(!PIT.serviceAllowed||mode!=='race'||state!=='racing'||c.isP||!c.go||c.fin||pitActive(c))return;
+ if(!PIT.serviceAllowed||mode!=='race'||state!=='racing'||c.isP||!c.go||!c.raceStarted||c.fin||pitActive(c))return;
  // Una decisione per passaggio nella zona d'ingresso; riprova l'accesso se il
  // traffico o l'orientamento impediscono temporaneamente di impegnare il raccordo.
- if(c.trackS<PIT.entryZoneStart||c.trackS>PIT.entryCaptureEnd)return;
+ const entryS=pitCoordinate(c.trackS);if(entryS<PIT.entryZoneStart||entryS>PIT.entryCaptureEnd)return;
  if(c.strategy.decisionLap!==c.lap){
   const remaining=remainingRaceLaps(c),plans=freshAiTyrePlans(c,remaining),plan=plans.at(-1),loss=estimatedPitLoss(c);
   const oldTime=estimatedRunTime(c,c.tyres.compound,c.tyres.condition,remaining,plans);
@@ -78,7 +80,7 @@ function updateAiPitStrategy(c){
   const scheduled=c.lap>=c.strategy.nextStopLap;
   const paysOff=c.strategy.expectedGain>1+(1-c.strategy.profile)*2;
   const exhausted=c.tyres.condition<.15&&remaining>1;
-  c.strategy.pitThisLap=remaining>0&&(mandatory&&(scheduled||c.lap>=S.laps-1)||remaining>1&&(paysOff||exhausted));
+  c.strategy.pitThisLap=remaining>0&&(mandatory&&(scheduled||c.lap>=lastPitLap(c))||remaining>1&&(paysOff||exhausted));
  }
  if(c.strategy.pitThisLap)tryPitEntry(c);
 }

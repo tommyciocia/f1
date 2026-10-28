@@ -8,14 +8,14 @@ const TSTAT=[[1.02,1.02,1.01,1.02],[1.01,1.01,1.01,1.01],[1.01,1.01,1,1.02],[1.0
 const DR=[['RUS','George Russell',63,0],['ANT','Kimi Antonelli',12,0],['LEC','Charles Leclerc',16,1],['HAM','Lewis Hamilton',44,1],['NOR','Lando Norris',1,2],['PIA','Oscar Piastri',81,2],['VER','Max Verstappen',3,3],['HAD','Isack Hadjar',6,3],['LAW','Liam Lawson',30,4],['LIN','Arvid Lindblad',41,4],['ALO','Fernando Alonso',14,5],['STR','Lance Stroll',18,5],['ALB','Alexander Albon',23,6],['SAI','Carlos Sainz',55,6],['GAS','Pierre Gasly',10,7],['COL','Franco Colapinto',43,7],['OCO','Esteban Ocon',31,8],['BEA','Oliver Bearman',87,8],['HUL','Nico Hülkenberg',27,9],['BOR','Gabriel Bortoleto',5,9],['BOT','Valtteri Bottas',77,10],['PER','Sergio Pérez',11,10]];
 const PLAYER='TOM',NCARS=23,PSLOT=12;
 // La griglia resta modificabile senza toccare i dati base della simulazione.
-S.teamNames=Array.isArray(S.teamNames)&&S.teamNames.length===TEAMS.length?S.teamNames:TEAMS.map(t=>t[2]);
+S.teamNames=TEAMS.map((t,i)=>boundedText(Array.isArray(S.teamNames)?S.teamNames[i]:undefined,28,t[2])||t[2]);
 S.roster=Array.isArray(S.roster)&&S.roster.length===DR.length?S.roster:DR.map(d=>d.slice());
-S.roster=S.roster.map((d,i)=>Array.isArray(d)&&d.length>=4?[String(d[0]),String(d[1]),clamp(+d[2]||DR[i][2],1,99),clamp(Math.trunc(+d[3])||0,0,TEAMS.length-2)]:DR[i].slice());
+S.roster=S.roster.map((d,i)=>Array.isArray(d)&&d.length>=4?[boundedText(d[0],3,DR[i][0]).toUpperCase().replace(/[^A-Z0-9]/g,'')||DR[i][0],boundedText(d[1],64,DR[i][1])||DR[i][1],boundedNumber(d[2],1,99,DR[i][2],true),boundedNumber(d[3],0,TEAMS.length-2,DR[i][3],true)]:DR[i].slice());
 // Conserva gli scambi del paddock e ripara eventuali vecchi salvataggi con team sovraffollati.
 {const seats=Array(TEAMS.length-1).fill(0),extra=[];
  for(const d of S.roster){if(seats[d[3]]<2)seats[d[3]]++;else extra.push(d);}
  for(const d of extra){const team=seats.findIndex(n=>n<2);d[3]=team;seats[team]++;}}
-const cleanStats=(a,def)=>Array.isArray(a)&&a.length>=4?def.map((v,k)=>clamp(+a[k]||v,.8,1.2)):def.slice();
+const cleanStats=(a,def)=>Array.isArray(a)&&a.length>=4?def.map((v,k)=>boundedNumber(a[k],.8,1.2,v)):def.slice();
 S.teamStats=TSTAT.map((d,i)=>cleanStats(Array.isArray(S.teamStats)?S.teamStats[i]:null,d));
 S.myStats=cleanStats(S.myStats,[1,1,1,1]);
 const teamName=i=>S.teamNames[i]||TEAMS[i][2];

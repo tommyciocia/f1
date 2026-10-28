@@ -35,23 +35,23 @@ test('fuori pista: consumo triplo per tutte le mescole, indipendente e normale a
  }
 });
 
-test('qualifica blocca SOFT al 100%; il transito non abilita il cambio gomme',()=>{
+test('qualifica blocca SOFT al 100%; servizio disabilitato impedisce il cambio gomme',()=>{
  const g=game();g.run('startQuali();cars.forEach(c=>{c.tyres.compound="HARD";c.tyres.condition=.1;c.off=true;updateTyres(c,.1);});');
  assert.equal(g.run('cars.every(c=>c.tyres.compound==="SOFT"&&c.tyres.condition===1&&!c.tyres.degradation)'),true);
- g.run('startRace();state="racing";pl.go=true;pl.pit.phase="waiting";pl.pit.selectedCompound="MEDIUM";pl.tyres.condition=.12;');
+ g.run('PIT.serviceAllowed=false;startRace();state="racing";pl.go=true;pl.pit.phase="waiting";pl.pit.selectedCompound="MEDIUM";pl.tyres.condition=.12;');
  assert.equal(g.run('confirmPitTyres()'),false);g.run('updatePitService(pl,3);');
  assert.equal(g.run('pl.tyres.compound'),'SOFT');assert.equal(g.run('pl.tyres.condition'),.12);assert.equal(g.run('pl.pitStops'),0);
 });
 
-test('il transito assistito conserva mescola e condizione senza soste',()=>{
- const g=game({laps:6});g.run('startRace();state="racing";pl.go=true;pl.lap=0;pl.tyres.condition=.52;');
+test('servizio disabilitato: il transito conserva mescola e condizione senza soste',()=>{
+ const g=game({laps:6});g.run('PIT.serviceAllowed=false;startRace();state="racing";pl.go=true;pl.lap=0;pl.tyres.condition=.52;');
  placePlayer(g,g.run('PIT.entryStart')-100,0,200);assert.equal(g.run('requestPitEntry()'),true);
  const before=g.run('JSON.stringify(pl.tyres)');g.run('for(let i=0;i<2200&&pitActive(pl);i++)update(.05);');
  assert.equal(g.run('pl.pit.phase'),'track');assert.equal(g.run('pl.pitStops'),0);assert.equal(g.run('JSON.stringify(pl.tyres)'),before);
 });
 
-test('né IA né giocatore entrano automaticamente con gomme usurate',()=>{
- const g=game({laps:6});g.run(`startRace();state='racing';cars.forEach(c=>c.go=true);
+test('servizio disabilitato: né IA né giocatore entrano con gomme usurate',()=>{
+ const g=game({laps:6});g.run(`PIT.serviceAllowed=false;startRace();state='racing';cars.forEach(c=>c.go=true);
   globalThis.bot=cars.find(c=>!c.isP);const q=botPointAt(PIT.entryStart);bot.x=q.x+q.nx*-70;bot.y=q.y+q.ny*-70;bot.a=q.ang;bot.idx=q.i;bot.trackS=q.trackS;bot.d=bot.lane=-70;bot.vx=Math.cos(q.ang)*180;bot.vy=Math.sin(q.ang)*180;bot.tyres.condition=.1;`);
  g.run('aiInput(bot,1/60);');assert.equal(g.run('pitActive(bot)'),false);
  assert.equal(g.run('pitActive(pl)'),false);
@@ -91,7 +91,7 @@ test('usura e mescola modificano realmente accelerazione e frenata nella fisica'
 });
 
 test('la conferma di un servizio disabilitato non azzera età e degrado',()=>{
- const g=game();g.run('startRace();state="racing";pl.go=true;pl.pit.phase="waiting";pl.tyres.ageLaps=2;pl.tyres.distance=L*2;pl.tyres.condition=.2;');
+ const g=game();g.run('PIT.serviceAllowed=false;startRace();state="racing";pl.go=true;pl.pit.phase="waiting";pl.tyres.ageLaps=2;pl.tyres.distance=L*2;pl.tyres.condition=.2;');
  const before=g.run('JSON.stringify(pl.tyres)');assert.equal(g.run('startPitService(pl,"HARD")'),false);g.run('updatePitService(pl,20);');
  assert.equal(g.run('JSON.stringify(pl.tyres)'),before);assert.equal(g.run('pl.pitStops'),0);assert.equal(g.run('pitObligationSatisfied(pl)'),true);
 });
@@ -101,6 +101,6 @@ test('la torre esistente segue identità e mescola dopo riordino e cambio gomme'
  assert.match(g.elements.get('tower').innerHTML,/data-driver-id="driver:0"[^>]*>.*?tyre-h/);
  g.run('fitTyres(bot,"MEDIUM");pl.lap=2;hudUpdate(.01);');
  const row=g.elements.get('tower').innerHTML.match(/<div[^>]*data-driver-id="driver:0"[^>]*>.*?<\/div>/)[0];
- assert.match(row,/tyre-m/);assert.doesNotMatch(row,/tyre-h/);assert.doesNotMatch(row,/0\/1/);
+ assert.match(row,/tyre-m/);assert.doesNotMatch(row,/tyre-h/);assert.match(row,/0\/1/);
  assert.equal((g.elements.get('tower').innerHTML.match(/data-driver-id=/g)||[]).length,23);
 });

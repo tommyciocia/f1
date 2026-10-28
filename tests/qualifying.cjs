@@ -14,7 +14,7 @@ test('durate 18/15/12, 23 partecipanti, migrazione impostazioni e possibilità d
  assert.equal(g.run('qualiParticipants().length'),23);assert.equal(g.run('qualiTimeLeft()'),1080);
  assert.ok(g.run('cars.every(c=>c.best===1e9&&c.qualiTimes.every(t=>t===null))'));
  g.run('qHud(1);');assert.equal(g.elements.get('timeTxt').textContent,'18:00');assert.match(g.elements.get('lapTxt').textContent,/Q1/);
- const skip=game({qmin:0});skip.click('play');assert.equal(skip.run('state'),'countdown');assert.equal(skip.run('quali'),null);
+ const skip=game({qmin:0});skip.click('play');assert.equal(skip.run('pendingRaceStart'),'play');skip.click('startrace');assert.equal(skip.run('state'),'countdown');assert.equal(skip.run('quali'),null);
  const enabled=game({qmin:0,qualiEnabled:true,qualiMinutes:[10,8,6]});enabled.click('play');assert.equal(enabled.run('qualiStage().duration'),600);
 });
 test('6 eliminati in Q1, 7 in Q2, 10 in Q3; i tempi di accesso non cambiano le classifiche successive',()=>{
@@ -42,6 +42,7 @@ test('6 eliminati in Q1, 7 in Q2, 10 in Q3; i tempi di accesso non cambiano le c
  assert.ok(g.run('quali.finalGrid.slice(17).every((r,i)=>r.id===quali.results[0].rows[i+17].id&&r.source==="Q1")'));
  assert.ok(g.elements.get('nextQBtn').classList.contains('hidden'));assert.ok(!g.elements.get('gridBtn').classList.contains('hidden'));
  const ids=plain(g.run('quali.finalGrid.map(r=>r.id)'));g.click('grid');
+ assert.equal(g.run('state'),'qdone');assert.equal(g.run('pendingRaceStart'),'grid');g.click('startrace');
  assert.equal(g.run('state'),'countdown');assert.deepEqual(plain(g.run('cars.map(c=>c.id)')),ids);checkSeats(g);
  assert.ok(g.run('cars.every(c=>c.tyres.degradation&&c.tyres.condition===1)&&quali.finished&&quali.results.length===3'));
  assert.ok(g.run('cars.every(c=>JSON.stringify(c.qualiTimes)===JSON.stringify(quali.finalGrid.find(r=>r.id===c.id).times))'));
@@ -85,6 +86,34 @@ test('allo zero si completa soltanto il giro lanciato già in corso, poi nessun 
  assert.ok(g.run('pl.qd&&!pl.qLapActive'));g.run('raceTime=62;qualiLapProgress(pl,N-1,0);checkQualiTime();');assert.equal(g.run('pl.qLaps'),1);
  assert.equal(g.run('state'),'qbetween');assert.equal(g.run('quali.results[0].rows[0].time'),2);
 });
+
+for(const invalidatedAfterExpiry of [false,true])test('ultimo giro annullato: il controllo resta manuale fino al traguardo, annullamento '+(invalidatedAfterExpiry?'dopo':'prima')+' dello zero',()=>{
+ const g=game({qualiMinutes:[1,1,1]});g.run('startQuali();');placePlayer(g,g.run('L*.4'),0,200);
+ g.run('raceTime=59;pl.qLapActive=pl.qLapValid=true;pl.lapStart=20;pl.qLapSectors=1;pl.qLapDistance=L*.4;');
+ if(!invalidatedAfterExpiry)g.run('invalidateQualiLap(pl);');
+ g.run('raceTime=60;expireQualiSession();');
+ if(invalidatedAfterExpiry)g.run('invalidateQualiLap(pl);');
+ assert.ok(g.run('qEnd&&!pl.ai&&!pl.qd'));
+ g.run('keys.KeyW=true;update(.01);');assert.equal(g.run('pl.inp.thr'),1);assert.equal(g.run('state'),'quali');
+ // Anche un ultimo giro lento resta manuale se la vettura sta ancora viaggiando.
+ g.run('raceTime=qEndT+qualiFinishGrace+1;checkQualiTime();');assert.ok(g.run('!pl.ai&&!pl.qd'));
+ g.run('qualiLapProgress(pl,N-1,0,L-1,0);checkQualiTime();');
+ assert.ok(g.run('pl.ai&&pl.qd'));assert.equal(g.run('state'),'qbetween');assert.equal(g.run('pl.qLaps'),0);
+ assert.equal(g.run('quali.results[0].rows.find(r=>r.id==="player").time'),null);
+});
+
+test('allo zero il giro di uscita resta manuale fino al traguardo e non assegna tempi',()=>{
+ const g=game({qualiMinutes:[1,1,1]});g.run('startQuali();');placePlayer(g,g.run('L*.3'),0,200);
+ g.run('raceTime=60;expireQualiSession();');assert.ok(g.run('!pl.qLapActive&&!pl.qd&&!pl.ai'));
+ g.run('raceTime=70;qualiLapProgress(pl,N-1,0,L-1,0);checkQualiTime();');
+ assert.ok(g.run('pl.ai&&pl.qd&&!pl.qLapActive'));assert.equal(g.run('pl.qLaps'),0);assert.equal(g.run('pl.best'),1e9);
+});
+
+test('un pilota fermo dopo lo zero conserva il limite di sicurezza della fase',()=>{
+ const g=game({qualiMinutes:[1,1,1]});g.run('startQuali();');placePlayer(g,g.run('L*.3'),0,0);
+ g.run('raceTime=60;expireQualiSession();');assert.ok(g.run('!pl.qd&&!pl.ai'));
+ g.run('raceTime=qEndT+qualiFinishGrace+1;checkQualiTime();');assert.ok(g.run('pl.qd&&pl.ai'));assert.equal(g.run('state'),'qbetween');
+});
 test('saltare Q1, Q2 e Q3 dalla pausa è immediato anche con giri lanciati in corso',()=>{
  const g=game();g.run('startQuali();');
  for(let phase=0;phase<3;phase++){
@@ -123,6 +152,78 @@ test('qualifica manuale: i settori avanzano nel giro di uscita e il giro complet
  g.run('for(let i=1;i<=N;i++)crossSample(i%N);');
  assert.equal(g.run('pl.qLaps'),1);assert.equal(g.run('pl.best'),g.run('N'));assert.ok(g.run('pl.bestSecs.every(t=>t>0&&t<1e8)'));
 });
+test('qualifica: il passaggio reale del traguardo apre il giro anche prima del cambio di segmento',()=>{
+ const g=game();g.run(`startQuali();pl.go=true;pl.pit.phase='track';pl.pit.auto=false;
+  raceTime=1;sectorProgress(pl,N-1,N-1,L-1,0);progress(pl,N-1,N-1,L-1,0);`);
+ assert.ok(g.run('pl.qLapActive&&pl.qLapValid'));assert.equal(g.run('pl.lapStart'),1);
+ assert.equal(g.run('pl.qLaps'),0);assert.equal(g.run('pl.activeSec'),0);
+});
+
+test('qualifica: settori colorati e tempo salvato al passaggio reale su tutti i 24 circuiti',()=>{
+ const g=game();
+ const rows=g.run(`(()=>{const out=[];
+  function cross(c,from,to,a=pointAtDistance(from).i,b=pointAtDistance(to).i){
+   c.trackS=wrapDistance(to);sectorProgress(c,a,b,from,to);progress(c,a,b,from,to);c.idx=b;
+  }
+  for(const circuit of CIRCUIT_DATA){toMenu();selectCircuit(circuit.id);startQuali();pl.go=true;pl.pit.phase='track';pl.pit.auto=false;
+   raceTime=1;cross(pl,L-1,0);const start=pl.lapStart;let from=0;const states=[];
+   // Include i rilevamenti esatti: non tutti coincidono con l'inizio di un segmento.
+   const positions=[...T.slice(1).map(q=>q.s),...SECTOR_MARKS,L].sort((a,b)=>a-b).filter((s,i,a)=>!i||s!==a[i-1]);
+   for(const to of positions){raceTime+=.05;const active=pl.activeSec;
+    // All'arrivo l'indice può essere ancora quello del segmento che termina sulla linea.
+    cross(pl,from,to,pointAtDistance(from).i,to===L?N-1:pointAtDistance(to).i);
+    if(pl.activeSec!==active&&to<L)states.push(pl.secState[active]);from=to;
+   }
+   sectorHud(pl);qHud(1);const best=pl.best;endQuali();
+   out.push({id:circuit.id,states,laps:pl.qLaps,best,total:raceTime-start,sectors:pl.lastSecs.slice(),
+    stored:quali.results[0].rows.find(r=>r.id==='player').time});
+  }return out;})()`);
+ assert.equal(rows.length,24);
+ for(const row of rows){
+  assert.deepEqual(Array.from(row.states),['fastest','fastest'],JSON.stringify(row));assert.equal(row.laps,1,JSON.stringify(row));
+  assert.ok(row.best>0&&row.best<1e8,JSON.stringify(row));assert.equal(row.stored,row.best);
+  assert.ok(row.sectors.every(t=>t>0),JSON.stringify(row));
+  assert.ok(Math.abs(row.sectors.reduce((a,b)=>a+b,0)-row.best)<1e-7,JSON.stringify(row));
+ }
+});
+
+test('qualifica manuale senza track limit: un giro con lunghe uscite registra subito il tempo su tutti i circuiti',()=>{
+ const g=game();
+ const rows=g.run(`(()=>{const out=[];
+  for(const circuit of CIRCUIT_DATA){toMenu();selectCircuit(circuit.id);startQuali();
+   pl.go=true;pl.ai=false;pl.pit.phase='track';pl.pit.auto=false;pl.idx=N-1;pl.trackS=L-1;
+   function sample(i,d=0){const q=T[i];pl.x=q.x+q.nx*d;pl.y=q.y+q.ny*d;pl.a=q.ang;
+    pl.vx=pl.vy=0;pl.inp={st:0,thr:0,brk:0,rev:0};raceTime+=.05;stepCar(pl,.01);}
+   sample(0);const start=pl.lapStart;let outside=false;
+   for(let i=1;i<=N;i++){sample(i%N,i>N*.3&&i<N*.5||i===Math.floor(N*.55)?TW/2+30:0);outside=outside||pl.off;}
+   qHud(1);const row={id:circuit.id,outside,laps:pl.qLaps,best:pl.best,total:raceTime-start,
+    saved:pl.qualiTimes[quali.stage],visible:$('tower').innerHTML.includes(fmt(raceTime-start)),sectors:pl.lastSecs.slice()};
+   endQuali();row.result=quali.results[0].rows.find(r=>r.id==='player').time;out.push(row);
+  }return out;})()`);
+ assert.equal(rows.length,24);
+ for(const row of rows){
+  assert.ok(row.outside,JSON.stringify(row));assert.equal(row.laps,1,JSON.stringify(row));assert.equal(row.best,row.total,JSON.stringify(row));
+  assert.equal(row.saved,row.best,JSON.stringify(row));assert.equal(row.result,row.best,JSON.stringify(row));assert.ok(row.visible,JSON.stringify(row));
+  assert.ok(row.sectors.every(t=>t>0),JSON.stringify(row));
+ }
+});
+
+test('una lunga percorrenza fuori pista salva il tempo; i giri successivi conservano il migliore',()=>{
+ const g=game();g.run(`startQuali();pl.go=true;pl.pit.phase='track';pl.pit.auto=false;pl.idx=N-1;pl.trackS=L-1;
+  globalThis.sampleQuali=(i,dt=.05,outside=false)=>{const q=T[i],d=outside?TW/2+30:0;
+   pl.x=q.x+q.nx*d;pl.y=q.y+q.ny*d;pl.a=q.ang;pl.vx=pl.vy=0;pl.inp={st:0,thr:0,brk:0,rev:0};raceTime+=dt;stepCar(pl,.01);};
+  sampleQuali(0);for(let i=1;i<=N;i++)sampleQuali(i%N,.05,i>N*.3&&i<N*.5);`);
+ assert.ok(g.run('pl.qLaps===1&&validQualiTime(pl.best)&&pl.qualiTimes[0]===pl.best'));
+ g.run('for(let i=1;i<=N;i++)sampleQuali(i%N);');
+ assert.ok(g.run('pl.qLaps===2&&validQualiTime(pl.best)&&pl.qualiTimes[0]===pl.best'));
+ const first=g.run('pl.best');g.run('for(let i=1;i<=N;i++)sampleQuali(i%N,.06);');
+ assert.equal(g.run('pl.best'),first);assert.equal(g.run('pl.qualiTimes[0]'),first);
+ g.run('for(let i=1;i<=N;i++)sampleQuali(i%N,.04);');
+ assert.ok(g.run('pl.best<qualiStage().duration&&pl.best<'+first+'&&pl.qualiTimes[0]===pl.best'));
+ const best=g.run('pl.best');g.run('endQuali();nextQualiSession();');
+ assert.equal(g.run('pl.qualiTimes[0]'),best);assert.equal(g.run('pl.qualiTimes[1]'),null);
+});
+
 test('i settori visibili avanzano anche dopo un giro annullato, senza assegnare tempi validi',()=>{
  const g=game();g.run(`startQuali();pl.go=true;pl.pit.phase='track';pl.lap=0;pl.qLapActive=pl.qLapValid=true;invalidateQualiLap(pl);
   const first=T.findIndex(q=>q.s>=SECTOR_MARKS[0]),second=T.findIndex(q=>q.s>=SECTOR_MARKS[1]);
@@ -145,7 +246,7 @@ test('SOFT al 100% anche per eliminate e auto ai box, fattori costanti; in gara 
   assert.equal(g.elements.get('tyreText').textContent,'SOFT — 100%');endWithTimes(g);
   if(phase<2)g.click('nextq');
  }
- g.click('grid');g.advance(2);assert.ok(g.run('cars.every(c=>c.tyres.condition===1&&c.tyres.degradation)'));
+ g.click('grid');g.click('startrace');g.advance(2);assert.ok(g.run('cars.every(c=>c.tyres.condition===1&&c.tyres.degradation)'));
  g.run('pl.ai=true;');g.advance(15);assert.ok(g.run('cars.every(c=>c.tyres.condition<1&&c.tyres.condition>0)'));
  g.run('pl.tyres.condition=.1;');assert.ok(g.run('tyreGrip(pl)<1&&tyreSpeed(pl)<1'));
 });
@@ -172,5 +273,5 @@ test('weekend fisico completo: 23 -> 17 -> 10, più tentativi reali, griglia aut
   if(phase<2)g.click('nextq');
  }
  const ids=plain(g.run('lastGrid.map(e=>e.isP?"player":"driver:"+e.di)'));assert.equal(ids.length,23);
- g.click('grid');assert.deepEqual(plain(g.run('cars.map(c=>c.id)')),ids);assert.ok(g.run('cars.every(c=>c.tyres.degradation)'));
+ g.click('grid');g.click('startrace');assert.deepEqual(plain(g.run('cars.map(c=>c.id)')),ids);assert.ok(g.run('cars.every(c=>c.tyres.degradation)'));
 });

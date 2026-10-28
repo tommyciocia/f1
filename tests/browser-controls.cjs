@@ -22,7 +22,7 @@ const {pathToFileURL}=require('node:url'),{chromium}=require('playwright');
   assert.equal(await page.evaluate(()=>S.padMap.pit),2);assert.equal(await page.evaluate(()=>S.padTriggers),'auto');
   await page.screenshot({path:path.join(folder,'controls.png')});
   await page.evaluate(()=>{
-   startRace();state='racing';pl.go=true;
+   PIT.serviceAllowed=false;startRace();state='racing';pl.go=true; // Isola i comandi di transito dal servizio, verificato in browser-tyres.
    globalThis.pose=(s,d,v)=>{const q=botPointAt(s);pl.x=q.x+q.nx*d;pl.y=q.y+q.ny*d;pl.idx=q.i;pl.trackS=q.trackS;pl.d=pl.lane=d;pl.a=q.ang;pl.vx=Math.cos(q.ang)*v;pl.vy=Math.sin(q.ang)*v;pl.pit.phase='track';pl.pit.auto=false;pl.pit.onLane=false;pl.ai=false;};
    pose(2000,0,600);updatePitPrompt();
   });

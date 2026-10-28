@@ -21,7 +21,8 @@ function mkCars(order){order=order||defOrder();cars=[];
   const q=gridSlot(k),idx=q.i,lat=q.lat;
   const c={id:isP?'player':'driver:'+e.di,code:dr[0],name:dr[1],num:dr[2],team,tname:isP?(m.name||'Tommy Racing'):teamName(team),col:isP?m.c1:TEAMS[team][0],acc:isP?m.c2:TEAMS[team][1],isP,ai:!isP,
    top:1000*ts[0]*sk,accel:460*ts[1]*sk,brk:1400*ts[2],grip:ts[3],cs:Math.min(1.04,sk*ts[3]),x:q.x,y:q.y,a:q.ang,vx:0,vy:0,idx,trackS:q.s,d:lat,lane:lat,base:lat*.6,
-   lap:-1,lapStart:0,best:1e9,fin:0,pen:0,go:false,stuck:0,steer:0,slip:0,inp:{st:0,thr:0,brk:0,hb:false},kerb:false,off:false,rep:0,e,tow:0,qd:false,relT:0,
+   lap:mode==='quali'?-1:0,lapStart:0,best:1e9,fin:0,pen:0,go:false,stuck:0,steer:0,slip:0,inp:{st:0,thr:0,brk:0,hb:false},kerb:false,off:false,rep:0,e,tow:0,qd:false,relT:0,
+   raceStarted:false,raceLapValid:true,raceLapSectors:0,raceLapDistance:0,
    aiId:k,pitStops:0,pitRequired:PIT.serviceAllowed&&mode==='race'&&S.laps>2,disqualified:false,passTarget:null,passSide:0,passLane:lat*.6,passHold:0,recoveryT:0,recoveryLane:lat*.6,launchT:0,launchLane:lat,stallP:undefined,stallT:0,
    secs:[null,null,null],bestSecs:[1e9,1e9,1e9],secDelta:[null,null,null],secState:['wait','wait','wait'],lastSecs:[null,null,null],lastDelta:[null,null,null],lastState:['wait','wait','wait'],secStart:0,activeSec:0,trackGuard:false};
   c.qActive=true;c.qualiTimes=e.qualiTimes?e.qualiTimes.slice():[null,null,null];resetTyres(c);cars.push(c);});

@@ -1,0 +1,17 @@
+{
+  "name": "f1-racing-simulator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Simulatore F1 locale con hosting statico protetto senza dipendenze runtime",
+  "engines": {
+    "node": "^22.23.4 || ^24.22.1 || ^26.12.1"
+  },
+  "scripts": {
+    "start": "node server/server.cjs",
+    "test": "node --test tests/pit-service.cjs tests/progression.cjs tests/security-client.cjs tests/security-server.cjs tests/security-source.cjs tests/security-tls.cjs tests/simulation.cjs tests/qualifying.cjs tests/controls.cjs tests/tyres.cjs tests/race-rules.cjs tests/strategy.cjs tests/pit-access.cjs tests/circuits.cjs",
+    "test:pit": "node --test tests/pit-service.cjs",
+    "test:progression": "node --test tests/progression.cjs",
+    "test:security": "node --test tests/security-client.cjs tests/security-server.cjs tests/security-source.cjs tests/security-tls.cjs",
+    "test:browser-security": "node tests/browser-security.cjs"
+  }
+}

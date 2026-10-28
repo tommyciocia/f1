@@ -111,10 +111,11 @@ test('X si attiva soltanto all’ingresso e in marcia avanti, senza prenotazioni
 test('transito ai box continuo: un passaggio al traguardo e penalità conservate',()=>{
  const g=game({laps:5});g.run('startRace();state="racing";cars.forEach(c=>c.go=true);pl.lap=0;pl.pen=3;pl.best=60;raceTime=80;');
  placePlayer(g,g.run("PIT.entryStart")-100,-70,200);g.run('requestPitEntry();');
+ g.run('pl.raceStarted=true;pl.raceLapSectors=3;pl.raceLapDistance=wrapDistance(pl.trackS);');
  const result=g.run(`(()=>{
   const start={x:pl.x,y:pl.y};tryPitEntry(pl);
   const jump=Math.hypot(pl.x-start.x,pl.y-start.y),phases=new Set([pl.pit.phase]);let maxSpeed=0,maxStep=0,minSpeed=Infinity;
-  for(let n=0;n<1200&&pitActive(pl);n++){
+  for(let n=0;n<1800&&pitActive(pl);n++){
    const p={x:pl.x,y:pl.y};update(1/30);phases.add(pl.pit.phase);
    if(pl.pit.phase==='waiting'){confirmPitTyres();phases.add(pl.pit.phase);}
    if(pitActive(pl)){const speed=Math.hypot(pl.vx,pl.vy);maxSpeed=Math.max(maxSpeed,speed*.32);minSpeed=Math.min(minSpeed,speed);maxStep=Math.max(maxStep,Math.hypot(pl.x-p.x,pl.y-p.y));}
@@ -122,8 +123,8 @@ test('transito ai box continuo: un passaggio al traguardo e penalità conservate
   render();return{jump,phases:[...phases],maxSpeed,minSpeed,maxStep,onTrack:onTrack(pl),ai:pl.ai,lap:pl.lap,pen:pl.pen,best:pl.best,others:cars.filter(c=>!c.isP&&pitActive(c)).length};
  })()`);
  assert.equal(result.jump,0);assert.ok(result.onTrack,JSON.stringify(result));assert.ok(!result.ai);
- assert.deepEqual(Array.from(result.phases),['entry','lane','exit','track']);assert.ok(result.maxSpeed<=80+1e-6,JSON.stringify(result));
- assert.ok(result.maxStep<=250/30+.1,JSON.stringify(result));assert.ok(result.minSpeed>0,JSON.stringify(result));
+ assert.deepEqual(Array.from(result.phases),['entry','lane','waiting','service','release','exit','track']);assert.ok(result.maxSpeed<=80+1e-6,JSON.stringify(result));
+ assert.ok(result.maxStep<=250/30+.1,JSON.stringify(result));assert.equal(result.minSpeed,0,JSON.stringify(result));
  assert.equal(result.lap,1);assert.equal(result.pen,3);assert.equal(result.best,60);assert.equal(result.others,0);checkSeats(g);
  g.run('keys.KeyW=true;update(.01);');assert.equal(g.run('pl.inp.thr'),1);
  // Un secondo transito usa ancora la stessa piazzola e non riutilizza il vecchio percorso.

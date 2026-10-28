@@ -42,7 +42,8 @@ function tyreGrip(c){return mode==='quali'?1:tyreCompound(c).grip*(1-tyreWearPen
 function tyreSpeed(c){return mode==='quali'?1:tyreCompound(c).speed*(1-tyreWearPenalty(c)*.42);}
 function tyreHud(){
  const tyre=tyreCompound(pl),percent=mode==='quali'?100:Math.floor(pl.tyres.condition*100+1e-7),ring=$('tyreIndicator');
+ const label=tyre.name+' — '+percent+'%';if(ring.getAttribute('aria-label')===label)return;
  const wearColor=percent>=80?'#2ecc40':percent>=20?'#ffd400':'#ff3344';
  ring.style.setProperty('--tyre-condition',percent+'%');ring.style.setProperty('--tyre-color',tyre.color);ring.style.setProperty('--tyre-wear-color',wearColor);
- ring.setAttribute('aria-label',tyre.name+' — '+percent+'%');$('tyreText').textContent=tyre.name+' — '+percent+'%';
+ ring.setAttribute('aria-label',label);$('tyreText').textContent=label;
 }

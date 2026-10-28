@@ -4,7 +4,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const vm=require('node:vm');
 const root=path.join(__dirname,'../..');
-function game(settings={}){
+function game(settings={},stored={}){
  const elements=new Map(),events=new Map(),docEvents=new Map(),ctx=new Proxy({},{get:(o,k)=>o[k]||(()=>{}),set:(o,k,v)=>(o[k]=v,true)});
  function element(id){
   if(!elements.has(id)){
@@ -16,7 +16,7 @@ function game(settings={}){
   return elements.get(id);
  }
  element('lights').children=Array.from({length:5},()=>element(Symbol()));
- const storage=new Map([['f1sim.set',JSON.stringify(settings)]]);
+ const storage=new Map([['f1sim.set',JSON.stringify(settings)],...Object.entries(stored)]);
  const register=(map,type,handler)=>{if(!map.has(type))map.set(type,[]);map.get(type).push(handler);};
  const env=vm.createContext({console,Math:Object.create(Math),Date,performance:{now:()=>0},setTimeout:()=>1,clearTimeout(){},
   localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v)},Path2D:class{moveTo(){}lineTo(){}closePath(){}},
@@ -31,7 +31,7 @@ function game(settings={}){
  const run=code=>vm.runInContext(code,env);
  function advance(seconds,dt=1/30){const count=Math.ceil(seconds/dt);run(`for(let step=0;step<${count};step++)if(state!=='paused')update(${dt});`);}
  function click(action){for(const handler of docEvents.get('click')||[])handler({target:{closest:()=>({dataset:{act:action}})}});}
- return{run,advance,elements,events,click};
+ return{run,advance,elements,events,click,storage};
 }
 function placePlayer(g,s,d,speed){
  g.run(`{const q=botPointAt(${s});pl.x=q.x+q.nx*${d};pl.y=q.y+q.ny*${d};pl.a=q.ang;pl.idx=q.i;pl.trackS=q.trackS;pl.d=pl.lane=${d};pl.vx=Math.cos(q.ang)*${speed};pl.vy=Math.sin(q.ang)*${speed};pl.go=true;pl.pit.phase='track';pl.pit.auto=pl.pit.onLane=false;pl.off=pl.kerb=false;}`);

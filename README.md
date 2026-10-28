@@ -2,6 +2,17 @@
 
 Apri `index.html` in un browser. Non servono compilazione o dipendenze per giocare.
 
+Per usare l'hosting locale con security headers e limiti alle richieste, esegui
+`node server/server.cjs` e apri `http://127.0.0.1:8080`. Per la produzione sono
+obbligatori un Node aggiornato, HTTPS e l'origine pubblica configurata.
+I dettagli di avvio, l'audit, i test e le configurazioni esterne sono in
+[docs/SECURITY.md](docs/SECURITY.md).
+
+Il gioco resta locale: non contiene account o database. I salvataggi sono
+validati, ma tempi e risultati calcolati nel browser non sono certificati
+contro modifiche del proprietario. Una competizione online richiede un backend
+autorevole; il rate limiting locale richiede una protezione DDoS di rete a monte.
+
 ## Qualifiche
 
 - Q1: 23 auto, 18 minuti; passano 17 piloti, 6 eliminati nelle posizioni 18–23.
@@ -14,11 +25,15 @@ La schermata dei risultati permette di continuare nella fase successiva. Se il g
 è eliminato, la sua auto resta nel garage e la telecamera segue i piloti ancora in corsa.
 
 Un giro valido richiede traguardo, entrambi i settori nell'ordine corretto e un giro
-completo percorso. Uscite di pista, riposizionamenti e ingresso ai box annullano il
-tentativo. Alla scadenza possono finire solo i giri lanciati già iniziati; non si
-avviano nuovi tentativi. Il pulsante di fine anticipata conclude subito la fase
+completo percorso. Non ci sono track limit: uscire di pista non annulla il tentativo
+e la distanza percorsa fuori pista conta normalmente. Riposizionamenti e ingresso ai box
+annullano il tentativo. Il miglior tempo viene salvato al traguardo.
+Alla scadenza si conserva il controllo fino al traguardo, anche sul giro
+di uscita o su un giro annullato; solo i giri lanciati validi assegnano un tempo e
+non si avviano nuovi tentativi. Il pulsante di fine anticipata conclude subito la fase
 con i tempi già registrati, anche in Q1.
-Un limite di sicurezza conclude la fase se un pilota rimane fermo sul giro finale.
+Un limite di sicurezza conclude la fase se un pilota rimane fermo sul giro finale,
+senza interrompere un giocatore che sta ancora guidando.
 
 Nessun tempo viene assegnato a chi non completa un giro valido. A parità di tempo
 prevale chi lo ha ottenuto prima; senza tempo si mantiene l'ordine di accesso alla fase.
@@ -28,7 +43,7 @@ successiva utilizza automaticamente l'intera griglia di 23 auto.
 ## Gomme e box
 
 Le qualifiche impongono SOFT rosse al 100% a tutte le auto, senza consumo o penalità.
-In gara il giocatore sceglie SOFT, MEDIUM o HARD dalle impostazioni: le tre mescole
+Prima della gara il giocatore sceglie SOFT, MEDIUM o HARD nella schermata di partenza: le tre mescole
 hanno velocità, aderenza e durata differenti. L'indicatore circolare in basso a
 sinistra mostra mescola, percentuale e stato di usura; la torre mostra la sigla
 colorata accanto a ciascun pilota.
@@ -39,9 +54,12 @@ sulla pista e il transito sulla corsia a **80 km/h**, fino al ricongiungimento.
 Il percorso attraversa il traguardo: in gara il passaggio conta un solo giro.
 In qualifica l'ingresso annulla il tentativo e conserva i migliori tempi.
 
-Il catalogo reale usa il solo transito: nessun pit stop automatico, cambio gomme
-automatico o sosta obbligatoria. Le 23 piazzole dei 12 team servono alla partenza
-delle qualifiche. Le funzioni del precedente servizio restano disabilitate.
+In gara X porta alla propria piazzola: il giocatore sceglie SOFT, MEDIUM o HARD e
+conferma il cambio. Il servizio dura 2,8 secondi, monta gomme nuove al 100% e
+contabilizza la sosta solo al completamento. Da 3 giri è obbligatoria almeno una
+sosta; terminarli senza averla completata comporta la squalifica. L'IA effettua
+le proprie soste sulla corsia reale. In qualifica restano il transito e le SOFT
+al 100%, senza servizio. Le 23 piazzole dei 12 team sono conservate.
 
 La durata competitiva di un set è circa il 33% della gara per le SOFT, il 55% per
 le MEDIUM e il 78% per le HARD, con minimi rispettivamente di 3, 4 e 5 giri per
@@ -96,6 +114,13 @@ I risultati per singolo circuito sono in [docs/validation-circuits.json](docs/va
 
 ## Verifiche
 
+Il debug di settori, giri iniziali e progressione è descritto in
+[docs/DEBUG-PROGRESSION.md](docs/DEBUG-PROGRESSION.md). Le regressioni mirate si
+eseguono con `npm run test:progression` e `node tests/browser-progression.cjs`.
+In gara tutte le vetture iniziano con zero giri completati; il primo passaggio
+dal traguardo apre il giro senza accreditarne uno. S1/S2/S3 usano la distanza
+effettiva lungo il circuito e l'HUD conserva i settori del giro precedente.
+
 ~~~text
 node --test tests/circuits.cjs
 node --test tests/simulation.cjs tests/qualifying.cjs tests/controls.cjs tests/tyres.cjs tests/race-rules.cjs tests/strategy.cjs tests/pit-access.cjs
@@ -109,8 +134,10 @@ I test dei circuiti simulano Q1/Q2/Q3 da quattro minuti per fase e gare di due
 giri su ciascuna pista, con 23 vetture. Controllano geometria, direzione, griglia,
 collisioni, barriere, giri, settori, box, gomme, salvataggio e sovrappasso.
 I test di regressione coprono anche qualifiche brevi, eliminazioni, pause, ripartenze,
-input e transiti di tutte le monoposto. I test delle vecchie soste automatiche
-sono stati aggiornati al transito senza fermata richiesto per questo catalogo.
+input e transiti di tutte le monoposto. `npm run test:pit` verifica il servizio
+manuale su tutti i circuiti, il conteggio della sosta obbligatoria e una gara con
+le soste di tutte le 23 vetture. I casi di solo transito usano esplicitamente
+il servizio disabilitato come configurazione di regressione.
 
 I test browser richiedono Playwright e Microsoft Edge; F1_BROWSER_CHANNEL consente
 un altro canale Chromium installato. I browser sono isolati, senza usare profili

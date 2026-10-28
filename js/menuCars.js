@@ -14,5 +14,6 @@ function renderMyStats(){document.querySelectorAll('[data-ms]').forEach(el=>{con
 document.querySelectorAll('[data-ms]').forEach(el=>el.addEventListener('input',()=>{S.myStats[+el.dataset.ms]=+el.value;save();renderMyStats();}));
 function renderCars(){renderMyStats();document.querySelectorAll('[data-my]').forEach(el=>el.value=S.my[el.dataset.my]);drawPrev();}
 document.querySelectorAll('[data-my]').forEach(el=>el.addEventListener('input',()=>{const k=el.dataset.my;let v=el.value;
+ if(!Object.hasOwn(DEF.my,k))return;
  if(k==='code'){v=v.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,3);el.value=v;}
- if(k==='name'||k==='driver')v=v.slice(0,22);S.my[k]=v;save();drawPrev();}));
+ S.my=cleanPlayer({...S.my,[k]:v},DEF.my);save();drawPrev();}));

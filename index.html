@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; style-src-elem 'self'; style-src-attr 'unsafe-inline'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'none'">
+<meta name="referrer" content="no-referrer">
 <title>F1 Racing Simulator</title>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -94,8 +96,6 @@
   <h2>Impostazioni</h2>
   <label>Difficoltà <select data-set="diff"><option value="0">Facilissimo</option><option value="1">Facile</option><option value="2">Medio</option><option value="3">Difficile</option><option value="4">Difficilissimo</option></select></label>
   <label>Giri <input type="number" min="1" max="65" data-set="laps"></label>
-  <label>Gomme di partenza <select data-set="startCompound"><option value="SOFT">SOFT — veloci</option><option value="MEDIUM">MEDIUM — equilibrate</option><option value="HARD">HARD — resistenti</option></select></label>
-  <p class="hint">Il consumo si adatta alla durata della gara. X avvia il transito assistito ai box a 80 km/h: nessuna fermata obbligatoria o sostituzione automatica delle gomme.</p>
   <label>Sensibilità sterzo <input type="range" min="0.5" max="1.5" step="0.05" data-set="sens"></label>
   <label>Volume audio <input type="range" min="0" max="1" step="0.05" data-set="vol"></label>
   <label>Qualifiche Q1 → Q2 → Q3 <input type="checkbox" data-set="qualiEnabled"></label>
@@ -109,13 +109,21 @@
   <button data-go="menu">TORNA AL MENU</button>
 </div>
 
+<div id="raceTyres" class="panel hidden" aria-labelledby="raceTyresTitle">
+  <h2 id="raceTyresTitle">GOMME DI PARTENZA</h2>
+  <label>Scegli la mescola <select id="startCompound" data-set="startCompound"><option value="SOFT">SOFT — veloci</option><option value="MEDIUM">MEDIUM — equilibrate</option><option value="HARD">HARD — resistenti</option></select></label>
+  <p class="hint">Il consumo si adatta alla durata della gara. Da 3 giri è obbligatoria almeno una sosta. Premi X all’ingresso: guida assistita a 80 km/h fino alla tua piazzola, poi scegli e conferma le gomme.</p>
+  <button type="button" id="startRaceBtn" data-act="startrace" class="main">INIZIA GARA</button>
+  <button type="button" data-act="menu">TORNA AL MENU</button>
+</div>
+
 <div id="controls" class="panel">
   <h2>Comandi</h2>
   <div class="cols">
     <div><b>Tastiera</b><p>W / ↑ acceleratore<br>S / ↓ freno<br>A D / ← → sterzo<br>X ingresso e pilota automatico box<br>R retromarcia (tieni premuto)<br>Esc pausa<br>Spazio freno a mano<br>T riposiziona (+3 s)<br>C cambia visuale</p></div>
     <div><b>Controller</b><p>RT/R2: acceleratore<br>LT/L2: freno e, da fermo, retromarcia<br>Stick sinistro: sterzo<br>X (Xbox) / X-Croce (PS4/PS5): pilota automatico box<br>B/Cerchio: retromarcia alternativa (tieni premuto)<br>Start/Menu/Options: pausa<br>A (Xbox): acceleratore alternativo<br>Y/Triangolo: visuale</p></div>
   </div>
-  <p class="hint">Dopo il traguardo, quando compare «PREMI X PER ENTRARE AI BOX», premi X. L'assistenza frena prima della corsia e percorre ingresso, pit lane e uscita a massimo 80 km/h. I comandi manuali tornano all'uscita. Fuori dalla zona, X non prenota né attiva un ingresso.</p>
+  <p class="hint">Quando compare «PREMI X PER ENTRARE AI BOX», premi X. L'assistenza frena e percorre la corsia a massimo 80 km/h. In gara si ferma alla tua piazzola: scegli le gomme e conferma il cambio, poi riparti con l'assistenza fino all'uscita. Fuori dalla zona, X non prenota né attiva un ingresso.</p>
   <p id="padStat"></p>
   <p id="inputReadout" role="status">Premi un comando per verificarlo qui.</p>
   <p id="padButtons" class="hint"></p>
@@ -166,6 +174,7 @@
   <button data-act="menu">TORNA AL MENU</button>
 </div>
 <script src="js/utils.js"></script>
+<script src="js/security.js"></script>
 <script src="js/settings.js"></script>
 <script src="js/data.js"></script>
 <script src="js/circuitData.js"></script>

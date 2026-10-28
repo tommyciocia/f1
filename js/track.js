@@ -86,6 +86,7 @@ function trackHeight(s,circuit=activeCircuit){const b=circuit.bridge;if(!b)retur
 const carTrackHeight=c=>pitActive(c)?0:trackHeight(c.trackS??T[c.idx].s);
 const differentTrackLevels=(a,b)=>Math.abs(carTrackHeight(a)-carTrackHeight(b))>30;
 const mm=document.createElement('canvas');mm.width=200;mm.height=150;
+const miniPixelRatio=()=>S.qual==='high'?(devicePixelRatio||1):1;
 const mX=p=>10+(p.x-bx0)*mS,mY=p=>10+(p.y-by0)*mS;
 function loadCircuit(id){
  activeCircuit=CIRCUIT_DATA.find(c=>c.id===id)||CIRCUIT_DATA.find(c=>c.id==='barcelona')||CIRCUIT_DATA[0];TW=activeCircuit.width;BAR=activeCircuit.barrier;
@@ -94,7 +95,11 @@ function loadCircuit(id){
 }
 function rebuildMiniTrack(extra=[]){
  bx0=by0=Infinity;bx1=by1=-Infinity;for(const p of [...T,...extra]){bx0=Math.min(bx0,p.x);bx1=Math.max(bx1,p.x);by0=Math.min(by0,p.y);by1=Math.max(by1,p.y);}
- mS=Math.min(180/(bx1-bx0),130/(by1-by0));const m=mm.getContext('2d');m.clearRect(0,0,200,150);m.strokeStyle='#8a929c';m.lineWidth=5;m.lineJoin='round';m.beginPath();T.forEach((p,i)=>i?m.lineTo(mX(p),mY(p)):m.moveTo(mX(p),mY(p)));m.closePath();m.stroke();
+ mS=Math.min(180/(bx1-bx0),130/(by1-by0));paintMiniTrack();
+}
+function paintMiniTrack(dpr=miniPixelRatio()){
+ mm.width=Math.round(200*dpr);mm.height=Math.round(150*dpr);
+ const m=mm.getContext('2d');m.setTransform(dpr,0,0,dpr,0,0);m.clearRect(0,0,200,150);m.strokeStyle='#8a929c';m.lineWidth=5;m.lineJoin='round';m.beginPath();T.forEach((p,i)=>i?m.lineTo(mX(p),mY(p)):m.moveTo(mX(p),mY(p)));m.closePath();m.stroke();
 }
 function gridSlot(k){const q=pointAtDistance(L-(90+k*90),activeCircuit,true),lat=(k%2?1:-1)*Math.min(48,TW*.235);return{...q,lat,x:q.x+q.nx*lat,y:q.y+q.ny*lat};}
 loadCircuit(S.circuitId);S.circuitId=activeCircuit.id;

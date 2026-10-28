@@ -1,6 +1,7 @@
 'use strict';
 /* Fisica di una vettura (accelerazione, frenata, aderenza, barriere) e avanzamento di tutte le vetture */
 function stepCar(c,h){
+ const previousTrackS=c.trackS;
  if(pitActive(c)&&!c.go)return;
  if(c.pit?.phase==='waiting'||c.pit?.phase==='service'){c.vx=c.vy=0;return;}
  const inPits=pitAutopilot(c);
@@ -43,11 +44,10 @@ function stepCar(c,h){
  // Il follower dei bot restituisce anche il segmento effettivamente raggiunto:
  // aggiornare tempi e giri con quello evita disallineamenti tra posizione e velocità.
  if(c.ai||inPits){const followed=followTrackAsBot(c,ni,h);ni=followed.idx;q=T[ni];d=followed.d;}
- if(state==='quali'&&!inPits&&Math.abs(d)>TW/2+22)invalidateQualiLap(c);
  if(!c.ai&&!inPits){const along=clamp((c.x-q.x)*Math.cos(q.ang)+(c.y-q.y)*Math.sin(q.ang),0,q.len);c.trackS=wrapDistance(q.s+along);}
  // I box reali attraversano il traguardo: il giro in gara conta anche nel transito.
  // L'out-lap di qualifica resta invece escluso fino all'uscita dalla corsia.
- if((!inPits||state==='racing')&&(state==='racing'||state==='quali')){sectorProgress(c,c.idx,ni);progress(c,c.idx,ni);}c.idx=ni;c.d=d;
+ if((!inPits||state==='racing')&&(state==='racing'||state==='quali')){sectorProgress(c,c.idx,ni,previousTrackS,c.trackS);progress(c,c.idx,ni,previousTrackS,c.trackS);}c.idx=ni;c.d=d;
  // Box e corsia di uscita hanno la propria superficie; non sono erba o barriere.
  if(inPits){c.off=c.kerb=false;return;}
  // Chi si trova già sulla corsia può proseguire manualmente fino alla pressione di X.

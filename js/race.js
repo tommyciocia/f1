@@ -1,7 +1,7 @@
 'use strict';
 /* Gara: semafori di partenza, countdown, traguardo e classifica finale */
-function startRace(g){resetQualiRelease();if(g!==undefined)lastGrid=g;mode='race';mkCars(lastGrid);$('tower').classList.remove('quali-tower');$('lights').classList.remove('hidden');raceTime=0;sessionBestSecs=[1e9,1e9,1e9];cd=0;lit=0;hold=.6+Math.random()*.9;finT=0;particles=[];camMul=1;
- camX=pl.x;camY=pl.y;state='countdown';hideAll();$('hud').classList.remove('hidden');setLights(0);$('banner').textContent='';}
+function startRace(g){resetQualiRelease();if(g!==undefined)lastGrid=g;mode='race';mkCars(lastGrid);$('tower').classList.remove('quali-tower');$('lights').classList.remove('hidden');raceTime=0;sessionBestSecs=[1e9,1e9,1e9];cd=0;lit=0;hold=.6+Math.random()*.9;finT=0;particles=[];camMul=1;tickT=0;
+ camX=pl.x;camY=pl.y;state='countdown';hideAll();$('hud').classList.remove('hidden');setLights(0);$('banner').textContent='';hudUpdate(0);}
 function setLights(n){[...$('lights').children].forEach((s,i)=>s.classList.toggle('on',i<n));}
 function updateCountdown(dt){
  if(state!=='countdown')return;
@@ -10,8 +10,7 @@ function updateCountdown(dt){
   if(cd>=4+hold){setLights(0);$('lights').classList.add('hidden');state='racing';cars.forEach(c=>{c.go=true;c.launchLane=c.d;c.launchT=1.5;});beep(880,.35);banner('VIA!',900);}
 }
 function checkRaceFinish(){if(state==='racing'&&pl.fin&&(cars.every(c=>c.fin)||raceTime-finT>10))endRace();}
-function endRace(){state='done';cars.forEach(c=>c.disqualified=missedMandatoryPit(c));const o=order();let rec=[];
- try{rec=JSON.parse(localStorage.getItem('f1sim.rec')||'[]');}catch(e){}
+function endRace(){state='done';cars.forEach(c=>c.disqualified=missedMandatoryPit(c));const o=order(),rec=readRecords();
  rec.unshift({d:new Date().toLocaleDateString('it-IT'),circuitId:activeCircuit.id,circuitName:activeCircuit.name,pos:o.indexOf(pl)+1,tot:pl.fin,best:pl.best<1e8?pl.best:0,laps:S.laps,diff:S.diff,disqualified:pl.disqualified,pitStops:pl.pitStops});
  try{localStorage.setItem('f1sim.rec',JSON.stringify(rec.slice(0,10)));}catch(e){}
  $('resList').innerHTML=o.map((c,i)=>`<div class="${c.isP?'me':''}"><b>${i+1}</b><span style="flex:1">${esc(c.name)} ${tyreBadge(c)} · ${esc(c.tname)}<small class="result-pits">${PIT.serviceAllowed?c.pitStops+' soste completate':esc(activeCircuit.name)}${c.disqualified?' · Sosta obbligatoria mancante':''}</small></span><span class="${c.disqualified?'pit-dsq':''}">${c.disqualified?'DSQ':c.fin?fmt(c.fin):'+'+Math.max(1,S.laps-c.lap)+' giro/i'}</span></div>`).join('');

@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-27",
+  "scope": "Repository locale e browser isolati; nessun test offensivo su servizi esterni",
+  "architecture": "Gioco statico offline; hosting Node opzionale; nessun account, API di scrittura o database",
+  "security": {
+    "command": "node --test tests/security-client.cjs tests/security-server.cjs tests/security-source.cjs tests/security-tls.cjs",
+    "runtime": "Node.js 24.22.1",
+    "passed": 17,
+    "failed": 0,
+    "skipped": 0,
+    "tls": "Certificato effimero localhost verificato tramite CA esplicita; HTTPS e HSTS produzione; TLS 1.1 rifiutato con alert protocol version; handshake incompleto chiuso entro timeout",
+    "slow_http": "Connessione con header incompleti chiusa entro timeout",
+    "secrets": "Nessuna corrispondenza ai formati coperti dalla scansione dei file sorgente; cronologia Git e ambienti esterni esclusi"
+  },
+  "browser": {
+    "engine": "Microsoft Edge Chromium headless, profili isolati",
+    "passedSuites": [
+      "tests/browser-security.cjs",
+      "tests/browser.cjs",
+      "tests/browser-controls.cjs",
+      "tests/browser-tyres.cjs",
+      "tests/browser-circuits.cjs"
+    ],
+    "securityChecks": "XSS persistente neutralizzato; CSP applicata a script inline, handler e connessioni esterne prima della rete; menu, 24 circuiti, gara e file:// funzionanti"
+  },
+  "gameRegression": {
+    "command": "node --test tests/simulation.cjs tests/qualifying.cjs tests/controls.cjs tests/tyres.cjs tests/race-rules.cjs tests/strategy.cjs tests/pit-access.cjs tests/circuits.cjs",
+    "runtime": "Node.js 24.14.1, esclusivamente test locali",
+    "passed": 191,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 933336.7656,
+    "circuits": "24/24: geometria, collisioni, settori, Q1/Q2/Q3 e gara completa con 23 auto",
+    "additionalFinalCodeVerification": {
+      "command": "node --test tests/qualifying.cjs tests/tyres.cjs tests/race-rules.cjs",
+      "runtime": "Node.js 24.22.1",
+      "passed": 37,
+      "failed": 0,
+      "note": "Rieseguiti dopo l'ultima protezione dei colori nei renderer; non sommati nuovamente ai 191 test distinti"
+    }
+  },
+  "dependencies": {
+    "runtimeNpmPackages": 0,
+    "command": "npm audit --omit=dev",
+    "reportedVulnerabilities": 0,
+    "systemNode": "24.14.1: aggiornamento necessario prima della produzione; il controllo di avvio lo rifiuta",
+    "productionNodePolicyAsOf": "2026-10-27"
+  },
+  "externalConfigurationRequired": [
+    "CDN/WAF e protezione DDoS volumetrica, firewall e limiti del gateway",
+    "Dominio, certificati pubblici, rinnovo e redirect HTTPS",
+    "Collector log con rotazione, retention e consegna degli allarmi critici",
+    "Aggiornamenti di Node, browser, OS e infrastruttura"
+  ],
+  "residualRisks": [
+    "La simulazione e i risultati locali possono essere modificati dal proprietario del browser",
+    "Nessuna autenticazione o amministrazione remota implementata in assenza di un backend",
+    "Nessun backup automatico dei salvataggi locali o database presente",
+    "Test locali: nessuna attestazione della sicurezza di un deployment pubblico"
+  ]
+}

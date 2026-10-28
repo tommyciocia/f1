@@ -95,20 +95,21 @@ for(const [id] of expected){
    assert.equal(data.state,phase===2?'qdone':'qbetween',JSON.stringify(data));assert.equal(data.participants,[23,17,10][phase]);assert.equal(data.timed,data.participants,JSON.stringify(data));assert.equal(data.eliminated,[6,7,0][phase]);assert.ok(data.pitSpeed<=80.001&&data.finite&&data.inside&&data.tyres,JSON.stringify(data));
    assert.ok(data.releases.every((s,i)=>i===0||s-data.releases[i-1]>=.5-1e-7));stages.push({participants:data.participants,timed:data.timed,time:data.time});if(phase<2)g.click('nextq');
   }
-  const grid=Array.from(g.run('quali.finalGrid.map(c=>c.id)'));g.click('grid');assert.deepEqual(Array.from(g.run('cars.map(c=>c.id)')),grid);checkSeats(g);assert.equal(g.run('activeCircuit.id'),id);console.log(id+' qualifiche',JSON.stringify(stages));
+  const grid=Array.from(g.run('quali.finalGrid.map(c=>c.id)'));g.click('grid');g.click('startrace');assert.deepEqual(Array.from(g.run('cars.map(c=>c.id)')),grid);checkSeats(g);assert.equal(g.run('activeCircuit.id'),id);console.log(id+' qualifiche',JSON.stringify(stages));
  });
 
- test(id+': gara completa, transito X a 80, traguardo ai box e nessun cambio gomme automatico',()=>{
+ test(id+': gara completa, pit stop richiesto a 80, cambio confermato e traguardo ai box',()=>{
   const g=game({circuitId:id,laps:2,diff:4,myStats:[.8,.8,.8,.8],startCompound:'MEDIUM'});g.run('startRace();pl.ai=true;');
   const data=g.run(`(()=>{let entered=false,initialLap=-1,pitCrossings=0,maxPitSpeed=0,maxPitStep=0,finite=true,inside=true,autoStops=0;const phases=new Set();
    for(let n=0;n<26000&&state!=='done';n++){
     const wasPit=pitAutopilot(pl),before={x:pl.x,y:pl.y,s:pl.trackS};update(.05);
     if(pl.lap>=0&&!entered&&requestPitEntry()){entered=true;initialLap=pl.lap;}
+    if(pl.pit.phase==='waiting'){phases.add('waiting');choosePitCompound('MEDIUM');confirmPitTyres();}
     if(pitAutopilot(pl)&&pl.pit.phase!=='approach'){maxPitSpeed=Math.max(maxPitSpeed,Math.hypot(pl.vx,pl.vy)*.32);if(wasPit)maxPitStep=Math.max(maxPitStep,Math.hypot(pl.x-before.x,pl.y-before.y));}
     if(wasPit&&before.s<0&&pl.trackS>=0)pitCrossings++;phases.add(pl.pit.phase);
     for(const c of cars){finite=finite&&[c.x,c.y,c.vx,c.vy].every(Number.isFinite);if(c!==pl&&pitActive(c))autoStops++;if(onTrack(c)&&c.ai)inside=inside&&Math.abs(c.d)<=TW/2-25;}
    }render();const result={state,entered,initialLap,pitCrossings,maxPitSpeed,maxPitStep,finite,inside,autoStops,phases:[...phases],lap:pl.lap,finished:cars.filter(c=>c.fin).length,stops:pl.pitStops,compound:pl.tyres.compound,condition:pl.tyres.condition,dsq:pl.disqualified,best:pl.best,pending:cars.filter(c=>!c.fin).map(c=>({id:c.id,lap:c.lap,phase:c.pit.phase}))};toMenu();result.persisted=activeCircuit.id;return result;})()`);
-  assert.equal(data.state,'done',JSON.stringify(data));assert.ok(data.entered&&data.finite&&data.inside);assert.equal(data.pitCrossings,1,JSON.stringify(data));assert.equal(data.lap,2);assert.equal(data.finished,23,JSON.stringify(data));assert.ok(data.maxPitSpeed<=80.001);assert.ok(data.maxPitStep<=13.5,JSON.stringify(data));assert.equal(data.autoStops,0);assert.equal(data.stops,0);assert.equal(data.compound,'MEDIUM');assert.ok(data.condition<1&&data.condition>0);assert.equal(data.dsq,false);assert.equal(data.persisted,id);assert.ok(data.best>0&&data.best<1e8);assert.ok(!data.phases.includes('waiting')&&!data.phases.includes('service'));
+  assert.equal(data.state,'done',JSON.stringify(data));assert.ok(data.entered&&data.finite&&data.inside);assert.equal(data.pitCrossings,1,JSON.stringify(data));assert.equal(data.lap,2);assert.equal(data.finished,23,JSON.stringify(data));assert.ok(data.maxPitSpeed<=80.001);assert.ok(data.maxPitStep<=13.5,JSON.stringify(data));assert.equal(data.autoStops,0);assert.equal(data.stops,1);assert.equal(data.compound,'MEDIUM');assert.ok(data.condition<1&&data.condition>0);assert.equal(data.dsq,false);assert.equal(data.persisted,id);assert.ok(data.best>0&&data.best<1e8);assert.ok(data.phases.includes('waiting')&&data.phases.includes('service'));
   console.log(id+' gara',JSON.stringify(data));
  });
 }

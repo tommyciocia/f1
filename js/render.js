@@ -1,16 +1,20 @@
 'use strict';
 /* Disegno della scena: camera, pista, auto, particelle */
 const cv=$('c'),ctx=cv.getContext('2d'),mctx=$('mini').getContext('2d');
-function render(){
+let renderBounds=null;
+function render(dt=1/60){
  const dpr=devicePixelRatio||1,W=innerWidth,H=innerHeight;
  if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);}
  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle=state==='menu'?'#0e1114':'#2f6b2f';ctx.fillRect(0,0,W,H);
  if(state==='menu')return;
  const unit=clamp(Math.min(W,H)/900,.55,1.4),qualifyingView=mode==='quali'&&state==='quali';let tx,ty,z;
  const followed=mode==='quali'?qualiCameraCar():pl,v=Math.hypot(followed.vx,followed.vy),lookAhead=qualifyingView&&W<=1000?.15:.5;tx=followed.x+followed.vx*lookAhead;ty=followed.y+followed.vy*lookAhead;z=(.62-.2*clamp(v/1000,0,1))*unit/camMul;
- camX+=(tx-camX)*.15;camY+=(ty-camY)*.15;camZ+=(z-camZ)*.05;
+ const cameraStep=clamp(dt,0,.05)*60,pan=1-Math.pow(.85,cameraStep),zoom=1-Math.pow(.95,cameraStep);
+ camX+=(tx-camX)*pan;camY+=(ty-camY)*pan;camZ+=(z-camZ)*zoom;
  // La tabella estesa lascia la vettura nella parte libera della visuale.
- ctx.save();ctx.translate(qualifyingView&&W>1000?W*.75:W/2,qualifyingView&&W<=1000?H*.68:H/2);ctx.scale(camZ,camZ);ctx.translate(-camX,-camY);
+ const screenX=qualifyingView&&W>1000?W*.75:W/2,screenY=qualifyingView&&W<=1000?H*.68:H/2;
+ renderBounds={left:camX-screenX/camZ,right:camX+(W-screenX)/camZ,top:camY-screenY/camZ,bottom:camY+(H-screenY)/camZ};
+ ctx.save();ctx.translate(screenX,screenY);ctx.scale(camZ,camZ);ctx.translate(-camX,-camY);
  ctx.lineJoin='round';ctx.lineCap='butt';
  ctx.strokeStyle='#d8dce0';ctx.lineWidth=TW+2*BAR+16;ctx.stroke(path);
  ctx.strokeStyle='#d24141';ctx.setLineDash([80,80]);ctx.stroke(path);ctx.setLineDash([]);
@@ -48,7 +52,9 @@ function render(){
  if(state!=='menu')drawMini();
 }
 function drawVehicleLayer(include){
- const layer=cars.filter(include);for(const c of layer)drawCar(c,true);for(const c of layer)drawCar(c,false);
+ // Il margine comprende ombra, rotazione e nome, anche al bordo dello schermo.
+ const layer=cars.filter(c=>(!renderBounds||c.x>=renderBounds.left-160&&c.x<=renderBounds.right+160&&c.y>=renderBounds.top-80&&c.y<=renderBounds.bottom+80)&&include(c));
+ if(S.qual==='high')for(const c of layer)drawCar(c,true);for(const c of layer)drawCar(c,false);
  ctx.font='bold 17px Segoe UI,sans-serif';ctx.textAlign='center';
  for(const c of layer){ctx.fillStyle=mode==='quali'&&(!c.qActive||c.qOutcome==='eliminato')?'#ff5864':c.isP?'#ffd400':'#fff';ctx.strokeStyle='#000';ctx.lineWidth=3;const t=c.code+' '+c.num;ctx.strokeText(t,c.x,c.y-38);ctx.fillText(t,c.x,c.y-38);}
 }

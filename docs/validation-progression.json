@@ -1,0 +1,65 @@
+{
+  "date": "2026-10-27",
+  "runtime": "Node.js 24.22.1",
+  "scope": "Progetto esistente; 24 circuiti, 23 vetture, 12 team; prove locali e browser isolati",
+  "baselineReproductions": {
+    "failedBeforeFix": 4,
+    "cases": [
+      "Giri iniziali non zero",
+      "Rilevamento di un settore all'interno dello stesso segmento",
+      "Attraversamenti ripetuti avanti/indietro sul traguardo",
+      "Salto di coordinate che accredita un giro senza percorrenza completa"
+    ],
+    "regularPoleToLastReproduced": false,
+    "permanentS1ForEveryCarReproduced": false
+  },
+  "focusedTests": {
+    "command": "node --test tests/progression.cjs",
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "gridChecks": "P1, P12, P23 su 24 circuiti: 72 configurazioni; zero giri iniziali, ordine e coordinate",
+    "qualifyingTransfer": "Q1/Q2/Q3 e griglia P1, P12, P23 con tempi controllati nelle fixture",
+    "sectorChecks": "Due giri per giocatore e IA su 24 circuiti: 48 coppie circuito/vettura, 96 giri; S1/S2/S3 ordinati, nessuna duplicazione, somma dei tre settori uguale al tempo sul giro",
+    "edgeCases": "Posizione fra campioni, confini numerici, retromarcia, salti, primo traguardo e piloti su giri differenti"
+  },
+  "browserTests": {
+    "engine": "Microsoft Edge Chromium headless, profili isolati",
+    "passedSuites": [
+      "tests/browser-progression.cjs",
+      "tests/browser.cjs",
+      "tests/browser-controls.cjs",
+      "tests/browser-tyres.cjs",
+      "tests/browser-circuits.cjs",
+      "tests/browser-security.cjs"
+    ],
+    "startChecks": "Acceleratore manuale per due secondi da P1/P12/P23, senza falsa differenza di un giro",
+    "sectorChecks": "Fisica stepCar e HUD su Barcelona, Suzuka e Monaco, mediante pose controllate lungo il circuito"
+  },
+  "fullRegression": {
+    "status": "passed",
+    "command": "node --test tests/progression.cjs tests/security-client.cjs tests/security-server.cjs tests/security-source.cjs tests/security-tls.cjs tests/simulation.cjs tests/qualifying.cjs tests/controls.cjs tests/tyres.cjs tests/race-rules.cjs tests/strategy.cjs tests/pit-access.cjs tests/circuits.cjs",
+    "passed": 215,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 998464.6579,
+    "circuits": "24/24: geometria, direzione, griglia, collisioni, barriere, settori, Q1/Q2/Q3, gara completa, transito box e persistenza",
+    "carsFinishingEachCircuitRace": 23,
+    "countingNote": "La suite lunga include 7 test mirati. Il test dei confini numerici è stato aggiunto durante la sua esecuzione e verificato nella successiva esecuzione separata di tutti gli 8 test mirati; i conteggi delle due esecuzioni si sovrappongono."
+  },
+  "preserved": [
+    "Geometrie, anteprime, direzioni e catalogo dei 24 circuiti",
+    "23 vetture e 12 team",
+    "Regole e associazioni per ID di Q1/Q2/Q3",
+    "SOFT, MEDIUM, HARD e degrado in gara",
+    "Movimento, tastiera e Gamepad API",
+    "Transito box a 80 km/h senza pit stop automatici",
+    "Controlli di sicurezza preesistenti"
+  ],
+  "limitations": [
+    "Il salto automatico P1→ultimo durante una partenza regolare non si è riprodotto nella versione esaminata",
+    "Non è stato riprodotto un blocco permanente generale dei settori su S1",
+    "Controller fisico non disponibile: verifiche mediante fixture dell'API",
+    "I circuiti restano ricostruzioni 2D approssimate, Madring preliminare"
+  ]
+}

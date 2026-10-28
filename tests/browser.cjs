@@ -56,6 +56,8 @@ const {chromium}=require('playwright');
   assert.ok(await page.locator('#gridBtn').isVisible());assert.ok(await page.locator('#nextQBtn').isHidden());
   await page.screenshot({path:path.join(folder,'final-grid.png')});
   const ids=await page.evaluate(()=>quali.finalGrid.map(r=>r.id));await page.locator('#gridBtn').click();
+  assert.ok(await page.locator('#raceTyres').isVisible());await page.locator('#startCompound').selectOption('MEDIUM');await page.locator('#startRaceBtn').click();
+  assert.equal(await page.evaluate(()=>pl.tyres.compound),'MEDIUM');
   assert.deepEqual(await page.evaluate(()=>cars.map(c=>c.id)),ids);
   await page.evaluate(()=>{pl.ai=true;for(let n=0;n<400;n++)update(.05);render();});
   assert.ok(await page.evaluate(()=>cars.every(c=>c.tyres.degradation&&c.tyres.condition<1)));
