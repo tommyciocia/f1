@@ -1,6 +1,6 @@
 'use strict';
 /* Controllo della sessione: avvio, pausa, riposizionamento, ritorno al menu */
-function begin(){lastGrid=null;if(S.qualiEnabled)startQuali();else{quali=null;startRace();}}
+function begin(){lastGrid=null;if(S.qualiEnabled)startQuali();else{quali=null;showRaceSetup();}}
 function banner(t,ms){const b=$('banner');b.textContent=t;clearTimeout(banner.t);banner.t=setTimeout(()=>b.textContent='',ms);}
 function repos(){if((state!=='racing'&&state!=='quali')||!pl||pl.fin||pl.rep>0||pitActive(pl))return;const i=nearest(pl,true),q=T[i];
  pl.x=q.x;pl.y=q.y;pl.a=q.ang;pl.vx=pl.vy=0;pl.idx=i;pl.trackS=q.s;pl.d=pl.lane=0;pl.rep=1.5;

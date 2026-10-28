@@ -95,7 +95,7 @@ for(const [id] of expected){
    assert.equal(data.state,phase===2?'qdone':'qbetween',JSON.stringify(data));assert.equal(data.participants,[23,17,10][phase]);assert.equal(data.timed,data.participants,JSON.stringify(data));assert.equal(data.eliminated,[6,7,0][phase]);assert.ok(data.pitSpeed<=80.001&&data.finite&&data.inside&&data.tyres,JSON.stringify(data));
    assert.ok(data.releases.every((s,i)=>i===0||s-data.releases[i-1]>=.5-1e-7));stages.push({participants:data.participants,timed:data.timed,time:data.time});if(phase<2)g.click('nextq');
   }
-  const grid=Array.from(g.run('quali.finalGrid.map(c=>c.id)'));g.click('grid');g.click('startrace');assert.deepEqual(Array.from(g.run('cars.map(c=>c.id)')),grid);checkSeats(g);assert.equal(g.run('activeCircuit.id'),id);console.log(id+' qualifiche',JSON.stringify(stages));
+  const grid=Array.from(g.run('quali.finalGrid.map(c=>c.id)'));g.click('grid');assert.equal(g.run('state'),'prerace');g.click('startrace');assert.deepEqual(Array.from(g.run('cars.map(c=>c.id)')),grid);checkSeats(g);assert.equal(g.run('activeCircuit.id'),id);console.log(id+' qualifiche',JSON.stringify(stages));
  });
 
  test(id+': gara completa, pit stop richiesto a 80, cambio confermato e traguardo ai box',()=>{

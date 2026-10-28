@@ -5,8 +5,8 @@ let renderBounds=null;
 function render(dt=1/60){
  const dpr=devicePixelRatio||1,W=innerWidth,H=innerHeight;
  if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);}
- ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle=state==='menu'?'#0e1114':'#2f6b2f';ctx.fillRect(0,0,W,H);
- if(state==='menu')return;
+ ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle=state==='menu'||state==='prerace'?'#0e1114':'#2f6b2f';ctx.fillRect(0,0,W,H);
+ if(state==='menu'||state==='prerace')return;
  const unit=clamp(Math.min(W,H)/900,.55,1.4),qualifyingView=mode==='quali'&&state==='quali';let tx,ty,z;
  const followed=mode==='quali'?qualiCameraCar():pl,v=Math.hypot(followed.vx,followed.vy),lookAhead=qualifyingView&&W<=1000?.15:.5;tx=followed.x+followed.vx*lookAhead;ty=followed.y+followed.vy*lookAhead;z=(.62-.2*clamp(v/1000,0,1))*unit/camMul;
  const cameraStep=clamp(dt,0,.05)*60,pan=1-Math.pow(.85,cameraStep),zoom=1-Math.pow(.95,cameraStep);

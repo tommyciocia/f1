@@ -19,6 +19,6 @@ function update(dt){
  }
  updateParticles(dt);
  engineSound(pl||{vx:0,vy:0,top:1,inp:{thr:0}},state==='racing'||state==='countdown'||state==='quali');
- if(state==='quali')qHud(dt);else if(state!=='menu'&&state!=='done'&&state!=='qdone'&&state!=='qbetween')hudUpdate(dt);
+ if(state==='quali')qHud(dt);else if(state!=='menu'&&state!=='prerace'&&state!=='done'&&state!=='qdone'&&state!=='qbetween')hudUpdate(dt);
  if(!$('controls').classList.contains('hidden'))testUpdate();
 }

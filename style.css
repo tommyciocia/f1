@@ -13,6 +13,22 @@ h2{font-size:1.5rem;font-weight:800;margin-bottom:4px}
 button{font:700 1rem inherit;font-family:inherit;padding:12px 16px;border:0;background:#2a3038;color:#fff;cursor:pointer;text-align:left;transition:background .15s,transform .1s}
 button:hover{background:#3a424d}button:active{transform:translateX(4px)}
 button.main{background:#e10600}button.main:hover{background:#ff2a20}
+#raceSetup{width:min(680px,94vw);gap:16px;background:rgba(14,17,20,.97)}
+.race-setup-eyebrow{color:#ff645d;font-size:.7rem;font-weight:800;letter-spacing:.16em}
+#raceSetup h2{font-size:clamp(1.5rem,4vw,2rem);font-style:italic;margin:0}
+.starting-tyres{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;border:0;padding:0;min-width:0}
+.starting-tyres legend{font-size:.8rem;font-weight:700;margin-bottom:12px;color:#c3cbd6}
+label.starting-tyre{position:relative;display:flex;flex-direction:column;justify-content:flex-start;gap:12px;min-width:0;padding:24px 10px 14px;background:#191e26;border:2px solid #3a424d;cursor:pointer;text-align:center;border-radius:8px}
+.starting-tyre input{position:absolute;top:10px;right:10px;width:17px;height:17px;accent-color:var(--tyre-compound-color);cursor:pointer}
+.starting-tyre-wheel{display:grid;place-items:center;width:72px;height:72px;border:7px solid var(--tyre-compound-color);border-radius:50%;background:#101318;box-shadow:inset 0 0 0 5px #292e36;color:var(--tyre-compound-color);font-size:1.4rem;font-weight:900}
+.starting-tyre strong{color:var(--tyre-compound-color);font-size:1rem;letter-spacing:.08em}
+.starting-tyre small{color:#c3cbd6;font-size:.78rem;line-height:1.5}
+.starting-tyre-selected{visibility:hidden;font-size:.6rem;font-weight:800;letter-spacing:.04em;color:var(--tyre-compound-color)}
+.starting-tyre:has(input:checked){border-color:var(--tyre-compound-color);background:#252c37;box-shadow:inset 0 -3px var(--tyre-compound-color)}
+.starting-tyre:has(input:checked) .starting-tyre-selected{visibility:visible}
+.starting-tyre:has(input:focus-visible){outline:2px solid #fff;outline-offset:3px}
+#raceTyreSummary{font-size:.85rem;color:#d6dee9}
+@media(max-width:520px){#raceSetup{padding:22px 14px;gap:14px}.starting-tyres{gap:6px}label.starting-tyre{padding:30px 5px 12px;gap:10px}.starting-tyre-wheel{width:58px;height:58px;border-width:6px}.starting-tyre strong{font-size:.75rem;letter-spacing:.04em}.starting-tyre small{font-size:.64rem}.starting-tyre-selected{font-size:.48rem}}
 label{display:flex;justify-content:space-between;align-items:center;gap:12px}
 select,input[type=number]{background:#1b2027;color:#fff;border:1px solid #3a424d;padding:6px;width:150px}
 input[type=range]{width:150px;accent-color:#e10600}
