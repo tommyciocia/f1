@@ -14,7 +14,7 @@ function releaseQualiCar(c){
 function startQuali(){
  const entries=defOrder();entries.unshift(entries.splice(entries.findIndex(e=>e.isP),1)[0]);
  mode='quali';lastGrid=null;mkCars(entries);
- quali={stage:0,stages:QUALI_STAGES.map((phase,i)=>({...phase,duration:S.qualiMinutes[i]*60})),results:[],finalGrid:null,finished:false};
+ quali={stage:0,stages:QUALI_STAGES.map((phase,i)=>({...phase,advance:i===0?entries.length-6:phase.advance,duration:S.qualiMinutes[i]*60})),results:[],finalGrid:null,finished:false};
  for(const [i,c] of cars.entries()){c.qualiTimes=[null,null,null];c.qSeed=i;c.qEliminatedAt=null;}
  startQualiSession(cars.map(c=>c.id));
 }
@@ -29,6 +29,7 @@ function invalidateQualiLap(c){
 }
 function startQualiSession(ids){
  const eligible=new Set(ids);resetQualiRelease();raceTime=0;qEnd=false;qEndT=0;qualiFinishGrace=75;
+ quali.simulating=false;
  sessionBestSecs=[1e9,1e9,1e9];tickT=0;particles=[];camMul=1;state='quali';
  for(const c of cars){
   c.qActive=eligible.has(c.id);c.qd=!c.qActive;c.ai=!c.isP;c.best=1e9;c.qBestSetAt=Infinity;c.qLaps=0;c.qOutcome=c.qActive?null:'eliminato';
@@ -96,6 +97,16 @@ function checkQualiTime(){
   if(qualiParticipants().every(c=>c.qd))finishQualiSession();
  }
 }
+function simulateQualiOpponents(){
+ if(state!=='quali'||!qEnd||!pl.qActive||!pl.qd)return;
+ if(!quali.simulating){quali.simulating=true;banner('SIMULAZIONE AVVERSARI…',2200);}
+ // Stessa fisica e stessi rilevamenti, in piccoli blocchi per lasciare fluida l'interfaccia.
+ const deadline=performance.now()+6;
+ for(let i=0;i<120&&state==='quali';i++){
+  update(.05,true);
+  if(performance.now()>=deadline)break;
+ }
+}
 function finishQualiSession(){
  if(state!=='quali'||!qEnd||!qualiParticipants().every(c=>c.qd)||quali.results[quali.stage])return;
  const phase=qualiStage(),ranked=qualiOrder(),cut=phase.advance;
@@ -108,8 +119,9 @@ function finishQualiSession(){
  quali.results[quali.stage]={name:phase.name,duration:phase.duration,rows,qualified:cut?rows.slice(0,cut).map(r=>r.id):[],eliminated:cut?rows.slice(cut).map(r=>r.id):[]};
  resetQualiRelease();
  if(quali.stage===2){
-  const grid=[...rows,...quali.results[1].rows.slice(10),...quali.results[0].rows.slice(17)];
-  quali.finalGrid=grid.map((row,i)=>({...row,position:i+1,times:cars.find(c=>c.id===row.id).qualiTimes.slice(),source:i<10?'Q3':i<17?'Q2':'Q1'}));
+  const firstCut=quali.stages[0].advance,secondCut=quali.stages[1].advance;
+  const grid=[...rows,...quali.results[1].rows.slice(secondCut),...quali.results[0].rows.slice(firstCut)];
+  quali.finalGrid=grid.map((row,i)=>({...row,position:i+1,times:cars.find(c=>c.id===row.id).qualiTimes.slice(),source:i<secondCut?'Q3':i<firstCut?'Q2':'Q1'}));
   lastGrid=quali.finalGrid.map(row=>{const c=cars.find(c=>c.id===row.id);return{...c.e,qualiTimes:c.qualiTimes.slice()};});
   quali.finished=true;state='qdone';
  }else state='qbetween';
@@ -154,9 +166,9 @@ function qualiTable(final=false){
 }
 function showQualiResults(){
  const final=quali.finished,phase=qualiStage(),result=quali.results[quali.stage];
- $('qTitle').textContent=final?'Griglia di partenza · 23 vetture':phase.name+' · Risultati definitivi';
+ $('qTitle').textContent=final?'Griglia di partenza · '+cars.length+' vetture':phase.name+' · Risultati definitivi';
  $('qSummary').textContent=final?validQualiTime(result.rows[0].time)?'Pole: '+result.rows[0].name+' · '+fmt(result.rows[0].time):'Nessun tempo valido in Q3: ordine di accesso alla fase conservato.':result.qualified.length+' qualificati a '+QUALI_STAGES[quali.stage+1].name+' · '+result.eliminated.length+' eliminati'+(pl.qOutcome==='eliminato'?' · Sei eliminato: puoi seguire le prossime fasi.':'');
- $('qSummary').textContent+=' · Tabella scorrevole: tutte le 23 posizioni.';
+ $('qSummary').textContent+=' · Tabella scorrevole: tutte le '+cars.length+' posizioni.';
  $('qList').innerHTML=qualiTable(final);$('nextQBtn').classList.toggle('hidden',final);$('gridBtn').classList.toggle('hidden',!final);
  if(!final)$('nextQBtn').textContent='CONTINUA IN '+QUALI_STAGES[quali.stage+1].name;
  clearTimeout(banner.t);$('banner').textContent='';$('hud').classList.add('hidden');show('qres');

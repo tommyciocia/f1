@@ -8,7 +8,11 @@
   },
   "scripts": {
     "start": "node server/server.cjs",
-    "test": "node --test tests/pit-service.cjs tests/progression.cjs tests/security-client.cjs tests/security-server.cjs tests/security-source.cjs tests/security-tls.cjs tests/simulation.cjs tests/qualifying.cjs tests/controls.cjs tests/tyres.cjs tests/race-setup.cjs tests/race-rules.cjs tests/strategy.cjs tests/pit-access.cjs tests/circuits.cjs",
+    "test": "node --test tests/career.cjs tests/pit-service.cjs tests/progression.cjs tests/security-client.cjs tests/security-server.cjs tests/security-source.cjs tests/security-tls.cjs tests/simulation.cjs tests/qualifying.cjs tests/controls.cjs tests/tyres.cjs tests/race-setup.cjs tests/race-rules.cjs tests/strategy.cjs tests/pit-access.cjs tests/circuits.cjs",
+    "test:career": "node --test tests/career.cjs",
+    "test:browser-career": "node tests/browser-career.cjs",
+    "test:browser-career-profiles": "node tests/browser-career-profiles.cjs",
+    "test:browser-performance": "node tests/browser-performance.cjs",
     "test:pit": "node --test tests/pit-service.cjs",
     "test:progression": "node --test tests/progression.cjs",
     "test:security": "node --test tests/security-client.cjs tests/security-server.cjs tests/security-source.cjs tests/security-tls.cjs",

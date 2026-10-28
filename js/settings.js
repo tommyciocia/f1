@@ -24,4 +24,5 @@ S.qualiMinutes=[18,15,12].map((value,i)=>boundedNumber(Array.isArray(S.qualiMinu
 const PAD_DEFAULT={steerAxis:0,throttle:7,brake:6,pit:2,reverse:1,pause:9,camera:3,throttleAxis:5,brakeAxis:2};
 S.padMap=Object.fromEntries(Object.entries(PAD_DEFAULT).map(([key,value])=>[key,boundedNumber(own(S.padMap,key),0,key.endsWith('Axis')?15:31,value,true)]));
 S.padTriggers=['auto','buttons','axes','invertedAxes','positiveAxes','negativeAxes'].includes(S.padTriggers)?S.padTriggers:'auto';
-const save=()=>{try{localStorage.setItem('f1sim.set',JSON.stringify(S))}catch(e){}};
+let settingsSaveHook=null;
+const save=()=>{if(settingsSaveHook){settingsSaveHook();return;}try{localStorage.setItem('f1sim.set',JSON.stringify(S))}catch(e){}};

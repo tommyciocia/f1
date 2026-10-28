@@ -36,6 +36,7 @@
 <div id="menu" class="panel">
   <h1>F1 <em>Racing</em> Simulator</h1>
   <button data-act="play" class="main">GIOCA</button>
+  <button data-act="career" class="home-career">CARRIERA <span>Il tuo mondiale · 24 Gran Premi →</span></button>
   <button data-go="circuits" class="home-circuits">CIRCUITI <span>24 tracciati F1 2026 · scegli la tua sfida →</span></button>
   <p id="homeCircuit" class="home-circuit"></p>
   <button data-go="cars">SELEZIONA AUTO</button>
@@ -44,6 +45,66 @@
   <button data-go="controls">COMANDI</button>
   <button data-go="records">CLASSIFICHE</button>
 </div>
+
+<section id="careerHub" class="panel hidden" aria-labelledby="careerHubTitle">
+  <header class="career-header"><div><p class="career-eyebrow">F1 RACING SIMULATOR / CARRIERA</p><h2 id="careerHubTitle">SCEGLI LA TUA CARRIERA</h2></div><button type="button" data-act="menu" class="career-back">← HOME</button></header>
+  <p class="career-intro">Due modi di vivere il mondiale. Due salvataggi separati: puoi portare avanti entrambe le carriere.</p>
+  <div id="careerSlots" class="career-slot-grid"></div>
+</section>
+
+<section id="careerSetup" class="panel hidden" aria-labelledby="careerSetupTitle">
+  <header class="career-header"><div><p class="career-eyebrow">NUOVA CARRIERA / STAGIONE 01</p><h2 id="careerSetupTitle">Crea la tua squadra</h2></div><button type="button" data-act="career" class="career-back">← CARRIERE</button></header>
+  <p id="careerSetupDescription" class="career-intro"></p>
+  <form id="careerCreateForm" class="career-create-form">
+    <div id="careerReplacementFields"><label>Pilota da sostituire <select id="careerReplaceDriver" name="replaceDriver"></select></label><div id="careerSeatPreview" class="career-seat-preview"></div></div>
+    <div class="career-form-grid">
+      <label id="careerTeamNameField">Nome squadra <input id="careerTeamName" name="name" type="text" maxlength="22"></label>
+      <label>Il tuo nome pilota <input id="careerDriverName" name="driver" type="text" maxlength="22" required></label>
+      <label>Sigla pilota <input id="careerDriverCode" name="code" type="text" maxlength="3" pattern="[A-Za-z0-9]{1,3}" required></label>
+      <label>Numero pilota <input id="careerDriverNumber" name="num" type="number" min="2" max="99" required></label>
+    </div>
+    <div id="careerTeamFields"><div class="career-form-grid"><label>Colore principale <input id="careerPrimaryColor" type="color"></label><label>Colore secondario <input id="careerAccentColor" type="color"></label></div>
+      <details class="career-car-options"><summary>Personalizza le prestazioni della tua auto</summary><div class="career-form-grid"><label>Velocità <input data-career-stat="0" type="range" min="0.8" max="1.2" step="0.01"></label><label>Accelerazione <input data-career-stat="1" type="range" min="0.8" max="1.2" step="0.01"></label><label>Frenata <input data-career-stat="2" type="range" min="0.8" max="1.2" step="0.01"></label><label>Aderenza <input data-career-stat="3" type="range" min="0.8" max="1.2" step="0.01"></label></div></details>
+    </div>
+    <p id="careerSetupError" class="career-form-error" role="alert"></p>
+    <button type="submit" class="main">CREA E SALVA CARRIERA →</button>
+  </form>
+</section>
+
+<section id="career" class="panel hidden" aria-labelledby="careerSeasonTitle">
+  <header class="career-header"><div><p id="careerModeLabel" class="career-eyebrow">F1 RACING SIMULATOR / CARRIERA</p><h2 id="careerSeasonTitle">Campionato F1</h2></div><button type="button" data-act="career" class="career-back">← CARRIERE</button></header>
+  <div class="career-season-progress"><span id="careerProgressText">0/24 gare completate</span><div id="careerProgress" role="progressbar" aria-label="Gran Premi completati" aria-valuemin="0" aria-valuemax="24" aria-valuenow="0"></div></div>
+  <p id="careerSaveStatus" class="career-save" role="status"></p>
+  <div id="careerNextGP" class="career-next"></div>
+  <div id="careerChampions" class="hidden"></div>
+  <div id="careerSeasonActions" class="career-season-actions hidden"><button type="button" data-act="careernew" class="main">NUOVA STAGIONE</button><button type="button" data-act="menu">TORNA AL MENU</button></div>
+  <div id="careerSummary" class="career-summary"></div>
+  <div class="career-tabs" role="tablist" aria-label="Dati della stagione"><button type="button" id="careerTabstandings" role="tab" data-career-tab="standings" aria-controls="careerViewstandings" aria-selected="true">CLASSIFICHE</button><button type="button" id="careerTabcalendar" role="tab" data-career-tab="calendar" aria-controls="careerViewcalendar" aria-selected="false">CALENDARIO</button><button type="button" id="careerTabhistory" role="tab" data-career-tab="history" aria-controls="careerViewhistory" aria-selected="false">RISULTATI</button><button type="button" id="careerTabsettings" role="tab" data-career-tab="settings" aria-controls="careerViewsettings" aria-selected="false">IMPOSTAZIONI</button></div>
+  <div id="careerViewstandings" role="tabpanel" aria-labelledby="careerTabstandings">
+    <p id="careerStandingsCaption" class="career-caption"></p>
+    <div class="career-standings-grid"><section class="career-board"><header><h3>MONDIALE PILOTI</h3><span id="careerDriverCount">23 PILOTI</span></header><div id="careerDriverStandings"></div></section><section class="career-board"><header><h3>MONDIALE COSTRUTTORI</h3><span id="careerTeamCount">12 TEAM</span></header><div id="careerConstructorStandings"></div><p class="career-rules">25 · 18 · 15 · 12 · 10 · 8 · 6 · 4 · 2 · 1<br>Nessun punto per il giro veloce.<br>Parità: migliori piazzamenti in gara, poi in qualifica.</p></section></div>
+  </div>
+  <div id="careerViewcalendar" class="hidden" role="tabpanel" aria-labelledby="careerTabcalendar"><p class="career-caption">Tutti i 24 circuiti. Una gara per tracciato, nell'ordine del calendario.</p><ol id="careerCalendar" class="career-calendar"></ol></div>
+  <div id="careerViewhistory" class="hidden" role="tabpanel" aria-labelledby="careerTabhistory"><p class="career-caption">Risultati definitivi · Ogni Gran Premio viene registrato una sola volta.</p><div id="careerHistory"></div></div>
+  <div id="careerViewsettings" class="hidden" role="tabpanel" aria-labelledby="careerTabsettings">
+    <p class="career-caption">Queste impostazioni appartengono solo a questa carriera. Ogni modifica viene salvata automaticamente.</p>
+    <div id="careerProfileSummary" class="career-profile-summary"></div>
+    <div class="career-form-grid career-settings-grid">
+      <label>Difficoltà <select data-career-set="diff"><option value="0">Facilissimo</option><option value="1">Facile</option><option value="2">Medio</option><option value="3">Difficile</option><option value="4">Difficilissimo</option></select></label>
+      <label>Giri per GP <input type="number" min="1" max="65" data-career-set="laps"></label>
+      <label>Sensibilità sterzo <input type="range" min="0.5" max="1.5" step="0.05" data-career-set="sens"></label>
+      <label>Volume audio <input type="range" min="0" max="1" step="0.05" data-career-set="vol"></label>
+      <label>Qualifiche Q1 → Q2 → Q3 <input type="checkbox" data-career-set="qualiEnabled"></label>
+      <label>Q1 · minuti <input type="number" min="1" max="60" data-career-qminutes="0"></label>
+      <label>Q2 · minuti <input type="number" min="1" max="60" data-career-qminutes="1"></label>
+      <label>Q3 · minuti <input type="number" min="1" max="60" data-career-qminutes="2"></label>
+      <label>Controllo <select data-career-set="ctrl"><option value="auto">Automatico</option><option value="kb">Tastiera</option><option value="pad">Controller</option></select></label>
+      <label>Qualità grafica <select data-career-set="qual"><option value="high">Alta</option><option value="low">Bassa</option></select></label>
+      <label>Inverti sterzo controller <input type="checkbox" data-career-set="inv"></label>
+    </div>
+    <button type="button" data-act="careersave">SALVA CARRIERA</button>
+  </div>
+</section>
 
 <section id="circuits" class="panel hidden" aria-labelledby="circuitsTitle">
   <header class="circuits-header"><div><p class="circuit-eyebrow">F1 RACING SIMULATOR / SELEZIONE 2026</p><h2 id="circuitsTitle">CIRCUITI<span>24</span></h2></div><button data-go="menu" class="circuit-back">← HOME</button></header>
@@ -149,11 +210,12 @@
   <button data-act="resume" class="main">RIPRENDI</button>
   <button data-act="restart">RICOMINCIA</button>
   <button data-act="endq" id="endqBtn" class="hidden">TERMINA QUALIFICHE</button>
+  <button data-act="careerretire" id="careerRetireBtn" class="hidden">RITIRATI DAL GRAN PREMIO</button>
   <button data-act="menu">TORNA AL MENU</button>
 </div>
 
 <div id="qres" class="panel hidden">
-  <h2 id="qTitle">Risultati qualifiche</h2><p id="qSummary"></p><div id="qList" tabindex="0" aria-label="Risultati e griglia completa di 23 vetture"></div>
+  <h2 id="qTitle">Risultati qualifiche</h2><p id="qSummary"></p><div id="qList" tabindex="0" aria-label="Risultati qualifiche e griglia completa"></div>
   <button data-act="nextq" id="nextQBtn" class="main">CONTINUA IN Q2</button>
   <button data-act="grid" id="gridBtn" class="main hidden">CONTINUA ALLA GARA</button>
   <button data-act="retryq">RIFAI LE QUALIFICHE</button>
@@ -192,7 +254,8 @@
 
 <div id="result" class="panel hidden">
   <h2>Classifica finale 🏁</h2><div id="resList"></div>
-  <button data-act="restart" class="main">RICOMINCIA GARA</button>
+  <button data-act="careerresume" id="careerContinueBtn" class="main hidden">CONTINUA CARRIERA</button>
+  <button data-act="restart" id="raceRestartBtn" class="main">RICOMINCIA GARA</button>
   <button data-act="menu">TORNA AL MENU</button>
 </div>
 <script src="js/utils.js"></script>
@@ -233,6 +296,10 @@
 <script src="js/menuRecords.js"></script>
 <script src="js/menuSettings.js"></script>
 <script src="js/circuits.js"></script>
+<script src="js/careerProfiles.js"></script>
+<script src="js/career.js"></script>
+<script src="js/careerUI.js"></script>
+<script src="js/careerSetup.js"></script>
 <script src="js/controlSettings.js"></script>
 <script src="js/menuClicks.js"></script>
 <script src="js/main.js"></script>

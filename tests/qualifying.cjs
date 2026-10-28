@@ -86,6 +86,48 @@ test('allo zero si completa soltanto il giro lanciato già in corso, poi nessun 
  assert.equal(g.run('state'),'qbetween');assert.equal(g.run('quali.results[0].rows[0].time'),2);
 });
 
+function prepareQualiFinish(g){
+ g.run(`startQuali();resetQualiRelease();cars.forEach(c=>{parkInGarage(c);c.qd=true;});
+  globalThis.rival=cars.find(c=>!c.isP);
+  for(const [c,s] of [[pl,L-1],[rival,L*.55]]){
+   const p=pointAtDistance(s),sector=s>=SECTOR_MARKS[1]?2:s>=SECTOR_MARKS[0]?1:0;
+   Object.assign(c,{x:p.x,y:p.y,a:p.ang,idx:p.i,trackS:p.s,d:0,lane:0,base:0,vx:Math.cos(p.ang)*200,vy:Math.sin(p.ang)*200,
+    go:true,qd:false,lap:0,lapStart:1,qLapActive:true,qLapValid:true,qLapDistance:s,qLapSectors:sector===2?3:sector,
+    activeSec:sector,secStart:1+sector*20,secs:[sector>0?20:null,sector>1?20:null,null]});
+   c.pit.phase='track';c.pit.auto=c.pit.onLane=false;
+  }
+  raceTime=59.99;`);
+}
+
+test('dopo il traguardo del giocatore allo zero gli avversari vengono simulati e registrano il loro giro',()=>{
+ const g=game({qualiMinutes:[1,1,1]});prepareQualiFinish(g);
+ g.run('update(.02);');
+ assert.ok(g.run('qEnd&&pl.qd&&pl.ai&&quali.simulating&&raceTime>60.02'));
+ const playerTime=g.run('pl.best');assert.ok(playerTime>0&&playerTime<1e8);
+ g.run('for(let i=0;i<40&&state==="quali";i++)update(1/60);');
+ assert.equal(g.run('state'),'qbetween');assert.equal(g.run('pl.best'),playerTime);assert.equal(g.run('pl.qLaps'),1);
+ assert.ok(g.run('rival.qd&&rival.qLaps===1&&validQualiTime(rival.best)&&rival.qualiTimes[0]===rival.best'));
+ assert.ok(g.run('quali.results[0].rows.filter(r=>r.id!==pl.id&&r.id!==rival.id).every(r=>r.time===null&&r.laps===0)'));
+ assert.equal(g.run('quali.results[0].rows.find(r=>r.id===rival.id).time'),g.run('rival.best'));
+});
+
+test('la simulazione veloce aspetta sia lo zero sia il traguardo del giocatore',()=>{
+ const g=game({qualiMinutes:[1,1,1]});prepareQualiFinish(g);
+ g.run('raceTime=50;update(.02);');
+ assert.ok(g.run('!qEnd&&!pl.qd&&!quali.simulating'));assert.ok(Math.abs(g.run('raceTime')-50.02)<1e-8);
+ placePlayer(g,g.run('L*.8'),0,200);g.run('raceTime=59.99;update(.02);');
+ assert.ok(g.run('qEnd&&!pl.qd&&!pl.ai&&!quali.simulating'));assert.ok(Math.abs(g.run('raceTime')-60.01)<1e-8);
+});
+
+test('pausa e fase successiva fermano e azzerano la simulazione veloce degli avversari',()=>{
+ const g=game({qualiMinutes:[1,1,1]});prepareQualiFinish(g);g.run('update(.02);');
+ assert.ok(g.run('quali.simulating'));const time=g.run('raceTime');
+ g.run('togglePause();update(.05);');assert.equal(g.run('raceTime'),time);assert.equal(g.run('state'),'paused');
+ g.run('resume();for(let i=0;i<40&&state==="quali";i++)update(1/60);');assert.equal(g.run('state'),'qbetween');
+ g.click('nextq');assert.equal(g.run('quali.stage'),1);assert.ok(g.run('!quali.simulating&&!qEnd&&!pl.ai'));
+ g.run('update(.02);');assert.ok(Math.abs(g.run('raceTime')-.02)<1e-8);
+});
+
 for(const invalidatedAfterExpiry of [false,true])test('ultimo giro annullato: il controllo resta manuale fino al traguardo, annullamento '+(invalidatedAfterExpiry?'dopo':'prima')+' dello zero',()=>{
  const g=game({qualiMinutes:[1,1,1]});g.run('startQuali();');placePlayer(g,g.run('L*.4'),0,200);
  g.run('raceTime=59;pl.qLapActive=pl.qLapValid=true;pl.lapStart=20;pl.qLapSectors=1;pl.qLapDistance=L*.4;');

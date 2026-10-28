@@ -13,6 +13,46 @@ validati, ma tempi e risultati calcolati nel browser non sono certificati
 contro modifiche del proprietario. Una competizione online richiede un backend
 autorevole; il rate limiting locale richiede una protezione DDoS di rete a monte.
 
+## Carriera
+
+La Home include **CARRIERA**, con due percorsi e due salvataggi indipendenti:
+**Crea la tua squadra** personalizza nome, pilota, colori e prestazioni, con
+23 vetture e 12 team; **Sostituisci un pilota** prende davvero il suo sedile
+nella squadra scelta, con 22 vetture e 11 team. Entrambe disputano i 24 GP
+nell'ordine del calendario F1 2026 originale. Il menu mostra classifiche,
+prossimo GP, calendario e risultati completi.
+
+Ogni carriera ha la propria scheda **IMPOSTAZIONI**: difficoltà, giri, qualifiche
+e relative durate, sterzo, audio, controlli e grafica. Le gare singole conservano
+le proprie opzioni. I weekend riusano gomme, usura, guida e box esistenti;
+con le qualifiche abilitate, la carriera pilota passa da 22 a 16 a 10 vetture.
+
+I punti vengono assegnati solo dalla classifica finale: 25–18–15–12–10–8–6–4–2–1,
+senza bonus per il giro veloce. La carriera salva automaticamente i progressi
+nel browser e registra ciascun GP una sola volta. Puoi alternare le due carriere
+dalla schermata iniziale e usare anche **SALVA CARRIERA** nelle impostazioni.
+Il vecchio salvataggio continua nello slot della tua squadra. Un weekend
+interrotto riparte dall'inizio, conservando le gare già completate.
+
+Dopo il 24° GP compare **CAMPIONI DEL MONDO**, con i vincitori e la possibilità
+di iniziare una nuova stagione. Regole, calendario, gestione dei ritiri,
+salvataggio e verifiche sono descritti in [docs/CAREER.md](docs/CAREER.md).
+
+## Grafica e fluidità
+
+Pista, box, griglia e segnaletica usano una superficie riutilizzata durante il
+movimento della camera; anche lo sfondo della minimappa viene conservato.
+Le auto, le ruote e le particelle restano animate. La qualità alta applica
+automaticamente una risoluzione maggiore per bordi più nitidi, con un limite
+alla dimensione delle superfici su schermi molto densi. Il menu non ridisegna
+continuamente uno sfondo identico.
+
+Il test `npm run test:browser-performance` controlla riutilizzo, spostamenti,
+cambio circuito e livrea, ridimensionamento e limite 4K. Nel confronto locale
+su Barcelona, Monaco e Suzuka, il rendering con camera ferma ha richiesto circa
+4–4,5 ms per fotogramma, rispetto a 10–15,5 ms senza riutilizzo. Sono misure
+del rendering nel browser di prova, non un valore FPS garantito su ogni PC.
+
 ## Qualifiche
 
 - Q1: 23 auto, 18 minuti; passano 17 piloti, 6 eliminati nelle posizioni 18–23.
@@ -30,7 +70,10 @@ e la distanza percorsa fuori pista conta normalmente. Riposizionamenti e ingress
 annullano il tentativo. Il miglior tempo viene salvato al traguardo.
 Alla scadenza si conserva il controllo fino al traguardo, anche sul giro
 di uscita o su un giro annullato; solo i giri lanciati validi assegnano un tempo e
-non si avviano nuovi tentativi. Il pulsante di fine anticipata conclude subito la fase
+non si avviano nuovi tentativi. Quando il giocatore conclude il suo ultimo giro dopo
+lo zero, gli avversari ancora in pista completano i loro giri in simulazione rapida
+e i tempi vengono registrati prima di mostrare i risultati.
+Il pulsante di fine anticipata conclude subito la fase
 con i tempi già registrati, anche in Q1.
 Un limite di sicurezza conclude la fase se un pilota rimane fermo sul giro finale,
 senza interrompere un giocatore che sta ancora guidando.

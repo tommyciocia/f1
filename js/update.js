@@ -1,7 +1,7 @@
 'use strict';
 /* Ciclo di aggiornamento: richiama in ordine tutte le parti del gioco */
-function update(dt){
- pollPad();
+function update(dt,simulationOnly=false){
+ if(!simulationOnly)pollPad();
  updateCountdown(dt);
  if(state==='racing'||state==='countdown'||state==='quali'){
   if(!(dt>1e-4))dt=1e-4;
@@ -12,11 +12,14 @@ function update(dt){
   for(const c of cars){updateTyres(c,dt);updatePitService(c,dt);c.inp=c.ai||pitAutopilot(c)||pitActive(c)&&!c.go?aiInput(c,dt):getInput(dt);if(c.rep>0)c.rep-=dt;}
   stepAllCars(dt);
   updateBotRecovery(dt);
-  emitParticles();
+  if(!simulationOnly)emitParticles();
   checkQualiTime();
   checkRaceFinish();
-  updatePitPrompt();
+  if(!simulationOnly)updatePitPrompt();
  }
+ if(simulationOnly)return;
+ simulateQualiOpponents();
+ simulateCareerRetirement();
  updateParticles(dt);
  engineSound(pl||{vx:0,vy:0,top:1,inp:{thr:0}},state==='racing'||state==='countdown'||state==='quali');
  if(state==='quali')qHud(dt);else if(state!=='menu'&&state!=='prerace'&&state!=='done'&&state!=='qdone'&&state!=='qbetween')hudUpdate(dt);

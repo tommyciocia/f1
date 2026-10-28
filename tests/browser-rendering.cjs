@@ -8,7 +8,7 @@ const {pathToFileURL}=require('node:url'),{chromium}=require('playwright');
  try{
   const page=await browser.newPage({viewport:{width:1280,height:800},deviceScaleFactor:2});
   page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
-  await page.addInitScript(()=>{requestAnimationFrame=()=>0;localStorage.setItem('f1sim.set',JSON.stringify({vol:0,qualiMinutes:[1,1,1]}));});
+  await page.addInitScript(()=>{window.testRAF=requestAnimationFrame.bind(window);requestAnimationFrame=()=>0;localStorage.setItem('f1sim.set',JSON.stringify({vol:0,qualiMinutes:[1,1,1]}));});
   await page.goto(pathToFileURL(path.join(__dirname,'../index.html')).href);
   for(const circuit of ['barcelona','monaco','suzuka'])for(const attempt of ['valid','invalidBefore','invalidAfter','outlap']){
    const result=await page.evaluate(({circuit,attempt})=>{
@@ -27,6 +27,32 @@ const {pathToFileURL}=require('node:url'),{chromium}=require('playwright');
    assert.ok(result.manual,JSON.stringify({circuit,attempt,...result}));assert.ok(result.finished);
    assert.equal(result.state,'qbetween');assert.equal(result.laps,attempt==='valid'?1:0);
    assert.ok(attempt==='valid'?result.time>0:result.time===null,JSON.stringify(result));
+  }
+  for(const circuit of ['barcelona','monaco','suzuka']){
+   const phases=await page.evaluate(async circuit=>{
+    toMenu();selectCircuit(circuit);startQuali();const out=[];
+    for(let phase=0;phase<3;phase++){
+     resetQualiRelease();cars.forEach(c=>{parkInGarage(c);c.qd=true;});const rival=cars.find(c=>c.qActive&&!c.isP);
+     for(const [c,s] of [[pl,L-1],[rival,L*.55]]){
+      const p=pointAtDistance(s),sector=s>=SECTOR_MARKS[1]?2:s>=SECTOR_MARKS[0]?1:0;
+      Object.assign(c,{x:p.x,y:p.y,a:p.ang,idx:p.i,trackS:p.s,d:0,lane:0,base:0,vx:Math.cos(p.ang)*200,vy:Math.sin(p.ang)*200,
+       go:true,qd:false,lap:0,lapStart:1,qLapActive:true,qLapValid:true,qLapDistance:s,qLapSectors:sector===2?3:sector,
+       activeSec:sector,secStart:1+sector*20,secs:[sector>0?20:null,sector>1?20:null,null]});
+      c.pit.phase='track';c.pit.auto=c.pit.onLane=false;
+     }
+     raceTime=59.99;update(.02);const playerTime=pl.best;let frames=0;
+     while(state==='quali'&&frames++<600)await new Promise(resolve=>testRAF(()=>{update(1/60);render(1/60);resolve();}));
+     const result=quali.results[phase],row=$('qList').querySelector('[data-driver-id="'+rival.id+'"]');
+     out.push({state,frames,playerUnchanged:pl.best===playerTime&&pl.qLaps===1,rivalTime:result?.rows.find(r=>r.id===rival.id).time,
+      rivalLaps:rival.qLaps,visible:!!row&&row.textContent.includes(fmt(rival.best)),rows:result?.rows.length});
+     if(phase<2)nextQualiSession();
+    }return out;
+   },circuit);
+   for(const [phase,result] of phases.entries()){
+    assert.equal(result.state,phase===2?'qdone':'qbetween',JSON.stringify({circuit,phase,...result}));
+    assert.ok(result.frames<600&&result.playerUnchanged&&result.visible);assert.ok(result.rivalTime>0&&result.rivalTime<1e8);
+    assert.equal(result.rivalLaps,1);assert.equal(result.rows,[23,17,10][phase]);
+   }
   }
   const hud=await page.evaluate(()=>{
    startRace();state='racing';hudUpdate(0);
@@ -61,6 +87,6 @@ const {pathToFileURL}=require('node:url'),{chromium}=require('playwright');
   await page.screenshot({path:path.join(folder,'race-hidpi.png')});
   await page.setViewportSize({width:360,height:800});await page.evaluate(()=>render(0));
   await page.screenshot({path:path.join(folder,'race-mobile-hidpi.png')});
-  assert.deepEqual(errors,[]);console.log('Ultimo giro, HUD stabile, gomme/soste, pixel invariati, ponte, camera e minimappa HiDPI verificati. Screenshot:',folder);
+  assert.deepEqual(errors,[]);console.log('Simulazione avversari dopo il giocatore in Q1/Q2/Q3, ultimo giro manuale, HUD stabile e rendering verificati. Screenshot:',folder);
  }finally{await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;});
