@@ -42,7 +42,7 @@ function careerStandings(data){
 }
 function updateCareerTotals(data){
  const standings=careerStandings(data);
- data.currentRound=data.results.length;data.status=data.currentRound===CAREER_CIRCUIT_IDS.length?'complete':'active';
+ data.currentRound=data.results.length;data.status=data.currentRound===data.calendar.length?'complete':'active';
  data.driverStandings=standings.drivers;data.constructorStandings=standings.teams;
  return data;
 }
@@ -78,7 +78,9 @@ function normalizeCareer(raw,slot='team'){
   !Number.isInteger(raw.number)||raw.number<1||raw.number>9999||!Array.isArray(raw.calendar)||
   !Array.isArray(raw.roster)||raw.roster.length!==ids.length||!Array.isArray(raw.teams)||raw.teams.length!==teamCount||
   !Array.isArray(raw.results)||raw.results.length>raw.calendar.length)return null;
+ const shortSeason=raw.format==='sprint10';
  const legacy=raw.calendar.length===CAREER_LEGACY_CIRCUIT_IDS.length&&raw.calendar.every((id,i)=>id===CAREER_LEGACY_CIRCUIT_IDS[i]);
+ if(shortSeason&&!legacy)return null;
  if(!legacy&&(raw.calendar.length!==CAREER_CIRCUIT_IDS.length||new Set(raw.calendar).size!==CAREER_CIRCUIT_IDS.length||
   raw.calendar.some(id=>!CAREER_CIRCUIT_IDS.includes(id))))return null;
  const seen=new Set(),roster=[];
@@ -99,13 +101,13 @@ function normalizeCareer(raw,slot='team'){
  const pendingRound=raw.pendingRound===results.length&&results.length<raw.calendar.length?results.length:null;
  // Conserva risultati e GP interrotto; le tappe restanti seguono il calendario F1.
  const played=raw.calendar.slice(0,results.length+(pendingRound!==null?1:0));
- const calendar=[...played,...CAREER_CIRCUIT_IDS.filter(id=>!played.includes(id))];
+ const calendar=shortSeason?CAREER_LEGACY_CIRCUIT_IDS.slice():[...played,...CAREER_CIRCUIT_IDS.filter(id=>!played.includes(id))];
  const settings=cleanCareerSettings(raw.settings);
  if(!isRecord(raw.settings)){
   const player=roster.find(d=>d.id==='player');
   settings.my=cleanPlayer({name:teams[player.team].name,driver:player.name,code:player.code,num:player.number,c1:player.color,c2:settings.my.c2},settings.my);
  }
- return updateCareerTotals({version:1,id:raw.id,number:raw.number,kind,replaceDriver:kind==='driver'?replaceDriver:null,settings,calendar,roster,teams,results,pendingRound});
+ return updateCareerTotals({version:1,id:raw.id,number:raw.number,kind,replaceDriver:kind==='driver'?replaceDriver:null,format:shortSeason?'sprint10':'full24',settings,calendar,roster,teams,results,pendingRound});
 }
 function loadCareer(slot=careerSlot){
  const keys=CAREER_SLOTS[slot];if(!keys)return null;
@@ -129,9 +131,9 @@ function saveCareer(){
 }
 function createCareerSeason(previous=null,options=null){
  const kind=options?.kind||previous?.kind||careerSlot,replaceDriver=kind==='driver'?(options?.replaceDriver??previous?.replaceDriver):null;
- const settings=cleanCareerSettings(options?.settings||previous?.settings);
+ const settings=cleanCareerSettings(options?.settings||previous?.settings),shortSeason=options?.calendarLength===10||previous?.format==='sprint10';
  return updateCareerTotals({version:1,id:'season-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10),
-  number:previous?Math.min(9999,previous.number+1):1,kind,replaceDriver,settings,calendar:CAREER_CIRCUIT_IDS.slice(),
+  number:previous?Math.min(9999,previous.number+1):1,kind,replaceDriver,format:shortSeason?'sprint10':'full24',settings,calendar:(shortSeason?CAREER_LEGACY_CIRCUIT_IDS:CAREER_CIRCUIT_IDS).slice(),
   roster:careerRoster(settings,kind,replaceDriver),teams:careerTeams(settings,kind),results:[],pendingRound:null});
 }
 function ensureCareer(){if(!career){career=createCareerSeason();saveCareer();}return career;}

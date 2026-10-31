@@ -33,7 +33,16 @@ recuperato nello slot **Crea la tua squadra**, con risultati e identità.
 
 ## Calendario
 
-La carriera usa tutti i 24 circuiti nell'ordine del
+Dal 30 ottobre 2026 la creazione propone **10 Gran Premi** come formato breve
+oppure **24 Gran Premi** come stagione completa. Il formato breve usa Barcelona,
+Suzuka, Spa, Monaco, Silverstone, Red Bull Ring, COTA, Bahrain, Singapore e Monza.
+È identificato nel salvataggio da `format: "sprint10"`, termina alla decima gara
+e conserva lo stesso formato nelle stagioni successive. Le vecchie stagioni
+e la loro migrazione a 24 GP restano compatibili; quelle nuove da 10 non vengono
+allungate durante il caricamento. La dimensione del calendario determina
+progresso, risultati, campioni e disponibilità del prossimo GP.
+
+Il formato completo usa tutti i 24 circuiti nell'ordine del
 [calendario F1 2026 originale da 24 GP](https://www.formula1.com/en/latest/article/formula-1-reveals-calendar-for-2026-season.YctbMZWqBvrgyddrnauo8).
 Questo riferimento mantiene tutti i 24 GP richiesti nel gioco.
 I nomi, le mappe, i box e le geometrie vengono letti da `CIRCUIT_DATA`: non sono

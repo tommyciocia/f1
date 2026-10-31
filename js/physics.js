@@ -1,5 +1,6 @@
 'use strict';
 /* Fisica di una vettura (accelerazione, frenata, aderenza, barriere) e avanzamento di tutte le vetture */
+let physicsStepDuration=0;
 function stepCar(c,h){
  const previousTrackS=c.trackS;
  if(pitActive(c)&&!c.go)return;
@@ -31,6 +32,7 @@ function stepCar(c,h){
  c.slip=Math.abs(vL);let g=(inp.hb?2.2:7)*c.grip*tyreGrip(c);if(c.slip>230)g*=.45;
  vL*=Math.exp(-g*h);
  if(inPits){vF=clamp(vF,0,pitVelocityLimit(c));vL=0;}
+ c.wheelPhase=((c.wheelPhase||0)+Math.abs(vF)*h*.02)%(Math.PI*2);
  c.vx=f.x*vF+r.x*vL;c.vy=f.y*vF+r.y*vL;c.x+=c.vx*h;c.y+=c.vy*h;
  // posizione sul tracciato
  // L'IA deve cercare prima attorno al proprio segmento: una scansione completa a
@@ -47,7 +49,7 @@ function stepCar(c,h){
  if(!c.ai&&!inPits){const along=clamp((c.x-q.x)*Math.cos(q.ang)+(c.y-q.y)*Math.sin(q.ang),0,q.len);c.trackS=wrapDistance(q.s+along);}
  // I box reali attraversano il traguardo: il giro in gara conta anche nel transito.
  // L'out-lap di qualifica resta invece escluso fino all'uscita dalla corsia.
- if((!inPits||state==='racing')&&(state==='racing'||state==='quali')){sectorProgress(c,c.idx,ni,previousTrackS,c.trackS);progress(c,c.idx,ni,previousTrackS,c.trackS);}c.idx=ni;c.d=d;
+ if((!inPits||state==='racing')&&(state==='racing'||state==='quali')){recordRaceTiming(c,previousTrackS,c.trackS);sectorProgress(c,c.idx,ni,previousTrackS,c.trackS);progress(c,c.idx,ni,previousTrackS,c.trackS);}c.idx=ni;c.d=d;
  // Box e corsia di uscita hanno la propria superficie; non sono erba o barriere.
  if(inPits){c.off=c.kerb=false;return;}
  // Chi si trova già sulla corsia può proseguire manualmente fino alla pressione di X.
@@ -63,5 +65,9 @@ function stepCar(c,h){
  if(ad>lim){const sg=Math.sign(d);c.x-=q.nx*sg*(ad-lim);c.y-=q.ny*sg*(ad-lim);const vn=c.vx*q.nx+c.vy*q.ny;
   if(vn*sg>0){c.vx-=1.5*vn*q.nx;c.vy-=1.5*vn*q.ny;c.vx*=.6;c.vy*=.6;hit(Math.abs(vn));}}
 }
-function stepAllCars(dt){const n=Math.max(1,Math.ceil(dt/.01)),h=dt/n;
- for(let s=0;s<n;s++){for(const c of cars)stepCar(c,h);collide();}}
+function stepAllCars(dt){const n=Math.max(1,Math.ceil(dt/.01)),h=dt/n,end=raceTime;
+ const running=state==='racing'||state==='quali';physicsStepDuration=running?h:0;
+ try{for(let s=0;s<n;s++){
+  if(running)raceTime=end-dt+(s+1)*h;
+  for(const c of cars)stepCar(c,h);collide();
+ }}finally{raceTime=end;physicsStepDuration=0;}}

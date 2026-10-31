@@ -40,7 +40,8 @@ const {pathToFileURL}=require('node:url'),{chromium}=require('playwright');
        activeSec:sector,secStart:1+sector*20,secs:[sector>0?20:null,sector>1?20:null,null]});
       c.pit.phase='track';c.pit.auto=c.pit.onLane=false;
      }
-     raceTime=59.99;update(.02);const playerTime=pl.best;let frames=0;
+     // Il passaggio deve avvenire dopo lo zero: a 59.995 un nuovo giro è ancora valido.
+     raceTime=60;update(.02);const playerTime=pl.best;let frames=0;
      while(state==='quali'&&frames++<600)await new Promise(resolve=>testRAF(()=>{update(1/60);render(1/60);resolve();}));
      const result=quali.results[phase],row=$('qList').querySelector('[data-driver-id="'+rival.id+'"]');
      out.push({state,frames,playerUnchanged:pl.best===playerTime&&pl.qLaps===1,rivalTime:result?.rows.find(r=>r.id===rival.id).time,

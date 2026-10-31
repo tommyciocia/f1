@@ -1,5 +1,6 @@
 'use strict';
 /* Gara: semafori di partenza, countdown, traguardo e classifica finale */
+let raceFinishGrace=180;
 function renderRaceTyres(){
  document.querySelectorAll('[data-start-compound]').forEach(input=>{
   const tyre=TYRE_COMPOUNDS[input.value];input.checked=input.value===S.startCompound;
@@ -18,6 +19,7 @@ function chooseRaceCompound(compound){
 }
 function confirmRaceStart(){if(state!=='prerace')return false;startRace();return true;}
 function startRace(g){resetQualiRelease();if(g!==undefined)lastGrid=g;mode='race';mkCars(lastGrid);$('tower').classList.remove('quali-tower');$('lights').classList.remove('hidden');raceTime=0;sessionBestSecs=[1e9,1e9,1e9];cd=0;lit=0;hold=.6+Math.random()*.9;finT=0;particles=[];camMul=1;tickT=0;
+ raceFinishGrace=Math.max(90,T.reduce((t,q)=>t+q.len/Math.max(100,q.vc*.65),0)+30);
  camX=pl.x;camY=pl.y;state='countdown';prepareCareerRace();hideAll();$('hud').classList.remove('hidden');setLights(0);$('banner').textContent='';hudUpdate(0);}
 function setLights(n){[...$('lights').children].forEach((s,i)=>s.classList.toggle('on',i<n));}
 function updateCountdown(dt){
@@ -29,10 +31,18 @@ function updateCountdown(dt){
 function checkRaceFinish(){
  if(state!=='racing')return;
  if(careerRun&&pl.retired){if(cars.every(c=>c.fin||c.retired))endRace();}
- else if(pl.fin&&(cars.every(c=>c.fin)||raceTime-finT>10))endRace();
+ else if(pl.fin&&(cars.every(c=>c.fin||c.retired)||raceTime-finT>raceFinishGrace))endRace();
 }
-function endRace(){state='done';cars.forEach(c=>c.disqualified=missedMandatoryPit(c));const o=order(),rec=readRecords();
+function simulateRaceFinish(){
+ if(state!=='racing'||!pl.fin||pl.retired)return;
+ const deadline=performance.now()+5;
+ for(let i=0;i<100&&state==='racing';i++){update(.05,true);if(performance.now()>=deadline)break;}
+}
+function endRace(){if(state==='done')return;state='done';silenceAudio();clearTimeout(banner.t);$('banner').textContent='';$('hud').classList.add('hidden');cars.forEach(c=>c.disqualified=missedMandatoryPit(c));const o=order(),rec=readRecords();
  if(!pl.retired){rec.unshift({d:new Date().toLocaleDateString('it-IT'),circuitId:activeCircuit.id,circuitName:activeCircuit.name,pos:o.indexOf(pl)+1,tot:pl.fin,best:pl.best<1e8?pl.best:0,laps:S.laps,diff:S.diff,disqualified:pl.disqualified,pitStops:pl.pitStops});
   try{localStorage.setItem('f1sim.rec',JSON.stringify(rec.slice(0,10)));}catch(e){}}
  $('resList').innerHTML=o.map((c,i)=>`<div class="${c.isP?'me':''}"><b>${i+1}</b><span style="flex:1">${esc(c.name)} ${tyreBadge(c)} · ${esc(c.tname)}<small class="result-pits">${PIT.serviceAllowed?c.pitStops+' soste completate':esc(activeCircuit.name)}${c.disqualified?' · Sosta obbligatoria mancante':''}</small></span><span class="${c.disqualified?'pit-dsq':''}">${c.disqualified?'DSQ':c.retired?'RITIRATO':c.fin?fmt(c.fin):'+'+Math.max(1,S.laps-c.lap)+' giro/i'}</span></div>`).join('');
+ const winner=o.find(c=>!c.disqualified&&!c.retired),position=o.indexOf(pl)+1;
+ $('resultSummary').textContent=activeCircuit.name+' · '+S.laps+' giri · '+(pl.disqualified?'Squalificato':pl.retired?'Ritirato':'La tua posizione: P'+position);
+ $('resultPodium').innerHTML=o.filter(c=>c.fin&&!c.disqualified&&!c.retired).slice(0,3).map((c,i)=>'<article style="--podium-color:'+safeColor(c.col,'#ffffff')+'"><span>'+['VINCITORE','SECONDO','TERZO'][i]+'</span><b>'+esc(c.name)+'</b><small>'+esc(c.tname)+'</small><strong>'+(c===winner?fmt(c.fin):'+'+(c.fin-winner.fin).toFixed(3)+' s')+'</strong></article>').join('');
  completeCareerGP(o);careerResultActions();show('result');if(careerRun?.completed&&career.status==='complete')openCareer();}

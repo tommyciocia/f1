@@ -1,0 +1,411 @@
+{
+  "date": "2026-10-30",
+  "browser": "156.0.4314.50",
+  "circuits": [
+    {
+      "id": "albert-park",
+      "theme": "park",
+      "objects": 565,
+      "stands": 15,
+      "high": {
+        "reuse": true,
+        "pixels": 12000000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 10
+    },
+    {
+      "id": "shanghai",
+      "theme": "park",
+      "objects": 527,
+      "stands": 15,
+      "high": {
+        "reuse": true,
+        "pixels": 11997000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "suzuka",
+      "theme": "park",
+      "objects": 566,
+      "stands": 12,
+      "high": {
+        "reuse": true,
+        "pixels": 11997000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "bahrain",
+      "theme": "desert",
+      "objects": 109,
+      "stands": 16,
+      "high": {
+        "reuse": true,
+        "pixels": 12000000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "jeddah",
+      "theme": "city",
+      "objects": 291,
+      "stands": 14,
+      "high": {
+        "reuse": true,
+        "pixels": 12000000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "miami",
+      "theme": "city",
+      "objects": 254,
+      "stands": 13,
+      "high": {
+        "reuse": true,
+        "pixels": 11996000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "montreal",
+      "theme": "park",
+      "objects": 425,
+      "stands": 12,
+      "high": {
+        "reuse": true,
+        "pixels": 11997000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "monaco",
+      "theme": "city",
+      "objects": 123,
+      "stands": 7,
+      "high": {
+        "reuse": true,
+        "pixels": 11997000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "barcelona",
+      "theme": "park",
+      "objects": 495,
+      "stands": 12,
+      "high": {
+        "reuse": true,
+        "pixels": 11997000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "red-bull-ring",
+      "theme": "park",
+      "objects": 449,
+      "stands": 13,
+      "high": {
+        "reuse": true,
+        "pixels": 11997000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "silverstone",
+      "theme": "park",
+      "objects": 621,
+      "stands": 18,
+      "high": {
+        "reuse": true,
+        "pixels": 11997000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "spa",
+      "theme": "park",
+      "objects": 766,
+      "stands": 20,
+      "high": {
+        "reuse": true,
+        "pixels": 12000000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "hungaroring",
+      "theme": "park",
+      "objects": 472,
+      "stands": 11,
+      "high": {
+        "reuse": true,
+        "pixels": 12000000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "zandvoort",
+      "theme": "park",
+      "objects": 439,
+      "stands": 13,
+      "high": {
+        "reuse": true,
+        "pixels": 12000000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "monza",
+      "theme": "park",
+      "objects": 602,
+      "stands": 16,
+      "high": {
+        "reuse": true,
+        "pixels": 12000000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "madring",
+      "theme": "park",
+      "objects": 569,
+      "stands": 17,
+      "high": {
+        "reuse": true,
+        "pixels": 11997000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "baku",
+      "theme": "city",
+      "objects": 294,
+      "stands": 14,
+      "high": {
+        "reuse": true,
+        "pixels": 12000000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "singapore",
+      "theme": "city",
+      "objects": 229,
+      "stands": 14,
+      "high": {
+        "reuse": true,
+        "pixels": 12000000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "cota",
+      "theme": "park",
+      "objects": 573,
+      "stands": 16,
+      "high": {
+        "reuse": true,
+        "pixels": 12000000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "mexico",
+      "theme": "park",
+      "objects": 438,
+      "stands": 10,
+      "high": {
+        "reuse": true,
+        "pixels": 12000000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "interlagos",
+      "theme": "park",
+      "objects": 433,
+      "stands": 9,
+      "high": {
+        "reuse": true,
+        "pixels": 12000000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "las-vegas",
+      "theme": "city",
+      "objects": 311,
+      "stands": 19,
+      "high": {
+        "reuse": true,
+        "pixels": 12000000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "lusail",
+      "theme": "desert",
+      "objects": 110,
+      "stands": 17,
+      "high": {
+        "reuse": true,
+        "pixels": 11997000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    },
+    {
+      "id": "yas-marina",
+      "theme": "desert",
+      "objects": 99,
+      "stands": 13,
+      "high": {
+        "reuse": true,
+        "pixels": 12000000
+      },
+      "lowReuse": true,
+      "unchanged": true,
+      "cars": 23,
+      "sprites": 23
+    }
+  ],
+  "sprites": {
+    "count": 48,
+    "width": 336,
+    "height": 216
+  },
+  "live": {
+    "frames": 218,
+    "fps": 54.2750570261551,
+    "state": "racing",
+    "raceTime": 3.9999999999999907
+  },
+  "coverage": [
+    {
+      "id": "barcelona",
+      "fraction": 0.05,
+      "changed": 0,
+      "pixels": 2916000
+    },
+    {
+      "id": "barcelona",
+      "fraction": 0.35,
+      "changed": 0,
+      "pixels": 2916000
+    },
+    {
+      "id": "barcelona",
+      "fraction": 0.65,
+      "changed": 0,
+      "pixels": 2916000
+    },
+    {
+      "id": "monaco",
+      "fraction": 0.05,
+      "changed": 0,
+      "pixels": 2916000
+    },
+    {
+      "id": "monaco",
+      "fraction": 0.35,
+      "changed": 0,
+      "pixels": 2916000
+    },
+    {
+      "id": "monaco",
+      "fraction": 0.65,
+      "changed": 0,
+      "pixels": 2916000
+    },
+    {
+      "id": "suzuka",
+      "fraction": 0.05,
+      "changed": 0,
+      "pixels": 2916000
+    },
+    {
+      "id": "suzuka",
+      "fraction": 0.35,
+      "changed": 0,
+      "pixels": 2916000
+    },
+    {
+      "id": "suzuka",
+      "fraction": 0.65,
+      "changed": 0,
+      "pixels": 2916000
+    }
+  ],
+  "errors": [],
+  "screenshots": "docs/review/graphics"
+}

@@ -1,10 +1,10 @@
 'use strict';
 /* Impostazioni del gioco salvate nel browser (localStorage) */
-const DEF={diff:2,dv:2,laps:3,sens:1,vol:.6,ctrl:'auto',qual:'high',inv:false,qmin:2,startCompound:'SOFT',my:{name:'Tommy Racing',driver:'Tommy',code:'TOM',num:99,c1:'#ffd400',c2:'#111111'}};
+const DEF={diff:2,dv:2,laps:3,sens:1,vol:.6,muted:false,ctrl:'auto',qual:'high',inv:false,qmin:2,startCompound:'SOFT',my:{name:'Tommy Racing',driver:'Tommy',code:'TOM',num:99,c1:'#ffd400',c2:'#111111'}};
 let S={...DEF,my:{...DEF.my}};
 const storedSettings=readStoredJSON('f1sim.set',{});
 // Lista esplicita: mai fondere oggetti arbitrari o chiavi __proto__/constructor.
-for(const key of ['diff','dv','laps','sens','vol','ctrl','qual','inv','qmin','startCompound','qualiEnabled','qualiMinutes','padMap','padTriggers','padPitCustom','myIdentityReady','myTeamNameReady','circuitId','teamNames','roster','teamStats','myStats']){
+for(const key of ['diff','dv','laps','sens','vol','muted','ctrl','qual','inv','qmin','startCompound','qualiEnabled','qualiMinutes','padMap','padTriggers','padPitCustom','myIdentityReady','myTeamNameReady','circuitId','teamNames','roster','teamStats','myStats']){
  if(own(storedSettings,key)!==undefined)S[key]=own(storedSettings,key);
 }
 S.my=cleanPlayer(own(storedSettings,'my'),DEF.my);
@@ -15,7 +15,7 @@ S.sens=boundedNumber(S.sens,.5,1.5,DEF.sens);S.vol=boundedNumber(S.vol,0,1,DEF.v
 S.ctrl=['auto','kb','pad'].includes(S.ctrl)?S.ctrl:DEF.ctrl;
 S.qual=['high','low'].includes(S.qual)?S.qual:DEF.qual;
 S.startCompound=['SOFT','MEDIUM','HARD'].includes(S.startCompound)?S.startCompound:DEF.startCompound;
-for(const key of ['inv','padPitCustom','myIdentityReady','myTeamNameReady'])S[key]=S[key]===true;
+for(const key of ['inv','muted','padPitCustom','myIdentityReady','myTeamNameReady'])S[key]=S[key]===true;
 S.circuitId=boundedText(S.circuitId,48).replace(/[^a-z0-9-]/g,'');
 S.qmin=boundedNumber(S.qmin,0,10,DEF.qmin,true);
 // Il vecchio qmin conserva solo la scelta di saltare le qualifiche.

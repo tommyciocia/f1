@@ -11,14 +11,16 @@ test('23 auto, 12 team e piazzole stabili dopo qualifiche, griglia e scambi',()=
  assert.ok(g.run('cars.every(c=>c.pit.team===c.team)'));
  const damaged=Array.from({length:22},(_,i)=>['A'+i,'Pilota '+i,i+1,0]);checkSeats(game({roster:damaged}));
 });
-test('23 uscite ogni 0,5 secondi, parcheggio reale, limite 80 km/h, continuità e giri validi',()=>{
- const g=game({qualiMinutes:[2,2,2]});g.run('startQuali();pl.ai=true;globalThis.initial=cars.map(c=>({x:c.x,y:c.y}));');
+test('23 uscite ogni secondo, parcheggio reale, limite 80 km/h, continuità e giri validi',()=>{
+ // Con uscite su 22 secondi, tre minuti consentono anche all'ultima vettura
+ // di iniziare il giro lanciato prima della scadenza, senza inventare tempi.
+ const g=game({qualiMinutes:[3,3,3]});g.run('startQuali();pl.ai=true;globalThis.initial=cars.map(c=>({x:c.x,y:c.y}));');
  assert.equal(g.run('cars.filter(c=>c.go).length'),1);
  assert.ok(g.run('cars.every(c=>c.lap===-1&&c.best===1e9&&Math.abs(c.d+470)<.001)'));
  // Raccoglie le misure ad ogni frame mentre percorrono davvero pit lane e circuito.
  const metrics=g.run(`(()=>{
   let maxPitSpeed=0,maxPitStep=0,minPitGap=Infinity,maxTrackStuck=0,maxPitSample=null;
-  for(let n=0;n<6000&&state==='quali';n++){
+  for(let n=0;n<12000&&state==='quali';n++){
    const before=cars.map(c=>({x:c.x,y:c.y,pit:pitActive(c)}));update(1/30);
    for(let i=0;i<cars.length;i++){
     const c=cars[i],p=before[i];
@@ -41,7 +43,7 @@ test('23 uscite ogni 0,5 secondi, parcheggio reale, limite 80 km/h, continuità 
  assert.ok(metrics.maxPitStep<=250/30+.1,JSON.stringify(metrics));
  assert.ok(metrics.minPitGap>=76,JSON.stringify(metrics));
  assert.ok(metrics.maxTrackStuck<1,JSON.stringify(metrics));
- metrics.releases.forEach((t,i)=>{assert.ok(Math.abs(t-i*.5)<1e-6,JSON.stringify(metrics.releases));});
+ metrics.releases.forEach((t,i)=>{assert.ok(Math.abs(t-i)<1e-6,JSON.stringify(metrics.releases));});
  assert.equal(g.run('quali.results[0].rows.length'),23);
  console.log('Qualifiche:',JSON.stringify(metrics));
 });
@@ -50,7 +52,7 @@ test('pausa, frame lenti, riavvio e passaggio diretto in gara non raggruppano le
  const snapshot=g.run('JSON.stringify(cars.map(c=>[c.x,c.y,c.go]))');
  g.run('togglePause();');g.advance(60);
  assert.equal(g.run('JSON.stringify(cars.map(c=>[c.x,c.y,c.go]))'),snapshot);
- g.run('releaseQualiCars();resume();');g.advance(.3,.01);
+ g.run('releaseQualiCars();resume();');g.advance(.8,.01);
  assert.equal(g.run('cars.filter(c=>c.go).length'),2);
  g.advance(.4,.01);
  g.run('raceTime+=20;releaseQualiCars();');assert.equal(g.run('cars.filter(c=>c.go).length'),3);

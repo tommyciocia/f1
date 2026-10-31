@@ -1,6 +1,6 @@
 'use strict';
 /* Box: ingresso X, fermata alla piazzola e cambio gomme confermato dal giocatore. */
-const PIT={speedLimit:80/.32,laneD:-290,stallD:-470,exitD:0,mergeLength:300,releaseInterval:.5,tyreServiceTime:2.8,serviceAllowed:true};
+const PIT={speedLimit:80/.32,laneD:-290,stallD:-470,exitD:0,mergeLength:300,releaseInterval:1,tyreServiceTime:2.8,serviceAllowed:true};
 const pitActive=c=>!!c.pit&&c.pit.phase!=='track';
 const pitAutopilot=c=>pitActive(c)&&c.go&&c.pit.auto!==false;
 const pitLimited=c=>pitAutopilot(c)?c.pit.phase!=='approach':!!c.pit?.onLane;
@@ -278,16 +278,27 @@ function rebuildPitGeometry(){
 }
 rebuildPitGeometry();
 function strokePitLine(g,points,width,color){g.beginPath();points.forEach((p,i)=>i?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y));g.lineWidth=width;g.strokeStyle=color;g.stroke();}
-function drawPits(g=ctx){g.save();g.lineJoin='round';g.lineCap='round';drawCircuitPits(g);g.restore();}
+function drawPits(g=ctx,bounds=renderBounds){g.save();g.lineJoin='round';g.lineCap='round';drawCircuitPits(g,bounds);g.restore();}
 function drawMiniPits(g=mctx){strokePitLine(g,pitRoadPoints.map(p=>({x:mX(p),y:mY(p)})),2,'#ddd');}
-function drawCircuitPits(g=ctx){
- for(const poly of pitAprons){g.fillStyle='#454b53';g.fill(makePath(poly,true));}
- strokePitLine(g,pitRoadPoints,96,'#e4e8ed');strokePitLine(g,pitRoadPoints,88,'#454b53');
+function drawCircuitPits(g=ctx,bounds=renderBounds){
+ for(const poly of pitAprons){g.fillStyle=surfacePaint(g,'asphalt');g.fill(makePath(poly,true));}
+ strokePitLine(g,pitRoadPoints,100,'#182733');strokePitLine(g,pitRoadPoints,95,'#dce5e6');strokePitLine(g,pitRoadPoints,88,surfacePaint(g,'asphalt'));
  g.setLineDash([28,25]);strokePitLine(g,pitRoadPoints,3,'#e8ca62');g.setLineDash([]);
  for(const garage of PIT_GARAGES){
   if(careerRun?.kind==='driver'&&garage.team===TEAMS.length-1)continue;
   const q=pitPoint(garage.s,PIT.stallD),base=pitCenterAt(garage.s),col=garage.team===TEAMS.length-1?S.my.c1:TEAMS[garage.team][0];
-  g.save();g.translate(q.x,q.y);g.rotate(base.ang);g.fillStyle='#1c222a';g.fillRect(-82,-65,164,130);g.strokeStyle='#a1a8af';g.lineWidth=2;g.strokeRect(-82,-65,164,130);g.fillStyle=col;g.fillRect(-82,-65,164,12);g.fillStyle='#fff';g.font='12px Segoe UI,sans-serif';g.textAlign='center';g.fillText(garage.team===TEAMS.length-1?S.my.name:teamName(garage.team),0,-35,155);g.restore();
+  if(bounds&&(q.x+240<bounds.left||q.x-240>bounds.right||q.y+240<bounds.top||q.y-240>bounds.bottom))continue;
+  g.save();g.translate(q.x,q.y);g.rotate(base.ang);
+  const side=PIT.side,roofY=side>0?25:-119,front=side>0?25:-37;
+  g.fillStyle='#b4becb0c';g.fillRect(-91,-24,182,48);g.strokeStyle='#efd076a6';g.lineWidth=2;g.strokeRect(-87,-22,174,44);
+  g.fillStyle='#111e2c44';g.fillRect(-84+13,roofY+18,168,94);
+  g.fillStyle='#1a2734';g.fillRect(-84,roofY,168,94);
+  g.fillStyle=artGradient(g,0,roofY,0,roofY+94,[[0,'#8e9ea9'],[.4,'#637685'],[1,'#455968']],'#637685');g.fillRect(-82,roofY+3,164,88);
+  g.fillStyle='#c6d1d8';g.fillRect(-84,roofY,168,3);
+  for(const x of [-56,23]){g.fillStyle='#344957';g.fillRect(x,roofY+28,32,25);g.fillStyle='#90a1ad';g.fillRect(x,roofY+28,32,3);g.strokeStyle='#233641';g.lineWidth=1;for(let k=0;k<4;k++)g.strokeRect(x+3,roofY+34+k*4,26,2);}
+  g.fillStyle='#0b1823';g.fillRect(-81,front,162,13);g.fillStyle=col;g.fillRect(-84,side>0?19:-27,168,7);
+  g.fillStyle='#d7e5eb';g.fillRect(-84,side>0?27:-37,3,15);g.fillRect(81,side>0?27:-37,3,15);
+  g.fillStyle='#f2f5f8';g.font='700 13px Segoe UI,sans-serif';g.textAlign='center';g.fillText(garage.team===TEAMS.length-1?S.my.name||'LA TUA SQUADRA':teamName(garage.team),0,roofY+77,151);g.restore();
  }
  const sign=pitCenterAt(PIT.entryEnd),label=pointAtDistance(PIT.entryStart);g.fillStyle='#fff';g.font='bold 18px Segoe UI,sans-serif';g.textAlign='center';g.fillText('BOX · 80',sign.x,sign.y-60);g.fillText('INGRESSO BOX',label.x,label.y-TW/2-40);
 }

@@ -1,0 +1,22 @@
+[
+  {
+    "file": "gameplay-ritratto-2x3-800x1200.mp4",
+    "width": 800,
+    "height": 1200,
+    "duration": 19.9922,
+    "playbackTime": 10.308427,
+    "decodedVideo": 22,
+    "decodedAudio": 37976,
+    "bytes": 6397892
+  },
+  {
+    "file": "gameplay-paesaggio-1920x1080.mp4",
+    "width": 1920,
+    "height": 1080,
+    "duration": 20.041233,
+    "playbackTime": 10.339271,
+    "decodedVideo": 20,
+    "decodedAudio": 30186,
+    "bytes": 10205961
+  }
+]

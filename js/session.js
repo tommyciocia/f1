@@ -5,7 +5,7 @@ function banner(t,ms){const b=$('banner');b.textContent=t;clearTimeout(banner.t)
 function repos(){if((state!=='racing'&&state!=='quali')||!pl||pl.fin||pl.rep>0||pitActive(pl))return;const i=nearest(pl,true),q=T[i];
  pl.x=q.x;pl.y=q.y;pl.a=q.ang;pl.vx=pl.vy=0;pl.idx=i;pl.trackS=q.s;pl.d=pl.lane=0;pl.rep=1.5;
  if(state==='quali'){pl.lap=-1;invalidateQualiLap(pl);banner('Giro annullato',1200);}else{pl.pen+=3;banner('+3 s penalità',1200);}}
-function togglePause(){if(state==='racing'||state==='countdown'||state==='quali'){togglePause.prev=state;state='paused';show('pause');careerPauseActions();$('endqBtn').classList.toggle('hidden',mode!=='quali');if(mode==='quali')$('endqBtn').textContent='TERMINA '+qualiStage().name;}
+function togglePause(){if(state==='racing'||state==='countdown'||state==='quali'){togglePause.prev=state;state='paused';silenceAudio();releaseKeyboard();show('pause');careerPauseActions();$('endqBtn').classList.toggle('hidden',mode!=='quali');if(mode==='quali')$('endqBtn').textContent='TERMINA '+qualiStage().name;}
  else if(state==='paused')resume();}
-function resume(){state=togglePause.prev||'racing';hideAll();}
-function toMenu(){exitCareerGP();resetQualiRelease();state='menu';mkCars();$('hud').classList.add('hidden');show('menu');if(engG)engG.gain.value=0;}
+function resume(){if(state!=='paused')return;releaseKeyboard();state=togglePause.prev||'racing';hideAll();}
+function toMenu(){exitCareerGP();resetQualiRelease();releaseKeyboard();runtimeFault=null;state='menu';mkCars();particles=[];clearTimeout(banner.t);$('banner').textContent='';$('hud').classList.add('hidden');show('menu');silenceAudio();}

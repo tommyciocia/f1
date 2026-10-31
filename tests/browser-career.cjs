@@ -14,6 +14,7 @@ const {pathToFileURL}=require('node:url'),{chromium}=require('playwright');
    if(await page.locator('#careerSetup').isVisible()){
     await page.locator('#careerTeamName').fill('Team Test');await page.locator('#careerDriverName').fill('Pilota Test');
     await page.locator('#careerDriverCode').fill('TST');await page.locator('#careerDriverNumber').fill('28');
+    await page.locator('#careerSeasonLength').selectOption('24');
     await page.locator('#careerCreateForm [type="submit"]').click();
    }
   }

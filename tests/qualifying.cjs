@@ -310,7 +310,7 @@ test('weekend fisico completo: 23 -> 17 -> 10, più tentativi reali, griglia aut
   assert.equal(data.state,phase===2?'qdone':'qbetween',JSON.stringify(data));assert.equal(data.rows.length,counts[phase]);
   assert.ok(data.rows.every(r=>r.time>20&&r.time<180&&r.laps>=1),JSON.stringify(data));assert.ok(data.rows.some(r=>r.laps>1));
   assert.ok(data.tyresLocked);assert.ok(data.maxPitSpeed<=80+1e-6);assert.ok(data.maxStuck<1);
-  data.release.forEach((r,i)=>assert.ok(Math.abs(r.time-i*.5)<.051,JSON.stringify(data.release)));
+  data.release.forEach((r,i)=>assert.ok(Math.abs(r.time-i)<.051,JSON.stringify(data.release)));
   if(phase<2)g.click('nextq');
  }
  const ids=plain(g.run('lastGrid.map(e=>e.isP?"player":"driver:"+e.di)'));assert.equal(ids.length,23);

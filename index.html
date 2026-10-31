@@ -6,6 +6,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; style-src-elem 'self'; style-src-attr 'unsafe-inline'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'none'">
 <meta name="referrer" content="no-referrer">
 <title>F1 Racing Simulator</title>
+<meta name="description" content="Simulatore motorsport 2D: 24 circuiti, qualifiche, strategia gomme e campionati da 10 o 24 gare. Progetto indipendente.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,9 +15,11 @@
 
 <!-- HUD di gara -->
 <div id="hud" class="hidden">
-  <div id="tower"></div>
+  <div id="venueBadge"><span>DIREZIONE GARA</span><b id="venueName"></b><small id="venueCountry"></small></div>
+  <div id="tower" role="region" aria-label="Classifica in tempo reale" tabindex="0"></div>
+  <div id="hudActions"><button type="button" data-act="pause" aria-label="Pausa gara">Ⅱ <span>PAUSA</span></button><button type="button" id="muteButton" data-act="mute" aria-pressed="false">AUDIO ON</button></div>
   <div id="top"><div id="lapTxt"></div><div id="timeTxt"></div><div id="bestTxt"></div><div id="gapTxt"></div></div>
-  <div id="sectors" aria-live="polite"></div>
+  <div id="sectors" aria-label="Tempi dei tre settori"></div>
   <div id="bottom"><div id="spd">0</div><small>km/h</small><div id="gear">N</div>
     <div class="bars"><i id="thr"></i><i id="brk"></i></div></div>
   <div id="tyreIndicator" role="status" aria-label="SOFT — 100%"><span id="tyreText">SOFT — 100%</span></div>
@@ -27,23 +30,28 @@
     <button type="button" id="confirmTyres" data-act="confirmtyres" class="main">CONFERMA CAMBIO GOMME</button>
   </div>
   <canvas id="mini" width="200" height="150"></canvas>
+  <div id="miniCaption" aria-hidden="true">MAPPA CIRCUITO</div>
   <div id="lights"><span></span><span></span><span></span><span></span><span></span></div>
   <div id="banner"></div>
   <div id="pitPrompt" class="hidden" role="status" aria-live="polite"></div>
 </div>
-<div id="toast"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<noscript><div class="no-script">Attiva JavaScript nel browser per avviare F1 Racing Simulator.</div></noscript>
 
 <div id="menu" class="panel">
-  <h1>F1 <em>Racing</em> Simulator</h1>
-  <button data-act="play" class="main">GIOCA</button>
-  <button data-act="career" class="home-career">CARRIERA <span>Il tuo mondiale · 24 Gran Premi →</span></button>
-  <button data-go="circuits" class="home-circuits">CIRCUITI <span>24 tracciati F1 2026 · scegli la tua sfida →</span></button>
-  <p id="homeCircuit" class="home-circuit"></p>
-  <button data-go="cars">SELEZIONA AUTO</button>
-  <button data-go="paddock">GESTISCI PADDOCK</button>
-  <button data-go="settings">IMPOSTAZIONI</button>
-  <button data-go="controls">COMANDI</button>
-  <button data-go="records">CLASSIFICHE</button>
+  <header class="home-header"><div><p class="home-eyebrow">MOTORSPORT / SIMULAZIONE 2D</p><h1>F1 <em>Racing</em><br>Simulator<span class="home-edition">RACE. REFINE. REPEAT.</span></h1></div><button type="button" id="menuMuteButton" data-act="mute" aria-pressed="false">AUDIO ON</button></header>
+  <div class="home-layout">
+    <nav class="home-actions" aria-label="Menu principale">
+      <button data-act="play" class="main">GIOCA</button>
+      <button data-act="career" class="home-career">CARRIERA <span>Il tuo mondiale · 10 o 24 Gran Premi →</span></button>
+      <button data-go="circuits" class="home-circuits">CIRCUITI <span>24 tracciati · scegli la tua sfida →</span></button>
+      <p id="homeCircuit" class="home-circuit"></p>
+      <div class="home-tools"><button data-go="cars">SELEZIONA AUTO</button><button data-go="paddock">GESTISCI PADDOCK</button><button data-go="settings">IMPOSTAZIONI</button><button data-go="controls">COMANDI</button></div>
+      <button data-go="records">CLASSIFICHE</button>
+    </nav>
+    <aside class="home-session" aria-label="La prossima sessione"><p class="home-eyebrow">LA TUA PROSSIMA SFIDA <span class="status-dot"></span></p><h2 id="homeTrackName"></h2><p id="homeTrackLocation"></p><div id="homeTrackMap"></div><div id="homeSessionFacts"></div><p id="homeSessionFormat"></p><p class="home-driving-tip"><kbd>W A S D</kbd> Guida <span>·</span> <kbd>X</kbd> Box <span>·</span> <kbd>ESC</kbd> Pausa</p></aside>
+  </div>
+  <footer class="home-footer"><span>PROGETTO INDIPENDENTE · GRAFICA E AUDIO ORIGINALI</span><span>PROGRESSI SALVATI IN QUESTO BROWSER</span></footer>
 </div>
 
 <section id="careerHub" class="panel hidden" aria-labelledby="careerHubTitle">
@@ -56,6 +64,7 @@
   <header class="career-header"><div><p class="career-eyebrow">NUOVA CARRIERA / STAGIONE 01</p><h2 id="careerSetupTitle">Crea la tua squadra</h2></div><button type="button" data-act="career" class="career-back">← CARRIERE</button></header>
   <p id="careerSetupDescription" class="career-intro"></p>
   <form id="careerCreateForm" class="career-create-form">
+    <label class="season-format">Durata del campionato <select id="careerSeasonLength" name="calendarLength"><option value="10">10 Gran Premi · Campionato breve</option><option value="24">24 Gran Premi · Stagione completa</option></select></label>
     <div id="careerReplacementFields"><label>Pilota da sostituire <select id="careerReplaceDriver" name="replaceDriver"></select></label><div id="careerSeatPreview" class="career-seat-preview"></div></div>
     <div class="career-form-grid">
       <label id="careerTeamNameField">Nome squadra <input id="careerTeamName" name="name" type="text" maxlength="22"></label>
@@ -84,7 +93,7 @@
     <p id="careerStandingsCaption" class="career-caption"></p>
     <div class="career-standings-grid"><section class="career-board"><header><h3>MONDIALE PILOTI</h3><span id="careerDriverCount">23 PILOTI</span></header><div id="careerDriverStandings"></div></section><section class="career-board"><header><h3>MONDIALE COSTRUTTORI</h3><span id="careerTeamCount">12 TEAM</span></header><div id="careerConstructorStandings"></div><p class="career-rules">25 · 18 · 15 · 12 · 10 · 8 · 6 · 4 · 2 · 1<br>Nessun punto per il giro veloce.<br>Parità: migliori piazzamenti in gara, poi in qualifica.</p></section></div>
   </div>
-  <div id="careerViewcalendar" class="hidden" role="tabpanel" aria-labelledby="careerTabcalendar"><p class="career-caption">Tutti i 24 circuiti. Una gara per tracciato, nell'ordine del calendario.</p><ol id="careerCalendar" class="career-calendar"></ol></div>
+  <div id="careerViewcalendar" class="hidden" role="tabpanel" aria-labelledby="careerTabcalendar"><p id="careerCalendarCaption" class="career-caption"></p><ol id="careerCalendar" class="career-calendar"></ol></div>
   <div id="careerViewhistory" class="hidden" role="tabpanel" aria-labelledby="careerTabhistory"><p class="career-caption">Risultati definitivi · Ogni Gran Premio viene registrato una sola volta.</p><div id="careerHistory"></div></div>
   <div id="careerViewsettings" class="hidden" role="tabpanel" aria-labelledby="careerTabsettings">
     <p class="career-caption">Queste impostazioni appartengono solo a questa carriera. Ogni modifica viene salvata automaticamente.</p>
@@ -94,6 +103,7 @@
       <label>Giri per GP <input type="number" min="1" max="65" data-career-set="laps"></label>
       <label>Sensibilità sterzo <input type="range" min="0.5" max="1.5" step="0.05" data-career-set="sens"></label>
       <label>Volume audio <input type="range" min="0" max="1" step="0.05" data-career-set="vol"></label>
+      <label>Disattiva audio <input type="checkbox" data-career-set="muted"></label>
       <label>Qualifiche Q1 → Q2 → Q3 <input type="checkbox" data-career-set="qualiEnabled"></label>
       <label>Q1 · minuti <input type="number" min="1" max="60" data-career-qminutes="0"></label>
       <label>Q2 · minuti <input type="number" min="1" max="60" data-career-qminutes="1"></label>
@@ -159,6 +169,7 @@
   <label>Giri <input type="number" min="1" max="65" data-set="laps"></label>
   <label>Sensibilità sterzo <input type="range" min="0.5" max="1.5" step="0.05" data-set="sens"></label>
   <label>Volume audio <input type="range" min="0" max="1" step="0.05" data-set="vol"></label>
+  <label>Disattiva audio <input type="checkbox" data-set="muted"></label>
   <label>Qualifiche Q1 → Q2 → Q3 <input type="checkbox" data-set="qualiEnabled"></label>
   <label>Q1 · minuti <input type="number" min="1" max="60" data-qminutes="0"></label>
   <label>Q2 · minuti <input type="number" min="1" max="60" data-qminutes="1"></label>
@@ -173,7 +184,7 @@
 <div id="controls" class="panel">
   <h2>Comandi</h2>
   <div class="cols">
-    <div><b>Tastiera</b><p>W / ↑ acceleratore<br>S / ↓ freno<br>A D / ← → sterzo<br>X ingresso e pilota automatico box<br>R retromarcia (tieni premuto)<br>Esc pausa<br>Spazio freno a mano<br>T riposiziona (+3 s)<br>C cambia visuale</p></div>
+    <div><b>Tastiera</b><p>W / ↑ acceleratore<br>S / ↓ freno<br>A D / ← → sterzo<br>X ingresso e pilota automatico box<br>R retromarcia (tieni premuto)<br>Esc pausa<br>M attiva/disattiva audio<br>Spazio freno a mano<br>T riposiziona (+3 s)<br>C cambia visuale</p></div>
     <div><b>Controller</b><p>RT/R2: acceleratore<br>LT/L2: freno e, da fermo, retromarcia<br>Stick sinistro: sterzo<br>X (Xbox) / X-Croce (PS4/PS5): pilota automatico box<br>B/Cerchio: retromarcia alternativa (tieni premuto)<br>Start/Menu/Options: pausa<br>A (Xbox): acceleratore alternativo<br>Y/Triangolo: visuale</p></div>
   </div>
   <p class="hint">Quando compare «PREMI X PER ENTRARE AI BOX», premi X. L'assistenza frena e percorre la corsia a massimo 80 km/h. In gara si ferma alla tua piazzola: scegli le gomme e conferma il cambio, poi riparti con l'assistenza fino all'uscita. Fuori dalla zona, X non prenota né attiva un ingresso.</p>
@@ -253,11 +264,12 @@
 </section>
 
 <div id="result" class="panel hidden">
-  <h2>Classifica finale 🏁</h2><div id="resList"></div>
+  <p class="race-setup-eyebrow">SESSIONE CONCLUSA / BANDIERA A SCACCHI</p><h2>Classifica finale 🏁</h2><p id="resultSummary"></p><div id="resultPodium"></div><div id="resList" tabindex="0" aria-label="Classifica finale completa"></div>
   <button data-act="careerresume" id="careerContinueBtn" class="main hidden">CONTINUA CARRIERA</button>
   <button data-act="restart" id="raceRestartBtn" class="main">RICOMINCIA GARA</button>
   <button data-act="menu">TORNA AL MENU</button>
 </div>
+<section id="runtimeError" class="panel hidden" role="alert" aria-labelledby="runtimeErrorTitle"><p class="race-setup-eyebrow">SESSIONE INTERROTTA</p><h2 id="runtimeErrorTitle">Ripartiamo dal paddock.</h2><p>Un errore ha fermato questa sessione. I Gran Premi già salvati restano disponibili. Torna al menu per avviare un nuovo weekend.</p><button type="button" data-act="menu" class="main">TORNA AL MENU</button></section>
 <script src="js/utils.js"></script>
 <script src="js/security.js"></script>
 <script src="js/settings.js"></script>
@@ -289,6 +301,7 @@
 <script src="js/hud.js"></script>
 <script src="js/carSprite.js"></script>
 <script src="js/minimap.js"></script>
+<script src="js/scenery.js"></script>
 <script src="js/render.js"></script>
 <script src="js/update.js"></script>
 <script src="js/menuCars.js"></script>

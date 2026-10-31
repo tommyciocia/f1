@@ -6,7 +6,7 @@ const TEAMS=[['#00d2be','#111','Mercedes-AMG F1','Mercedes'],['#e10600','#ffd400
 const TSTAT=[[1.02,1.02,1.01,1.02],[1.01,1.01,1.01,1.01],[1.01,1.01,1,1.02],[1.01,1,1.01,1.01],[.99,1,1,1],[.98,.99,1,.99],[.99,1,.99,1],[.98,.99,.99,.99],[.98,.98,1,.99],[.97,.98,.98,.98],[.96,.97,.98,.97],[1,1,1,1]];
 // griglia 2026: [sigla, nome, numero, squadra]
 const DR=[['RUS','George Russell',63,0],['ANT','Kimi Antonelli',12,0],['LEC','Charles Leclerc',16,1],['HAM','Lewis Hamilton',44,1],['NOR','Lando Norris',1,2],['PIA','Oscar Piastri',81,2],['VER','Max Verstappen',3,3],['HAD','Isack Hadjar',6,3],['LAW','Liam Lawson',30,4],['LIN','Arvid Lindblad',41,4],['ALO','Fernando Alonso',14,5],['STR','Lance Stroll',18,5],['ALB','Alexander Albon',23,6],['SAI','Carlos Sainz',55,6],['GAS','Pierre Gasly',10,7],['COL','Franco Colapinto',43,7],['OCO','Esteban Ocon',31,8],['BEA','Oliver Bearman',87,8],['HUL','Nico Hülkenberg',27,9],['BOR','Gabriel Bortoleto',5,9],['BOT','Valtteri Bottas',77,10],['PER','Sergio Pérez',11,10]];
-const PLAYER='TOM',NCARS=23,PSLOT=12;
+const NCARS=23,PSLOT=12;
 // La griglia resta modificabile senza toccare i dati base della simulazione.
 S.teamNames=TEAMS.map((t,i)=>boundedText(Array.isArray(S.teamNames)?S.teamNames[i]:undefined,28,t[2])||t[2]);
 S.roster=Array.isArray(S.roster)&&S.roster.length===DR.length?S.roster:DR.map(d=>d.slice());

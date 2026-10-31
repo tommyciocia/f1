@@ -13,7 +13,7 @@ const {pathToFileURL}=require('node:url'),{chromium}=require('playwright');
     const first=sceneryCache.builds;render(0);const built=sceneryCache.builds;
     const sample=()=>{for(let i=0;i<8;i++)render(0);ctx.getImageData(0,0,1,1);const start=performance.now();for(let i=0;i<60;i++)render(0);ctx.getImageData(0,0,1,1);return(performance.now()-start)/60;};
     const cachedMs=sample(),hits=sceneryCache.builds===built,original=drawCachedScenery;let uncachedMs;
-    try{drawCachedScenery=()=>drawTrackScenery(ctx);uncachedMs=sample();}finally{drawCachedScenery=original;}
+    try{drawCachedScenery=()=>{drawGround(ctx,renderBounds);drawTrackScenery(ctx);};uncachedMs=sample();}finally{drawCachedScenery=original;}
     camX+=5000;render(0);const moved=sceneryCache.builds===built+1,b=renderBounds,c=sceneryCache.bounds;
     const covered=c.left<=b.left&&c.right>=b.right&&c.top<=b.top&&c.bottom>=b.bottom;
     const before=sceneryCache.builds;S.my.name+=' Test';render(0);const renamed=sceneryCache.builds===before+1;

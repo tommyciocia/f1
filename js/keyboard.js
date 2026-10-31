@@ -5,8 +5,8 @@ const editingControls=e=>e.target?.isContentEditable||['INPUT','TEXTAREA','SELEC
 addEventListener('keydown',e=>{if(editingControls(e))return;
  if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();
  const held=!!keys[e.code];keys[e.code]=true;if(held||e.repeat)return;initAudio();
- if(e.code==='Escape')togglePause();if(e.code==='KeyT')repos();if(e.code==='KeyC')camMul=camMul===1?1.45:1;if(e.code==='KeyX')requestPitEntry();});
+ if(e.code==='Escape')togglePause();if(e.code==='KeyM')toggleMute();if(e.code==='KeyT')repos();if(e.code==='KeyC')camMul=camMul===1?1.45:1;if(e.code==='KeyX')requestPitEntry();});
 addEventListener('keyup',e=>keys[e.code]=false);
 function releaseKeyboard(){for(const k in keys)keys[k]=false;ks=0;}
-addEventListener('blur',()=>{releaseKeyboard();if(state==='racing'||state==='quali')togglePause();});
-document.addEventListener('visibilitychange',()=>{if(document.hidden){releaseKeyboard();if(state==='racing'||state==='quali')togglePause();}});
+addEventListener('blur',()=>{releaseKeyboard();if(state==='racing'||state==='quali'||state==='countdown')togglePause();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){releaseKeyboard();if(state==='racing'||state==='quali'||state==='countdown')togglePause();}});

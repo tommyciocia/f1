@@ -28,6 +28,7 @@ function careerResultTable(result){
   '<tr data-career-result-driver="'+row.id+'" class="'+(row.id==='player'?'career-me':'')+'"><td>'+(row.classified?row.position:row.status==='DSQ'?'DSQ':'NC')+'</td><td><b>'+esc(row.name)+'</b><small>'+esc(row.teamName)+'</small></td><td>'+esc(row.finished&&!row.disqualified?fmt(row.time):labels[row.status])+'<small>'+row.laps+'/'+result.laps+' giri</small></td><td class="career-points">'+row.points+'</td></tr>').join('')+'</tbody></table></div>';
 }
 function renderCareerCalendar(){
+ $('careerCalendarCaption').textContent=career.calendar.length+' circuiti · Una gara per tracciato, nell’ordine del campionato.';
  $('careerCalendar').innerHTML=career.calendar.map((id,i)=>{
   const circuit=careerCircuit(id),result=career.results[i],pending=!result&&career.pendingRound===i;
   const winner=result?.rows.find(r=>r.id===result.winnerId),status=result?'Completato':pending?'In corso':'Da disputare';

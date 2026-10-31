@@ -1,5 +1,12 @@
 # F1 Racing Simulator
 
+Versione 1.2 · Revisione grafica del 30 ottobre 2026: materiali di pista,
+scenografia, monoposto, box e HUD rinnovati. Anteprime e verifiche sono in
+[docs/GRAPHICS.md](docs/GRAPHICS.md).
+
+Revisione qualità 1.1 del 30 ottobre 2026. Problemi corretti, modifiche,
+prove riproducibili e limiti sono raccolti in [docs/QUALITY-REVIEW.md](docs/QUALITY-REVIEW.md).
+
 Apri `index.html` in un browser. Non servono compilazione o dipendenze per giocare.
 
 Per usare l'hosting locale con security headers e limiti alle richieste, esegui
@@ -18,8 +25,9 @@ autorevole; il rate limiting locale richiede una protezione DDoS di rete a monte
 La Home include **CARRIERA**, con due percorsi e due salvataggi indipendenti:
 **Crea la tua squadra** personalizza nome, pilota, colori e prestazioni, con
 23 vetture e 12 team; **Sostituisci un pilota** prende davvero il suo sedile
-nella squadra scelta, con 22 vetture e 11 team. Entrambe disputano i 24 GP
-nell'ordine del calendario F1 2026 originale. Il menu mostra classifiche,
+nella squadra scelta, con 22 vetture e 11 team. Alla creazione scegli **10 GP**
+(i dieci circuiti originari) oppure **24 GP**. Le stagioni esistenti da 24 restano
+complete. Il menu mostra classifiche,
 prossimo GP, calendario e risultati completi.
 
 Ogni carriera ha la propria scheda **IMPOSTAZIONI**: difficoltà, giri, qualifiche
@@ -34,11 +42,32 @@ dalla schermata iniziale e usare anche **SALVA CARRIERA** nelle impostazioni.
 Il vecchio salvataggio continua nello slot della tua squadra. Un weekend
 interrotto riparte dall'inizio, conservando le gare già completate.
 
-Dopo il 24° GP compare **CAMPIONI DEL MONDO**, con i vincitori e la possibilità
+Dopo l'ultimo GP del formato scelto compare **CAMPIONI DEL MONDO**, con i vincitori e la possibilità
 di iniziare una nuova stagione. Regole, calendario, gestione dei ritiri,
 salvataggio e verifiche sono descritti in [docs/CAREER.md](docs/CAREER.md).
 
 ## Grafica e fluidità
+
+Erba, sabbia, cemento, ghiaia e asfalto usano materiali procedurali originali.
+I circuiti hanno tre ambientazioni visive: parco, città e deserto. Alberi,
+edifici, tribune e cartelli di frenata sono disegnati fuori dalla pista;
+non introducono ostacoli o modifiche alla fisica. Le posizioni sono generate
+con un generatore locale, indipendente dal caso usato dalla simulazione.
+La scenografia rappresenta un'ambientazione stilizzata, non una replica degli
+edifici o della vegetazione dei circuiti reali.
+
+Le monoposto hanno carrozzerie prerenderizzate a risoluzione tripla, halo,
+casco, sospensioni, ali e numero personale; sterzo, ruote, colori gomme e LED
+restano dinamici. La cache conserva al massimo 48 livree/numero e una sola
+ambientazione attiva. L'anteprima in **SELEZIONA AUTO** è anch'essa ad alta
+risoluzione. La visuale più vicina rende leggibili le vetture; C mantiene la
+possibilità di allargare l'inquadratura. Le etichette danno priorità al
+giocatore ed evitano sovrapposizioni. La classifica conserva tutti i piloti.
+
+`npm run test:browser-graphics` verifica alta/bassa qualità sui 24 circuiti,
+assenza di modifiche a fisica e casualità durante il disegno, riutilizzo della
+cache, limite delle livree, layout desktop/mobile e ciclo reale dei frame.
+Il rapporto è `docs/validation-graphics.json`.
 
 Pista, box, griglia e segnaletica usano una superficie riutilizzata durante il
 movimento della camera; anche lo sfondo della minimappa viene conservato.
@@ -60,7 +89,7 @@ del rendering nel browser di prova, non un valore FPS garantito su ogni PC.
 - Q3: 10 auto, 12 minuti; i risultati determinano le prime 10 posizioni e la pole.
 
 Le durate sono modificabili nelle impostazioni. È ancora possibile saltare le qualifiche.
-Ogni fase riparte dai garage con uscite ogni 0,5 secondi e cronometri azzerati.
+Ogni fase riparte dai garage con uscite ogni secondo e cronometri azzerati.
 La schermata dei risultati permette di continuare nella fase successiva. Se il giocatore
 è eliminato, la sua auto resta nel garage e la telecamera segue i piloti ancora in corsa.
 
@@ -82,6 +111,24 @@ Nessun tempo viene assegnato a chi non completa un giro valido. A parità di tem
 prevale chi lo ha ottenuto prima; senza tempo si mantiene l'ordine di accesso alla fase.
 I risultati delle tre fasi rimangono disponibili nella sessione di gioco e la gara
 successiva utilizza automaticamente l'intera griglia di 23 auto.
+
+I passaggi su settori e traguardo sono interpolati all'interno dei sottopassi
+fisici. Attraversare la linea prima dello zero permette ancora un ultimo giro;
+attraversarla dopo la scadenza conclude il tentativo. La simulazione del ciclo
+normale usa un passo fisso di 1/60 s, con un limite di recupero dei frame lenti.
+I distacchi di gara usano tempi misurati su 100 punti comuni per giro, aggiornati
+cinque volte al secondo; senza un rilevamento comune compare «—».
+Al proprio arrivo viene completata la gara delle altre vetture in simulazione
+rapida, conservando un limite di sicurezza per eventuali stalli.
+
+## Audio e pausa
+
+Motore, frenata, menu, partenza e segnale finale sono sintetizzati localmente
+con WebAudio. **AUDIO ON/OFF** e il tasto **M** attivano/disattivano il suono senza
+perdere il volume scelto. La pausa azzera motore e frenata, anche durante i
+semafori. Start/Menu del controller permette sia di mettere in pausa sia di
+riprendere. Cambiare finestra o nascondere la pagina mette in pausa la sessione.
+I suoni non richiedono file musicali o connessioni esterne.
 
 ## Gomme e box
 
@@ -194,3 +241,9 @@ fisico non era collegato: la prova hardware resta da fare con il pannello COMAND
 
 Per una prova lunga aggiuntiva sul circuito selezionato dal test è disponibile
 node tests/qualifying-soak.cjs (intere durate 18/15/12 minuti).
+
+Le regressioni della revisione qualità sono eseguibili con `npm run test:quality`
+e, con Playwright/Edge disponibili, `npm run test:browser-quality`. Quest'ultima
+usa l'hosting HTTP reale e verifica le schermate, il motore WebAudio, layout da
+320 a 1920 pixel, un weekend completo e tutti i dieci GP con 23 arrivi, soste,
+salvataggi ricaricati, punteggi e titolo. Genera `docs/validation-quality-browser.json`.

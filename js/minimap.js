@@ -15,4 +15,7 @@ function drawMini(){
  miniScenery.circuit=activeCircuit;miniScenery.pits=PIT_GARAGES[0];
  }
  mctx.setTransform(dpr,0,0,dpr,0,0);mctx.clearRect(0,0,200,150);mctx.drawImage(miniScenery.canvas,0,0,200,150);
- for(const c of cars){mctx.fillStyle=c.col;mctx.beginPath();mctx.arc(mX(c),mY(c),c.isP?5:3.5,0,7);mctx.fill();mctx.strokeStyle=c.isP?'#fff':'#000';mctx.lineWidth=c.isP?2:1;mctx.stroke();}}
+ for(const c of cars){if(c.isP)continue;mctx.fillStyle=c.col;mctx.beginPath();mctx.arc(mX(c),mY(c),3.5,0,7);mctx.fill();mctx.strokeStyle='#091725';mctx.lineWidth=1;mctx.stroke();}
+ // Il giocatore resta sopra gli altri punti; la freccia mostra l'orientamento.
+ if(pl){mctx.save();mctx.translate(mX(pl),mY(pl));mctx.rotate(pl.a);mctx.fillStyle=pl.col;mctx.strokeStyle='#f2f7fb';mctx.lineWidth=1.6;
+  mctx.beginPath();mctx.moveTo(8,0);mctx.lineTo(-5,5);mctx.lineTo(-2,0);mctx.lineTo(-5,-5);mctx.closePath();mctx.fill();mctx.stroke();mctx.restore();}}

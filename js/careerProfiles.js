@@ -7,7 +7,7 @@ function cleanCareerSettings(raw,fallback=S){
  const val=key=>own(raw,key),out={dv:2};
  for(const [key,min,max,integer] of [['diff',0,4,true],['laps',1,65,true],['sens',.5,1.5,false],['vol',0,1,false]])out[key]=boundedNumber(val(key),min,max,fallback[key],integer);
  for(const [key,values] of [['ctrl',['auto','kb','pad']],['qual',['high','low']],['startCompound',['SOFT','MEDIUM','HARD']],['padTriggers',['auto','buttons','axes','invertedAxes','positiveAxes','negativeAxes']]])out[key]=values.includes(val(key))?val(key):fallback[key];
- for(const key of ['inv','padPitCustom'])out[key]=typeof val(key)==='boolean'?val(key):fallback[key];
+ for(const key of ['inv','muted','padPitCustom'])out[key]=typeof val(key)==='boolean'?val(key):!!fallback[key];
  out.qualiEnabled=typeof val('qualiEnabled')==='boolean'?val('qualiEnabled'):true;
  out.qualiMinutes=[18,15,12].map((v,i)=>boundedNumber(Array.isArray(val('qualiMinutes'))?val('qualiMinutes')[i]:undefined,1,60,fallback.qualiMinutes[i]||v,true));
  out.qmin=out.qualiEnabled?2:0;out.circuitId=fallback.circuitId;
@@ -27,7 +27,7 @@ const careerDriverIds=(kind='team',replaceDriver=null)=>[...DR.flatMap((_,i)=>ki
 const careerTeamCount=kind=>TEAMS.length-(kind==='driver'?1:0);
 function setCareerSetting(key,value){
  if(!career||careerRun||state!=='menu')return false;
- const keys=['diff','laps','sens','vol','ctrl','qual','inv','qualiEnabled','startCompound'];if(!keys.includes(key))return false;
+ const keys=['diff','laps','sens','vol','muted','ctrl','qual','inv','qualiEnabled','startCompound'];if(!keys.includes(key))return false;
  career.settings=cleanCareerSettings({...career.settings,[key]:value},career.settings);saveCareer();return true;
 }
 function setCareerQualiMinutes(phase,value){
@@ -55,5 +55,5 @@ function createCareerProfile(kind,input){
  if(kind==='driver'&&replaceDriver<0)return false;
  settings.my=my;settings.myStats=cleanStats(input.myStats,settings.myStats);
  if(kind==='driver'){const team=settings.roster[replaceDriver][3];settings.my.name=settings.teamNames[team];settings.my.c1=TEAMS[team][0];settings.my.c2=TEAMS[team][1];}
- careerSlot=kind;career=createCareerSeason(null,{kind,replaceDriver,settings});careerRecovered=false;saveCareer();openCareer();return true;
+ careerSlot=kind;career=createCareerSeason(null,{kind,replaceDriver,settings,calendarLength:Number(input.calendarLength)===10?10:24});careerRecovered=false;saveCareer();openCareer();return true;
 }

@@ -136,14 +136,15 @@ function qualiLapProgress(c,a,b,from=T[a].s,to=T[b].s){
   if(Math.abs(distance)>L*.08)c.qLapValid=false; // un salto di posizione non crea un giro valido
  }
  if(crossedMark(a,b,0,from,to)){
+  const at=timingAtMark(from,to,0);
   c.lap++;
   if(c.qLapActive&&c.qLapValid&&c.qLapSectors===3&&c.qLapDistance>=L*.95){
-   const time=raceTime-c.lapStart;
-   if(validQualiTime(time)){c.qLaps++;if(time<c.best){c.best=time;c.qBestSetAt=raceTime;c.qualiTimes[quali.stage]=time;if(c.isP){tickT=0;banner(qualiStage().name+' · '+fmt(time),1500);}}}
+   const time=at-c.lapStart;
+   if(validQualiTime(time)){c.qLaps++;if(time<c.best){c.best=time;c.qBestSetAt=at;c.qualiTimes[quali.stage]=time;if(c.isP){tickT=0;banner(qualiStage().name+' · '+fmt(time),1500);}}}
   }
   resetQualiLap(c);
-  if(qEnd||raceTime>=qualiStage().duration){completeQualiRun(c);return;}
-  c.lapStart=raceTime;c.qLapActive=true;c.qLapValid=true;
+  if(qEnd||at>=qualiStage().duration){completeQualiRun(c);return;}
+  c.lapStart=at;c.qLapActive=true;c.qLapValid=true;
  }else if(crossedMark(b,a,0,to,from)){c.lap--;invalidateQualiLap(c);}
 }
 function qualiCameraCar(){

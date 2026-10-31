@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-30",
+  "runtime": "v24.22.1",
+  "fullRun": {
+    "cases": 280,
+    "passed": 277,
+    "failed": 3
+  },
+  "retest": {
+    "cases": 3,
+    "passed": 3,
+    "failed": 0
+  },
+  "additionalFinalCases": 2,
+  "verifiedDistinctPassingCases": 282,
+  "finalQualitySuite": {
+    "cases": 11,
+    "passed": 11,
+    "failed": 0
+  },
+  "browserScriptsPassed": 11,
+  "fullSuiteRepeatedAfterFixes": false,
+  "qualifyingSoak": [
+    {
+      "phase": "Q1",
+      "time": 1156.9999999994955,
+      "state": "qbetween",
+      "participants": 23,
+      "maxStuck": 0,
+      "locked": true,
+      "minLaps": 12,
+      "timed": 23,
+      "eliminated": 6
+    },
+    {
+      "phase": "Q2",
+      "time": 950.0499999996837,
+      "state": "qbetween",
+      "participants": 17,
+      "maxStuck": 0,
+      "locked": true,
+      "minLaps": 10,
+      "timed": 17,
+      "eliminated": 7
+    },
+    {
+      "phase": "Q3",
+      "time": 762.3999999998543,
+      "state": "qdone",
+      "participants": 10,
+      "maxStuck": 0,
+      "locked": true,
+      "minLaps": 8,
+      "timed": 10,
+      "eliminated": 0
+    }
+  ],
+  "syntaxCheckedFiles": 45,
+  "serverSmoke": {
+    "url": "http://127.0.0.1:8087",
+    "status": 200,
+    "errors": []
+  }
+}
